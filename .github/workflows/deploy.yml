@@ -1,0 +1,105 @@
+name: CI/CD Pipeline for Node.js API and PostgreSQL
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code from the repository
+      - name: Checkout code from the repository
+        uses: actions/checkout@v2
+
+      # Step 2: Set up SSH key for EC2
+      - name: Set up SSH key for EC2
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_EC2_SSH_KEY }}" | base64 --decode > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      # Step 3: Add EC2 to known hosts to avoid SSH authenticity prompts
+      - name: Add EC2 to known hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.AWS_EC2_HOST }} >> ~/.ssh/known_hosts
+
+      # Step 4: SSH into EC2 and deploy your containers
+      - name: SSH into EC2 and deploy
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USERNAME }}
+          key: ${{ secrets.AWS_EC2_SSH_KEY }}
+          script: |
+            # Check if Docker is installed on EC2
+            if ! command -v docker &> /dev/null
+            then
+                echo "Docker is not installed. Installing Docker..."
+                sudo apt-get update
+                sudo apt-get install -y docker.io
+                sudo systemctl start docker
+                sudo systemctl enable docker
+            else
+                echo "Docker is already installed."
+            fi
+
+            # Navigate to your project directory and pull the latest code
+            cd /home/ec2-user/node-test || exit
+            git fetch origin
+            git checkout master
+            git pull origin master
+
+            # Step 1: Set up persistent PostgreSQL container
+            POSTGRES_CONTAINER=$(docker ps -q -f name=postgres)
+            if [ -z "$POSTGRES_CONTAINER" ]; then
+                echo "Postgres container is not running. Creating and starting a new one..."
+                docker volume create pgdata  # Create a volume for persistent storage
+                docker run -d --name postgres \
+                    -e POSTGRES_PASSWORD=${{ secrets.AWS_POSTGRES_PASSWORD }} \
+                    -e POSTGRES_USER=${{ secrets.AWS_POSTGRES_USER }} \
+                    -e POSTGRES_DB=${{ secrets.AWS_POSTGRES_DB }} \
+                    -v pgdata:/var/lib/postgresql/data \
+                    -p 5432:5432 \
+                    postgres
+            else
+                echo "Postgres container is already running."
+            fi
+
+             # Step 2: Check for changes in /prisma/migrations folder and apply Prisma migrations if needed
+            echo "Checking for changes in the /prisma/migrations folder..."
+            git diff --exit-code --quiet -- /prisma/migrations
+            if [ $? -eq 1 ]; then
+                echo "Changes detected in the /prisma/migrations folder. Running Prisma migrations..."
+                export DATABASE_URL=${{ secrets.AWS_DATABASE_URL }}
+                npx prisma migrate deploy
+            else
+                echo "No changes in /prisma/migrations. Skipping migrations."
+            fi
+
+            # Step 3: Handle Node.js API container deployment
+            NODE_API_CONTAINER=$(docker ps -q -f name=node-api)
+            if [ -z "$NODE_API_CONTAINER" ]; then
+                echo "Node.js API container is not running. Creating and starting a new one..."
+                docker build -t node-api .
+                docker run -d --name node-api \
+                    -p 3000:3000 \
+                    --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
+                    node-api
+            else
+                echo "Node.js API container is already running. Checking for code changes..."
+
+                # If the code has changed, restart the Node.js API container
+                git diff --exit-code || {
+                    echo "Code has changed. Restarting Node.js API container..."
+                    docker stop node-api
+                    docker rm node-api
+                    docker build -t node-api .
+                    docker run -d --name node-api \
+                        -p 3000:3000 \
+                        --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
+                        node-api
+                }
+            fi
