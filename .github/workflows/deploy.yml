@@ -12,14 +12,13 @@ jobs:
     steps:
       # Step 1: Checkout code from the repository
       - name: Checkout code from the repository
-        uses:
-          actions/checkout@v2
+        uses: actions/checkout@v2
 
-          # Step 2: Set up SSH key for EC2 (using the stored secret)
+        # Step 2: Set up SSH key for EC2 (using the stored secret)
       - name: Set up SSH key for EC2
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.AWS_EC2_SSH_KEY }}" | base64 --decode > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa  # Ensure the private key has the correct permissions
 
       # Step 3: Add EC2 to known hosts to avoid SSH authenticity prompts
@@ -27,7 +26,7 @@ jobs:
         run: |
           ssh-keyscan -H ${{ secrets.AWS_EC2_HOST }} >> ~/.ssh/known_hosts
 
-      # Step 4: SSH into EC2 and deploy your containers with verbose output
+      # Step 4: SSH into EC2 and deploy
       - name: SSH into EC2 and deploy
         uses: appleboy/ssh-action@v0.1.0
         with:
