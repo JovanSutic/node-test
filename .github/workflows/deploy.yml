@@ -16,10 +16,10 @@ jobs:
       - name: Set up SSH key for EC2
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_EC2_SSH_KEY }}" | base64 --decode > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ls -l ~/.ssh  # Debug: Verify key permissions
-          cat ~/.ssh/id_rsa  # Debug: Print the decoded key (ensure it's correct)
+          echo "${{ secrets.AWS_EC2_SSH_KEY }}" | base64 --decode > ~/.ssh/test-initial.pem
+          chmod 600 ~/.ssh/test-initial.pem  # Set correct permissions for the key
+          ls -l ~/.ssh  # Check permissions and verify file
+          cat ~/.ssh/test-initial.pem  # Print the key to make sure it was decoded correctly
 
       - name: Add EC2 to known hosts
         run: |
@@ -30,10 +30,10 @@ jobs:
         with:
           host: ${{ secrets.AWS_EC2_HOST }}
           username: ${{ secrets.AWS_EC2_USERNAME }}
-          key: ~/.ssh/id_rsa  # Directly use the key
+          key: ~/.ssh/test-initial.pem  # Use the decoded key file directly
           script: |
             set -x  # Enable shell debugging
-            ssh -vvv -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.AWS_EC2_HOST }} <<EOF
+            ssh -vvv -i ~/.ssh/test-initial.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.AWS_EC2_HOST }} <<EOF
             echo "SSH connected"
             EOF
             # Check if Docker is installed on EC2
