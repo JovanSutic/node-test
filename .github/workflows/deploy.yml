@@ -50,7 +50,7 @@ jobs:
           fi
 
           # Navigate to your project directory and pull the latest code
-          cd /home/ec2-user/node-test || exit
+          sudo cd /home/ec2-user/node-test || exit
           git fetch origin
           git checkout master
           git pull origin master
