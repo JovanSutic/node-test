@@ -108,19 +108,16 @@ jobs:
                     --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
                     hopeful_cohen
             else
-                echo "Node.js API container is already running. Checking for code changes..."
+                echo "Node.js API container is already running. Restarting Node.js API container..."
 
-                # If the code has changed, restart the Node.js API container
-                git diff --exit-code || {
-                    echo "Code has changed. Restarting Node.js API container..."
-                    docker stop hopeful_cohen
-                    docker rm hopeful_cohen
-                    docker build -t hopeful_cohen .
-                    docker run -d --name hopeful_cohen \
-                        -p 3000:3000 \
-                        --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
-                        hopeful_cohen
-                }
+                  docker stop hopeful_cohen
+                  docker rm hopeful_cohen
+                  docker build -t hopeful_cohen .
+                  docker run -d --name hopeful_cohen \
+                      -p 3000:3000 \
+                      --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
+                      hopeful_cohen
+                
             fi
 
             echo "Deployment completed"
