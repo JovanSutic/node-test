@@ -10,32 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code from the repository
       - name: Checkout code from the repository
         uses: actions/checkout@v2
 
-        # Step 2: Set up SSH key for EC2 (using the stored secret)
       - name: Set up SSH key for EC2
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.AWS_EC2_SSH_KEY }}" | base64 --decode > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa  # Ensure the private key has the correct permissions
+          chmod 600 ~/.ssh/id_rsa
 
-      # Step 3: Add EC2 to known hosts to avoid SSH authenticity prompts
       - name: Add EC2 to known hosts
         run: |
           ssh-keyscan -H ${{ secrets.AWS_EC2_HOST }} >> ~/.ssh/known_hosts
 
-      # Step 4: SSH into EC2 and deploy
       - name: SSH into EC2 and deploy
         uses: appleboy/ssh-action@v0.1.0
         with:
-          host: ${{ secrets.AWS_EC2_HOST }} # EC2 host (IP or domain)
-          username: ${{ secrets.AWS_EC2_USERNAME }} # EC2 username (usually ec2-user)
-          key: ${{ secrets.AWS_EC2_SSH_KEY }} # The private key stored as secret
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USERNAME }}
+          key: ~/.ssh/id_rsa  # Directly use the key
           script: |
             set -x  # Enable shell debugging
-            ssh -v -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.AWS_EC2_HOST }} <<EOF
+            ssh -vvv -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.AWS_EC2_HOST }} <<EOF
             echo "SSH connected"
             EOF
             # Check if Docker is installed on EC2
