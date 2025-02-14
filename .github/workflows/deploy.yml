@@ -18,6 +18,8 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.AWS_EC2_SSH_KEY }}" | base64 --decode > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          ls -l ~/.ssh  # Debug: Verify key permissions
+          cat ~/.ssh/id_rsa  # Debug: Print the decoded key (ensure it's correct)
 
       - name: Add EC2 to known hosts
         run: |
