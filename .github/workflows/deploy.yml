@@ -49,8 +49,17 @@ jobs:
               echo "Docker is already installed."
           fi
 
+
+          echo "Checking directory existence and permissions..."
+          ls -l /home/ec2-user/
+          if [ -d "/home/ec2-user/node-test" ]; then
+            echo "Directory /home/ec2-user/node-test exists!"
+          else
+            echo "Directory /home/ec2-user/node-test does not exist!"
+          fi
+
           # Navigate to your project directory and pull the latest code
-          sudo cd /home/ec2-user/node-test || exit
+          cd /home/ec2-user/node-test || exit
           git fetch origin
           git checkout master
           git pull origin master
