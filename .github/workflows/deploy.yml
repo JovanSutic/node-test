@@ -63,6 +63,12 @@ jobs:
                 echo "Docker is already installed."
             fi
 
+            # Pull the latest code from GitHub
+            echo "Pulling latest code from GitHub"
+            git fetch origin
+            git checkout master
+            git pull origin master
+
             # Step 1: Set up persistent PostgreSQL container
             echo "Setting up PostgreSQL container..."
             POSTGRES_CONTAINER=$(docker ps -q -f name=postgres)
@@ -80,16 +86,9 @@ jobs:
                 echo "Postgres container is already running."
             fi
 
-            # Step 2: Apply Prisma migrations if needed
-            echo "Checking for changes in /prisma/migrations folder..."
-            git diff --exit-code --quiet -- /prisma/migrations
-            if [ $? -eq 1 ]; then
-                echo "Changes detected in the /prisma/migrations folder. Running Prisma migrations..."
-                export DATABASE_URL=${{ secrets.AWS_DATABASE_URL }}
-                npx prisma migrate deploy
-            else
-                echo "No changes in /prisma/migrations. Skipping migrations."
-            fi
+           echo "Running Prisma migrations..."
+            export DATABASE_URL=${{ secrets.AWS_DATABASE_URL }}
+            npx prisma migrate deploy
 
             # Step 3: Handle Node.js API container deployment
             echo "Deploying Node.js API container..."
