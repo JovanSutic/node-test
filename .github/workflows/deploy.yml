@@ -34,7 +34,7 @@ jobs:
         run: |
           echo "Running SSH command..."
           set -x  # Enable shell debugging
-          ssh -vvv -i ~/.ssh/test-initial.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.AWS_EC2_HOST }} <<EOF
+          ssh -vvv -i ~/.ssh/test-initial.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.AWS_EC2_HOST }} <<'EOF'
             echo "SSH connected to EC2 instance"
             
             # Listing contents of the home directory on EC2
@@ -118,4 +118,4 @@ jobs:
             fi
 
             echo "Deployment completed"
-EOF
+          EOF
