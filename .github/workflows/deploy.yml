@@ -35,7 +35,13 @@ jobs:
           echo "Running SSH command..."
           set -x  # Enable shell debugging
           ssh -vvv -i ~/.ssh/test-initial.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.AWS_EC2_HOST }} <<EOF
-          echo "SSH connected"
+          echo "SSH connected to EC2 instance"
+          echo "Listing contents of the home directory on EC2:"
+          ls -l /home/ec2-user
+          echo "Checking current working directory"
+          pwd
+          cd /home/ec2-user/node-test || exit
+          ls -l
           EOF
           # Check if Docker is installed on EC2
           if ! command -v docker &> /dev/null
@@ -56,7 +62,7 @@ jobs:
           ls -l $HOME
 
           # Navigate to your project directory and pull the latest code
-          cd node-test || exit
+          cd /home/ec2-user/node-test || exit
           git fetch origin
           git checkout master
           git pull origin master
