@@ -117,7 +117,8 @@ jobs:
 
                   # Check if Prisma migration was successful
                   echo "Checking Prisma migration status..."
-                  docker exec -it hopeful_cohen npx prisma migrate status
+                  MIGRATION_STATUS=$(docker exec -it hopeful_cohen npx prisma migrate status)
+                  echo "Prisma Migration Status: $MIGRATION_STATUS"
 
                   # Optionally: View logs if there's an issue
                   echo "Displaying logs from the container to troubleshoot..."
