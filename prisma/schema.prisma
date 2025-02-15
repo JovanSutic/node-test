@@ -11,9 +11,3 @@ model users {
   id   Int     @id @default(autoincrement())
   name String?
 }
-
-model cities {
-  id   Int     @id @default(autoincrement())
-  name String?
-  country String?
-}
