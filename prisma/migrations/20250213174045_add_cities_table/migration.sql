@@ -1,10 +1,10 @@
--- CreateTable
-CREATE TABLE "users" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT,
+-- -- CreateTable
+-- CREATE TABLE "users" (
+--     "id" SERIAL NOT NULL,
+--     "name" TEXT,
 
-    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
-);
+--     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+-- );
 
 -- CreateTable
 CREATE TABLE "cities" (
