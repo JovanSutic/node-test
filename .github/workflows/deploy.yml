@@ -107,9 +107,21 @@ jobs:
                       --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
                       hopeful_cohen
 
+                  # Wait for the container to be fully started
+                  echo "Waiting for the container to be fully initialized..."
+                  sleep 10  # Give the container some time to start
+
                   # Run Prisma migrations inside the container
                   echo "Running Prisma migrations..."
                   docker exec -it hopeful_cohen npx prisma migrate deploy
+
+                  # Check if Prisma migration was successful
+                  echo "Checking Prisma migration status..."
+                  docker exec -it hopeful_cohen npx prisma migrate status
+
+                  # Optionally: View logs if there's an issue
+                  echo "Displaying logs from the container to troubleshoot..."
+                  docker logs hopeful_cohen
             fi
 
             echo "Deployment completed"
