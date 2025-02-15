@@ -86,11 +86,6 @@ jobs:
                 echo "Postgres container is already running."
             fi
 
-           # Step 2: Apply Prisma migrations if needed
-            echo "Changes detected in the /prisma/migrations folder. Running Prisma migrations..."
-            export DATABASE_URL=${{ secrets.AWS_DATABASE_URL }}
-            npx prisma migrate deploy
-
             # Step 3: Handle Node.js API container deployment
             echo "Deploying Node.js API container..."
             NODE_API_CONTAINER=$(docker ps -q -f name=hopeful_cohen)
@@ -111,7 +106,10 @@ jobs:
                       -p 3000:3000 \
                       --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
                       hopeful_cohen
-                
+
+                  # Run Prisma migrations inside the container
+                  echo "Running Prisma migrations..."
+                  docker exec -it hopeful_cohen npx prisma migrate deploy
             fi
 
             echo "Deployment completed"
