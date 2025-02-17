@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies inside the container
-RUN npm install --production
+RUN npm install
 
 # Copy the Prisma schema (make sure this is done before generating Prisma client)
 COPY prisma ./prisma
