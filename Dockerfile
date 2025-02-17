@@ -4,11 +4,11 @@ FROM node:20
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock)
+# Copy package.json and package-lock.json (or yarn.lock) to install dependencies
 COPY package*.json ./
 
 # Install dependencies inside the container
-RUN npm install
+RUN npm install --production
 
 # Copy the Prisma schema (make sure this is done before generating Prisma client)
 COPY prisma ./prisma
@@ -19,8 +19,11 @@ RUN npx prisma generate
 # Copy the rest of the application files
 COPY . .
 
+# Build the application
+RUN npm run build
+
 # Expose the port the app will run on
 EXPOSE 3000
 
-# Command to run the application
-CMD ["node", "index.js"]
+# Command to run the application (use the compiled main.js in the dist folder)
+CMD ["node", "dist/main.js"]
