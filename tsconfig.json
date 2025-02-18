@@ -11,8 +11,12 @@
     "strictPropertyInitialization": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "**/*.spec.ts",
+    "node_modules/jest"
+  ],
   "exclude": ["node_modules"]
 }

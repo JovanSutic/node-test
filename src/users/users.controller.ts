@@ -6,6 +6,7 @@ import {
   Body,
   UsePipes,
   BadRequestException,
+  NotFoundException,
 } from "@nestjs/common";
 import { CreateUserDto } from "./users.dto";
 import { UsersService } from "./users.service";
@@ -41,8 +42,15 @@ export class UsersController {
   @Get(":id")
   async getById(@Param("id") id: string) {
     try {
-      return await this.usersService.getById(Number(id));
+      const result = await this.usersService.getById(Number(id));
+      if (!result) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+      }
+      return result;
     } catch (error: any) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new BadRequestException(
         error.message ||
           `An error occurred while fetching the user with id: ${id}`
