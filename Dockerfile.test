@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install only the dependencies needed for testing (not the app itself)
-RUN npm install --only=production
+RUN npm install
 
 # Copy only the necessary parts of the application (e.g., test files and prisma schema)
 COPY . .
