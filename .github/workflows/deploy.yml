@@ -86,6 +86,32 @@ jobs:
                 echo "Postgres container is already running."
             fi
 
+            # Step 2: Spin up temporary container for testing
+            echo "Spinning up temporary container for testing..."
+            docker build -t node-api-test .  # Build the test container
+            docker run --name node-api-test-temp node-api-test  # Run the container in the background
+
+            # Step 3: Install dependencies and run tests inside the temporary container
+            echo "Running tests inside the temporary container..."
+            docker exec node-api-test-temp npm install  # Install dependencies
+            TEST_RESULT=$(docker exec node-api-test-temp npm run test)  # Run the tests
+
+            # Check test result
+            echo "Test results: $TEST_RESULT"
+            if [[ $TEST_RESULT == *"Test Passed"* ]]; then
+                echo "Tests passed, proceeding with deployment."
+            else
+                echo "Tests failed, stopping deployment."
+                docker stop node-api-test-temp  # Stop the test container
+                docker rm node-api-test-temp  # Remove the test container
+                exit 1  # Exit the script and stop the deployment
+            fi
+
+            # Cleanup: Stop and remove the temporary container after tests (regardless of test result)
+            echo "Cleaning up: Stopping and removing temporary test container..."
+            docker stop node-api-test-temp
+            docker rm node-api-test-temp
+
             # Step 3: Handle Node.js API container deployment
             echo "Deploying Node.js API container..."
             NODE_API_CONTAINER=$(docker ps -q -f name=hopeful_cohen)
