@@ -1,39 +1,39 @@
+---
 name: CI/CD Pipeline for Node.js API and PostgreSQL
-
 on:
   push:
     branches:
       - master
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code from the repository
         uses: actions/checkout@v2
-
       - name: Set up SSH key for EC2
-        run: |
+        run: >
           mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_EC2_SSH_KEY }}" | base64 --decode > ~/.ssh/test-initial.pem
-          chmod 600 ~/.ssh/test-initial.pem  # Set correct permissions for the key
-          ls -l ~/.ssh  # Check permissions and verify file
-          cat ~/.ssh/test-initial.pem  # Print the key to make sure it was decoded correctly
 
+          echo "${{ secrets.AWS_EC2_SSH_KEY }}" | base64 --decode > ~/.ssh/test-initial.pem
+
+          chmod 600 ~/.ssh/test-initial.pem  # Set correct permissions for the key
+
+          ls -l ~/.ssh  # Check permissions and verify file
+
+          cat ~/.ssh/test-initial.pem  # Print the key to make sure it was decoded correctly
       - name: Add EC2 to known hosts
         run: |
           ssh-keyscan -H ${{ secrets.AWS_EC2_HOST }} >> ~/.ssh/known_hosts
-
       - name: Add SSH Key to Agent
         run: |
           eval $(ssh-agent -s)  # Start the SSH agent
           ssh-add ~/.ssh/test-initial.pem  # Add the private key to the agent
-
       - name: SSH into EC2 and deploy
-        run: |
+        run: >
           echo "Running SSH command..."
+
           set -x  # Enable shell debugging
+
           ssh -vvv -i ~/.ssh/test-initial.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.AWS_EC2_HOST }} <<'EOF'
             echo "SSH connected to EC2 instance"
             
@@ -86,33 +86,33 @@ jobs:
                 echo "Postgres container is already running."
             fi
 
-            # Step 2: Spin up temporary container for testing
+            # Step 2: Build the Docker image for testing (Dockerfile.test)
+            echo "Building Docker image for testing..."
+            docker build -f Dockerfile.test -t node-api-test .  # Use Dockerfile.test for testing only
+
+            # Step 3: Spin up a temporary container to run the tests
             echo "Spinning up temporary container for testing..."
-            docker build -t node-api-test .  # Build the test container
-            docker run --name node-api-test-temp node-api-test  # Run the container in the background
+            docker run --name node-api-test-temp -d node-api-test npm run test  # Run tests inside container
 
-            # Step 3: Install dependencies and run tests inside the temporary container
-            echo "Running tests inside the temporary container..."
-            docker exec node-api-test-temp npm install  # Install dependencies
-            TEST_RESULT=$(docker exec node-api-test-temp npm run test)  # Run the tests
+            # Wait for the container to finish running the tests
+            docker wait node-api-test-temp  # This will capture the exit code
 
-            # Check test result
-            echo "Test results: $TEST_RESULT"
-            if [[ $TEST_RESULT == *"Test Passed"* ]]; then
-                echo "Tests passed, proceeding with deployment."
-            else
-                echo "Tests failed, stopping deployment."
-                docker stop node-api-test-temp  # Stop the test container
-                docker rm node-api-test-temp  # Remove the test container
-                exit 1  # Exit the script and stop the deployment
-            fi
+            # Capture the exit code of the test container (this is the result of npm run test)
+            TEST_EXIT_CODE=$(docker inspect --format '{{.State.ExitCode}}' node-api-test-temp)
 
-            # Cleanup: Stop and remove the temporary container after tests (regardless of test result)
-            echo "Cleaning up: Stopping and removing temporary test container..."
+            # Stop and remove the temporary test container after running tests
             docker stop node-api-test-temp
             docker rm node-api-test-temp
 
-            # Step 3: Handle Node.js API container deployment
+            # Step 4: Check if tests passed and decide whether to continue deployment
+            if [ $TEST_EXIT_CODE -eq 0 ]; then
+                echo "Tests passed, proceeding with deployment."
+            else
+                echo "Tests failed, stopping deployment."
+                exit 1  # Stop deployment if tests failed
+            fi
+
+            # Step 5: Handle Node.js API container deployment
             echo "Deploying Node.js API container..."
             NODE_API_CONTAINER=$(docker ps -q -f name=hopeful_cohen)
             if [ -z "$NODE_API_CONTAINER" ]; then
@@ -125,30 +125,30 @@ jobs:
             else
                 echo "Node.js API container is already running. Restarting Node.js API container..."
 
-                  docker stop hopeful_cohen
-                  docker rm hopeful_cohen
-                  docker build -t hopeful_cohen .
-                  docker run -d --name hopeful_cohen \
-                      -p 3000:3000 \
-                      --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
-                      hopeful_cohen
+                docker stop hopeful_cohen
+                docker rm hopeful_cohen
+                docker build -t hopeful_cohen .
+                docker run -d --name hopeful_cohen \
+                    -p 3000:3000 \
+                    --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
+                    hopeful_cohen
 
-                  # Wait for the container to be fully started
-                  echo "Waiting for the container to be fully initialized..."
-                  sleep 10  # Give the container some time to start
+                # Wait for the container to be fully started
+                echo "Waiting for the container to be fully initialized..."
+                sleep 10  # Give the container some time to start
 
-                  # Run Prisma migrations inside the container
-                  echo "Running Prisma migrations..."
-                  docker exec -it hopeful_cohen npx prisma migrate deploy
+                # Run Prisma migrations inside the container
+                echo "Running Prisma migrations..."
+                docker exec -it hopeful_cohen npx prisma migrate deploy
 
-                  # Check if Prisma migration was successful
-                  echo "Checking Prisma migration status..."
-                  MIGRATION_STATUS=$(docker exec hopeful_cohen npx prisma migrate status)
-                  echo "Prisma Migration Status: $MIGRATION_STATUS"
+                # Check if Prisma migration was successful
+                echo "Checking Prisma migration status..."
+                MIGRATION_STATUS=$(docker exec hopeful_cohen npx prisma migrate status)
+                echo "Prisma Migration Status: $MIGRATION_STATUS"
 
-                  # Optionally: View logs if there's an issue
-                  echo "Displaying logs from the container to troubleshoot..."
-                  docker logs hopeful_cohen
+                # Optionally: View logs if there's an issue
+                echo "Displaying logs from the container to troubleshoot..."
+                docker logs hopeful_cohen
             fi
 
             echo "Deployment completed"
