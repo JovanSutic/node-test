@@ -40,11 +40,7 @@ export class UsersService {
 
   async getById(id: number) {
     try {
-      const user = await this.prisma.users.findUnique({ where: { id } });
-      if (!user) {
-        throw new NotFoundException(`User with ID ${id} not found`);
-      }
-      return user;
+      return await this.prisma.users.findUnique({ where: { id } });
     } catch (error: any) {
       throw new BadRequestException(
         error.message ||
