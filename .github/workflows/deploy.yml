@@ -100,6 +100,13 @@ jobs:
             # Capture the exit code of the test container (this is the result of npm run test)
             TEST_EXIT_CODE=$(docker inspect --format '{{.State.ExitCode}}' node-api-test-temp)
 
+            # Log the test results by displaying the container logs
+            echo "Displaying test results from the container logs:"
+            docker logs node-api-test-temp
+
+            # Log the TEST_EXIT_CODE value
+            echo "Test exit code: $TEST_EXIT_CODE"
+
             # Stop and remove the temporary test container after running tests
             docker stop node-api-test-temp
             docker rm node-api-test-temp
