@@ -1,0 +1,17 @@
+# Use the same base image as your main app
+FROM node:20
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json (or yarn.lock) to install dependencies
+COPY package*.json ./
+
+# Install only the dependencies needed for testing (not the app itself)
+RUN npm install --only=production
+
+# Copy only the necessary parts of the application (e.g., test files and prisma schema)
+COPY . .
+
+# Run the tests
+CMD ["npm", "run", "test"]
