@@ -6,6 +6,7 @@ import {
   Body,
   UsePipes,
   BadRequestException,
+  NotFoundException,
 } from "@nestjs/common";
 import { CreateCityDto } from "./cities.dto";
 import { CitiesService } from "./cities.service";
@@ -41,8 +42,16 @@ export class CitiesController {
   @Get(":id")
   async getById(@Param("id") id: string) {
     try {
-      return await this.citiesService.getById(Number(id));
+      const result = await this.citiesService.getById(Number(id));
+      if (!result) {
+        throw new NotFoundException(`City with ID ${id} not found`);
+      }
+      return result;
     } catch (error: any) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
       throw new BadRequestException(
         error.message ||
           `An error occurred while fetching the city with id: ${id}`

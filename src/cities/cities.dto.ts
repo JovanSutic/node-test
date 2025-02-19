@@ -3,3 +3,9 @@ export class CreateCityDto {
     name: string;
     country: string;
 }
+
+export class CityDto {
+    id: number;
+    name: string;
+    country: string;
+}
