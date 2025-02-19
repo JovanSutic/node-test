@@ -74,7 +74,7 @@ jobs:
 
             # Step 4: Run tests using docker-compose.test.yml (without --abort-on-container-exit)
             echo "Running tests using docker-compose.test.yml"
-            docker-compose -f docker-compose.test.yml up  # Run tests without aborting other containers
+            docker-compose -f docker-compose.test.yml up -d  # Run tests without aborting other containers
 
             # Get the container ID of the test container
             TEST_CONTAINER_ID=$(docker ps -q --filter "name=node-api-test")
