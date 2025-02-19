@@ -34,7 +34,6 @@ jobs:
 
           set -x  # Enable shell debugging
 
-
           ssh -vvv -i ~/.ssh/test-initial.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.AWS_EC2_HOST }} <<'EOF'
             echo "SSH connected to EC2 instance"
             
@@ -59,6 +58,15 @@ jobs:
                 echo "Docker is already installed."
             fi
 
+            # Check if Docker Compose is installed
+            if ! command -v docker-compose &> /dev/null; then
+                echo "Docker Compose is not installed. Installing Docker Compose..."
+                sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                sudo chmod +x /usr/local/bin/docker-compose
+            else
+                echo "Docker Compose is already installed."
+            fi
+
             # Pull the latest code from GitHub
             echo "Pulling latest code from GitHub"
             git fetch origin
@@ -70,9 +78,9 @@ jobs:
             docker-compose -f docker-compose.test.yml up --abort-on-container-exit  # Run tests and stop if any test fails
 
             # Get the exit code of the test container
-            TEST_EXIT_CODE=$(docker inspect --format '{{.State.ExitCode}}' node-api-test)
+            TEST_EXIT_CODE=$(docker-compose ps -q node-api-test | xargs docker inspect -f '{{.State.ExitCode}}')
 
-            if [ $TEST_EXIT_CODE -eq 0 ]; then
+            if [ "$TEST_EXIT_CODE" -eq 0 ]; then
                 echo "Tests passed, proceeding with deployment."
             else
                 echo "Tests failed, stopping deployment."
