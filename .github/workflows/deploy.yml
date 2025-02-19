@@ -72,9 +72,9 @@ jobs:
             git checkout master
             git pull origin master
 
-            # Step 4: Run tests using docker-compose.test.yml
+            # Step 4: Run tests using docker-compose.test.yml (without --abort-on-container-exit)
             echo "Running tests using docker-compose.test.yml"
-            docker-compose -f docker-compose.test.yml up --abort-on-container-exit  # Run tests and stop if any test fails
+            docker-compose -f docker-compose.test.yml up  # Run tests without aborting other containers
 
             # Get the container ID of the test container
             TEST_CONTAINER_ID=$(docker-compose ps -q node-api-test)
