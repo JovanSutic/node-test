@@ -77,21 +77,24 @@ jobs:
             docker-compose -f docker-compose.test.yml up  # Run tests without aborting other containers
 
             # Get the container ID of the test container
-            TEST_CONTAINER_ID=$(docker-compose ps -q node-api-test)
+            TEST_CONTAINER_ID=$(docker ps -q --filter "name=node-api-test")
 
-            # Check the exit code of the test container
-            if [ -n "$TEST_CONTAINER_ID" ]; then
-              TEST_EXIT_CODE=$(docker inspect --format '{{.State.ExitCode}}' "$TEST_CONTAINER_ID")
+            if [ -z "$TEST_CONTAINER_ID" ]; then
+                echo "Test container not found, stopping deployment."
+                exit 1  # Stop deployment if test container is not found
+            fi
+
+            # Get the exit code of the test container
+              TEST_EXIT_CODE=$(docker inspect -f '{{.State.ExitCode}}' "$TEST_CONTAINER_ID")
+              echo "Test container exit code: $TEST_EXIT_CODE"
+
               if [ "$TEST_EXIT_CODE" -eq 0 ]; then
                   echo "Tests passed, proceeding with deployment."
               else
                   echo "Tests failed, stopping deployment."
+                  docker-compose -f docker-compose.test.yml down  # Clean up containers
                   exit 1  # Stop deployment if tests failed
               fi
-            else
-              echo "Test container not found, stopping deployment."
-              exit 1
-            fi
 
             # Cleanup: Stop and remove the test container
             echo "Cleaning up test container..."
