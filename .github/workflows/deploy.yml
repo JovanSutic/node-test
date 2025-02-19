@@ -58,14 +58,13 @@ jobs:
                 echo "Docker is already installed."
             fi
 
-            # Check if Docker Compose is installed
-            if ! command -v docker-compose &> /dev/null; then
-                echo "Docker Compose is not installed. Installing Docker Compose..."
-                sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-                sudo chmod +x /usr/local/bin/docker-compose
-            else
-                echo "Docker Compose is already installed."
-            fi
+            echo "Installing missing libraries (libcrypt) and Docker Compose..."
+            sudo apt-get update
+            sudo apt-get install -y libcrypt1  # Install missing libraries
+            sudo apt-get install -y python3-pip python3-dev libpython3.7-dev  # Install Python dependencies
+            sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose  # Download Docker Compose
+            sudo chmod +x /usr/local/bin/docker-compose  # Make it executable
+            docker-compose --version  # Verify installation
 
             # Pull the latest code from GitHub
             echo "Pulling latest code from GitHub"
