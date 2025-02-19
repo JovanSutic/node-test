@@ -5,6 +5,6 @@ module.exports = {
       '^.+\\.ts$': 'ts-jest', // Transform TypeScript files with ts-jest
     },
     moduleFileExtensions: ['ts', 'js', 'json'],
-    testMatch: ['**/users/**/*.spec.ts'], // Look for .spec.ts files inside the 'users' folder
+    testMatch: ['**/*.spec.ts'], // Look for .spec.ts files inside the 'users' folder
   };
   

@@ -41,11 +41,7 @@ import {
   
     async getById(id: number) {
       try {
-        const city = await this.prisma.cities.findUnique({ where: { id } });
-        if (!city) {
-          throw new NotFoundException(`City with ID ${id} not found`);
-        }
-        return city;
+        return await this.prisma.cities.findUnique({ where: { id } });
       } catch (error: any) {
         throw new BadRequestException(
           error.message ||
