@@ -34,26 +34,22 @@ jobs:
 
           set -x  # Enable shell debugging
 
+
           ssh -vvv -i ~/.ssh/test-initial.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ secrets.AWS_EC2_HOST }} <<'EOF'
             echo "SSH connected to EC2 instance"
             
-            # Listing contents of the home directory on EC2
-            echo "Listing contents of the home directory on EC2:"
-            ls -l /home/ec2-user
-            
-            # Checking current working directory
-            echo "Checking current working directory"
-            pwd
-
-            # Navigate to project directory and verify its contents
-            echo "Navigating to /home/ec2-user/node-test"
+            # Navigate to the project directory and verify its contents
             cd /home/ec2-user/node-test || exit
             ls -l
 
+            # Export secrets as environment variables
+            export POSTGRES_USER=${{ secrets.AWS_POSTGRES_USER }}
+            export POSTGRES_PASSWORD=${{ secrets.AWS_POSTGRES_PASSWORD }}
+            export POSTGRES_DB=${{ secrets.AWS_POSTGRES_DB }}
+            export DATABASE_URL=${{ secrets.AWS_DATABASE_URL }}
+
             # Check if Docker is installed on EC2
-            echo "Checking if Docker is installed"
-            if ! command -v docker &> /dev/null
-            then
+            if ! command -v docker &> /dev/null; then
                 echo "Docker is not installed. Installing Docker..."
                 sudo apt-get update
                 sudo apt-get install -y docker.io
@@ -69,49 +65,13 @@ jobs:
             git checkout master
             git pull origin master
 
-            # Step 1: Set up persistent PostgreSQL container
-            echo "Setting up PostgreSQL container..."
-            POSTGRES_CONTAINER=$(docker ps -q -f name=postgres)
-            if [ -z "$POSTGRES_CONTAINER" ]; then
-                echo "Postgres container is not running. Creating and starting a new one..."
-                docker volume create pgdata  # Create a volume for persistent storage
-                docker run -d --name postgres \
-                    -e POSTGRES_PASSWORD=${{ secrets.AWS_POSTGRES_PASSWORD }} \
-                    -e POSTGRES_USER=${{ secrets.AWS_POSTGRES_USER }} \
-                    -e POSTGRES_DB=${{ secrets.AWS_POSTGRES_DB }} \
-                    -v pgdata:/var/lib/postgresql/data \
-                    -p 5432:5432 \
-                    postgres
-            else
-                echo "Postgres container is already running."
-            fi
+            # Step 1: Run tests using docker-compose.test.yml
+            echo "Running tests using docker-compose.test.yml"
+            docker-compose -f docker-compose.test.yml up --abort-on-container-exit  # Run tests and stop if any test fails
 
-            # Step 2: Build the Docker image for testing (Dockerfile.test)
-            echo "Building Docker image for testing..."
-            docker build -f Dockerfile.test -t node-api-test .  # Use Dockerfile.test for testing only
+            # Get the exit code of the test container
+            TEST_EXIT_CODE=$(docker inspect --format '{{.State.ExitCode}}' node-api-test)
 
-            # Step 3: Spin up a temporary container to run the tests
-            echo "Spinning up temporary container for testing..."
-            docker run --name node-api-test-temp node-api-test npm run test  # Run tests inside container
-
-            # Wait for the container to finish running the tests
-            docker wait node-api-test-temp  # This will capture the exit code
-
-            # Capture the exit code of the test container (this is the result of npm run test)
-            TEST_EXIT_CODE=$(docker inspect --format '{{.State.ExitCode}}' node-api-test-temp)
-
-            # Log the test results by displaying the container logs
-            echo "Displaying test results from the container logs:"
-            docker logs node-api-test-temp
-
-            # Log the TEST_EXIT_CODE value
-            echo "Test exit code: $TEST_EXIT_CODE"
-
-            # Stop and remove the temporary test container after running tests
-            docker stop node-api-test-temp
-            docker rm node-api-test-temp
-
-            # Step 4: Check if tests passed and decide whether to continue deployment
             if [ $TEST_EXIT_CODE -eq 0 ]; then
                 echo "Tests passed, proceeding with deployment."
             else
@@ -119,44 +79,21 @@ jobs:
                 exit 1  # Stop deployment if tests failed
             fi
 
-            # Step 5: Handle Node.js API container deployment
-            echo "Deploying Node.js API container..."
-            NODE_API_CONTAINER=$(docker ps -q -f name=hopeful_cohen)
-            if [ -z "$NODE_API_CONTAINER" ]; then
-                echo "Node.js API container is not running. Creating and starting a new one..."
-                docker build -t hopeful_cohen .
-                docker run -d --name hopeful_cohen \
-                    -p 3000:3000 \
-                    --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
-                    hopeful_cohen
-            else
-                echo "Node.js API container is already running. Restarting Node.js API container..."
+            # Cleanup: Stop and remove the test container
+            echo "Cleaning up test container..."
+            docker-compose -f docker-compose.test.yml down
 
-                docker stop hopeful_cohen
-                docker rm hopeful_cohen
-                docker build -t hopeful_cohen .
-                docker run -d --name hopeful_cohen \
-                    -p 3000:3000 \
-                    --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
-                    hopeful_cohen
+            # Step 2: Run production containers using docker-compose.yml
+            echo "Running docker-compose up for production containers"
+            docker-compose up -d  # Start production containers (Postgres, Node.js app)
 
-                # Wait for the container to be fully started
-                echo "Waiting for the container to be fully initialized..."
-                sleep 10  # Give the container some time to start
+            # Wait for the Node.js app container to be fully started
+            echo "Waiting for Node.js app container to start..."
+            sleep 10  # Give the container time to initialize
 
-                # Run Prisma migrations inside the container
-                echo "Running Prisma migrations..."
-                docker exec -it hopeful_cohen npx prisma migrate deploy
+            # Run Prisma migrations inside the production container
+            echo "Running Prisma migrations..."
+            docker-compose exec node-app npx prisma migrate deploy
 
-                # Check if Prisma migration was successful
-                echo "Checking Prisma migration status..."
-                MIGRATION_STATUS=$(docker exec hopeful_cohen npx prisma migrate status)
-                echo "Prisma Migration Status: $MIGRATION_STATUS"
-
-                # Optionally: View logs if there's an issue
-                echo "Displaying logs from the container to troubleshoot..."
-                docker logs hopeful_cohen
-            fi
-
-            echo "Deployment completed"
+            echo "Deployment completed."
           EOF

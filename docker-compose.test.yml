@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  node-api-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test  # Build using Dockerfile.test
+    container_name: node-api-test
+    environment:
+      DATABASE_URL: ${DATABASE_URL}  # Make sure you define this environment variable
+    networks:
+      - app_network
+    command: npm run test  # Run tests after the container starts
+
+networks:
+  app_network:
+    driver: bridge
