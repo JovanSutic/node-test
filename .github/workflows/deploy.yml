@@ -92,7 +92,7 @@ jobs:
 
             # Step 3: Spin up a temporary container to run the tests
             echo "Spinning up temporary container for testing..."
-            docker run --name node-api-test-temp -d node-api-test npm run test  # Run tests inside container
+            docker run --name node-api-test-temp node-api-test npm run test  # Run tests inside container
 
             # Wait for the container to finish running the tests
             docker wait node-api-test-temp  # This will capture the exit code
