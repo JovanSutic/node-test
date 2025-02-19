@@ -10,6 +10,12 @@ COPY package*.json ./
 # Install only the dependencies needed for testing (not the app itself)
 RUN npm install
 
+# Copy the Prisma schema (make sure this is done before generating Prisma client)
+COPY prisma ./prisma
+
+# Generate Prisma client (run this before copying the rest of the application files)
+RUN npx prisma generate
+
 # Copy only the necessary parts of the application (e.g., test files and prisma schema)
 COPY . .
 
