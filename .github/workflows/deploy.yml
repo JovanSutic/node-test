@@ -75,7 +75,7 @@ jobs:
             if [ -z "$POSTGRES_CONTAINER" ]; then
                 echo "Postgres container is not running. Creating and starting a new one..."
                 docker volume create pgdata  # Create a volume for persistent storage
-                docker run --name postgres \
+                docker run -d --name postgres \
                     -e POSTGRES_PASSWORD=${{ secrets.AWS_POSTGRES_PASSWORD }} \
                     -e POSTGRES_USER=${{ secrets.AWS_POSTGRES_USER }} \
                     -e POSTGRES_DB=${{ secrets.AWS_POSTGRES_DB }} \
@@ -125,7 +125,7 @@ jobs:
             if [ -z "$NODE_API_CONTAINER" ]; then
                 echo "Node.js API container is not running. Creating and starting a new one..."
                 docker build -t hopeful_cohen .
-                docker run --name hopeful_cohen \
+                docker run -d --name hopeful_cohen \
                     -p 3000:3000 \
                     --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
                     hopeful_cohen
@@ -135,7 +135,7 @@ jobs:
                 docker stop hopeful_cohen
                 docker rm hopeful_cohen
                 docker build -t hopeful_cohen .
-                docker run --name hopeful_cohen \
+                docker run -d --name hopeful_cohen \
                     -p 3000:3000 \
                     --env DATABASE_URL=${{ secrets.AWS_DATABASE_URL }} \
                     hopeful_cohen
