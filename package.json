@@ -4,10 +4,10 @@
   "description": "",
   "main": "main.ts",
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand",
     "build": "tsc",
-    "dev": "nodemon ./src/main.ts",
-    "start": "node dist/index.js",
+    "dev": "bun --hot ./src/main.ts",
+    "start": "bun ./src/main.ts", 
     "prepare": "husky"
   },
   "lint-staged": {
