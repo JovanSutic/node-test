@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateUserDto } from "./users.dto";
@@ -29,6 +28,7 @@ export class UsersService {
 
   async getAll() {
     try {
+      console.log('ovde');
       return await this.prisma.users.findMany();
     } catch (error: any) {
       throw new BadRequestException(
