@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.ts",
   "scripts": {
-    "test": "jest --runInBand --verbose -u",
+    "test": "jest --runInBand --verbose",
     "build": "tsc",
     "dev": "bun --hot ./src/main.ts",
     "start": "bun ./src/main.ts", 
