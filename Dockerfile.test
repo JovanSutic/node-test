@@ -19,5 +19,8 @@ RUN bun prisma generate
 # Copy only the necessary parts of the application (e.g., test files and prisma schema)
 COPY . .
 
+# Print Bun version to verify it's installed correctly
+RUN bun --version
+
 # Run the tests
 CMD ["bun", "run", "test"]
