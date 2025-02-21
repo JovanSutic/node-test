@@ -1,8 +1,9 @@
+// @ts-nocheck
 import { Test, TestingModule } from "@nestjs/testing";
 import { CitiesController } from "./cities.controller";
 import { CitiesService } from "./cities.service";
 import request from "supertest";
-import { INestApplication } from "@nestjs/common";
+import type { INestApplication } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CityDto } from "./cities.dto";
 

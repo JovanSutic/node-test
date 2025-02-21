@@ -1,10 +1,27 @@
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'node',
-    transform: {
-      '^.+\\.ts$': 'ts-jest', // Transform TypeScript files with ts-jest
-    },
-    moduleFileExtensions: ['ts', 'js', 'json'],
-    testMatch: ['**/*.spec.ts'], // Look for .spec.ts files inside the 'users' folder
+    "moduleFileExtensions": [
+		"ts",
+		"js"
+	],
+	"testMatch": [
+		"**/?(*.)+(spec|test).ts"
+	],
+	"transform": {
+		"^.+\\.ts$": [
+			"ts-jest",
+			{
+				"useESM": true,
+				"isolatedModules": true
+			}
+		]
+	},
+	"moduleNameMapper": {
+		"^src/(.*)$": "<rootDir>/src/$1"
+	},
+	"extensionsToTreatAsEsm": [
+		".ts"
+	]
   };
   

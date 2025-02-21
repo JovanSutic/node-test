@@ -110,7 +110,7 @@ jobs:
 
             # Run Prisma migrations inside the production container
             echo "Running Prisma migrations..."
-            docker-compose exec node-api npx prisma migrate deploy
+            docker-compose exec node-api bun prisma migrate deploy
 
             echo "Deployment completed."
           EOF

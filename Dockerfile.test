@@ -1,5 +1,5 @@
-# Use the same base image as your main app
-FROM node:20
+# Use an official Bun image as the base
+FROM oven/bun:latest
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -8,16 +8,16 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install only the dependencies needed for testing (not the app itself)
-RUN npm install
+RUN bun install
 
 # Copy the Prisma schema (make sure this is done before generating Prisma client)
 COPY prisma ./prisma
 
 # Generate Prisma client (run this before copying the rest of the application files)
-RUN npx prisma generate
+RUN bun prisma generate
 
 # Copy only the necessary parts of the application (e.g., test files and prisma schema)
 COPY . .
 
 # Run the tests
-CMD ["npm", "run", "test"]
+CMD ["bun", "run", "test"]
