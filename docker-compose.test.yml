@@ -10,10 +10,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}  # Make sure you define this environment variable
     networks:
       - app_network
-    command: sh -c "bun run test; tail -f /dev/null"  # Run tests and keep the container running
-    restart: no  # Avoid automatic restart of the container after completion
-    stdin_open: true  # Keep the STDIN open
-    tty: true  # Allocate a pseudo-TTY
+    command: bun run test  # Run tests after the container starts
 
 networks:
   app_network:
