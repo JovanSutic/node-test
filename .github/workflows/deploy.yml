@@ -109,8 +109,16 @@ jobs:
             sleep 10  # Give the container time to initialize
 
             # Run Prisma migrations inside the production container
-            echo "Running Prisma migrations..."
-            docker-compose exec node-api bun prisma migrate deploy
 
+            status_output=$(docker-compose exec -it hopeful_cohen bun prisma migrate status)
+            echo "$status_output"
+
+            if echo "$status_output" | grep -q "Database schema is up to date!"; then
+              echo "Migrations are up to date, skipping deployment."
+            else
+              echo "Applying migrations..."
+              docker exec -it hopeful_cohen bun prisma migrate deploy
+            fi
+            
             echo "Deployment completed."
           EOF
