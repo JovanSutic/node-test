@@ -113,7 +113,7 @@ jobs:
             status_output=$(docker-compose exec -it hopeful_cohen bun prisma migrate status)
             echo "$status_output"
 
-            if echo "$status_output" | grep -q "is up to date"; then
+            if echo "$status_output" | grep -q "up-to-date"; then
               echo "Migrations are up to date, skipping deployment."
             else
               echo "Applying migrations..."
