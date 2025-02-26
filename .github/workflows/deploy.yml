@@ -100,15 +100,19 @@ jobs:
             echo "Cleaning up test container..."
             docker-compose -f docker-compose.test.yml down
 
-            # Step 5: Run production containers using docker-compose.yml
+            # Step 5: Build the new Docker image and recreate the containers
+            echo "Building the Docker image for production"
+            docker-compose -f docker-compose.prod.yml build 
+
+            # Step 6: Run production containers using docker-compose.yml
             echo "Running docker-compose up for production containers"
-            docker-compose -f docker-compose.prod.yml up -d   # Start production containers (Postgres, Node.js app)
+            docker-compose -f docker-compose.prod.yml up -d
 
             # Wait for the Node.js app container to be fully started
             echo "Waiting for Node.js app container to start..."
             sleep 10  # Give the container time to initialize
 
-            # Run Prisma migrations inside the production container
+            # Step 7: Run Prisma migrations inside the production container
 
             status_output=$(docker-compose exec -it hopeful_cohen bun prisma migrate status)
             echo "$status_output"
@@ -119,6 +123,11 @@ jobs:
               echo "Applying migrations..."
               docker exec -it hopeful_cohen bun prisma migrate deploy
             fi
+
+             # Step 8: Upload the Swagger JSON file to S3
+            echo "Uploading Swagger JSON to S3..."
+            aws s3 cp /home/ec2-user/node-test/src/swagger-doc.json s3://${{ secrets.AWS_BUCKET_NAME }}/documentation/swagger-doc.json
+
 
             echo "Deployment completed."
           EOF
