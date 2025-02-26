@@ -113,7 +113,7 @@
             }
           }
         },
-        "summary": "Create a city.",
+        "summary": "Create the new city.",
         "tags": [
           "cities"
         ]

@@ -20,7 +20,7 @@ export class CitiesController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  @ApiOperation({ summary: "Create a city." })
+  @ApiOperation({ summary: "Create the new city." })
   @ApiResponse({
     status: 201,
     description: "Successfully created a city",
