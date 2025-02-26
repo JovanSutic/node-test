@@ -8,16 +8,24 @@ import {
   BadRequestException,
   NotFoundException,
 } from "@nestjs/common";
-import { CreateUserDto } from "./users.dto";
+import { CreateUserDto, UserDto } from "./users.dto";
 import { UsersService } from "./users.service";
 import { ValidationPipe } from "./users.validation.pipe";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 @Controller("users")
+@ApiTags("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @UsePipes(ValidationPipe) // Apply the custom validation pipe
+  @UsePipes(ValidationPipe)
+  @ApiOperation({ summary: "Create a user." })
+  @ApiResponse({
+    status: 201,
+    description: "Successfully created a user.",
+    type: UserDto,
+  })
   async create(@Body() createUserDto: CreateUserDto) {
     try {
       return await this.usersService.create(createUserDto);
@@ -29,6 +37,13 @@ export class UsersController {
   }
 
   @Get()
+  @ApiOperation({ summary: "Return all users." })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully retrieved all users.",
+    isArray: true,
+    type: UserDto,
+  })
   async getAll() {
     try {
       return await this.usersService.getAll();
@@ -40,6 +55,12 @@ export class UsersController {
   }
 
   @Get(":id")
+  @ApiOperation({ summary: "Return user by id." })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully retrieved user by id.",
+    type: UserDto,
+  })
   async getById(@Param("id") id: string) {
     try {
       const result = await this.usersService.getById(Number(id));
