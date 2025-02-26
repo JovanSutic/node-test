@@ -115,7 +115,7 @@
         },
         "summary": "Create a city.",
         "tags": [
-          "users"
+          "cities"
         ]
       },
       "get": {
@@ -138,7 +138,7 @@
         },
         "summary": "Return all cities.",
         "tags": [
-          "users"
+          "cities"
         ]
       }
     },
@@ -169,7 +169,7 @@
         },
         "summary": "Return city by id.",
         "tags": [
-          "users"
+          "cities"
         ]
       }
     }
