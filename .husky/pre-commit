@@ -10,8 +10,10 @@ echo "Generating Swagger documentation..."
 bun run ./src/main.ts &
 PID=$!
 
-sleep 5
+sleep 2
 
 kill $PID
+
+git add src/swagger-doc.json
 
 echo "Tests passed and Swagger docs generated. Proceeding with commit."
