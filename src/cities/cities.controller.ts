@@ -14,7 +14,7 @@ import { ValidationPipe } from "./cities.validation.pipe";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 @Controller("cities")
-@ApiTags("users")
+@ApiTags("cities")
 export class CitiesController {
   constructor(private readonly citiesService: CitiesService) {}
 
