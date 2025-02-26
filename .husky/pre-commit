@@ -1,1 +1,17 @@
 bun run test
+
+if [ $? -ne 0 ]; then
+  echo "Tests failed, commit aborted."
+  exit 1 
+fi
+
+echo "Generating Swagger documentation..."
+
+bun run ./src/main.ts &
+PID=$!
+
+sleep 5
+
+kill $PID
+
+echo "Tests passed and Swagger docs generated. Proceeding with commit."
