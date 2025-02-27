@@ -25,6 +25,12 @@ services:
       - postgres
     networks:
       - app_network
+    command: |
+      sh -c "
+        bun prisma migrate reset --force && \
+        bun prisma db seed && \
+        bun run start
+      "
 
 volumes:
   pgdata:

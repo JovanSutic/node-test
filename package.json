@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "main.ts",
+  "prisma": {
+    "seed": "bun ./prisma/seed.ts"
+  },
   "scripts": {
     "test": "jest --runInBand --verbose",
     "build": "tsc",
