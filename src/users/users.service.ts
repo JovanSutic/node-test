@@ -28,7 +28,6 @@ export class UsersService {
 
   async getAll() {
     try {
-      console.log('ovde');
       return await this.prisma.users.findMany();
     } catch (error: any) {
       throw new BadRequestException(
