@@ -34,6 +34,8 @@ describe("CityController", () => {
       ...createCityDto,
     });
 
+    jest.spyOn(citiesService, "getByEssentialData").mockResolvedValue(null);
+
     const response = await request(app.getHttpServer())
       .post("/cities")
       .send(createCityDto)
