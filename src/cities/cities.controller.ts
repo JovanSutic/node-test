@@ -10,6 +10,7 @@ import {
   ConflictException,
   UnprocessableEntityException,
   Put,
+  Delete,
 } from "@nestjs/common";
 import { CreateCityDto, CityDto } from "./cities.dto";
 import { CitiesService } from "./cities.service";
@@ -109,7 +110,12 @@ export class CitiesController {
     try {
       if (data.length === 1) {
         const [city] = data;
-        return await this.citiesService.updateSingle(Number(city.id), city);
+        const existing = await this.citiesService.getById(Number(city.id));
+        if (existing) {
+          return await this.citiesService.updateSingle(Number(city.id), city);
+        } else {
+          throw new NotFoundException(`City with ID ${city.id} not found`);
+        }
       } else if (data.length > 1) {
         return await this.citiesService.updateMany(data);
       } else {
@@ -123,6 +129,33 @@ export class CitiesController {
       }
       throw new BadRequestException(
         error.message || "An error occurred while fetching all the cities"
+      );
+    }
+  }
+
+  @Delete(":id")
+  @ApiOperation({ summary: "Delete city by id." })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully deleted city by id.",
+    type: CityDto,
+  })
+  async delete(@Param("id") id: string) {
+    try {
+      const city = await this.citiesService.getById(Number(id));
+      if (city) {
+        return await this.citiesService.delete(Number(id));
+      } else {
+        throw new NotFoundException(`City with ID ${id} not found`);
+      }
+    } catch (error: any) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new BadRequestException(
+        error.message ||
+          `An error occurred while deleting the city with id: ${id}`
       );
     }
   }

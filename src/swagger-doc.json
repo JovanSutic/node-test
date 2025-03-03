@@ -207,6 +207,35 @@
         "tags": [
           "cities"
         ]
+      },
+      "delete": {
+        "operationId": "CitiesController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted city by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CityDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete city by id.",
+        "tags": [
+          "cities"
+        ]
       }
     }
   },
