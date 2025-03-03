@@ -7,10 +7,14 @@ import {
   UsePipes,
   BadRequestException,
   NotFoundException,
+  ConflictException,
+  UnprocessableEntityException,
+  Put,
+  Delete,
 } from "@nestjs/common";
 import { CreateCityDto, CityDto } from "./cities.dto";
 import { CitiesService } from "./cities.service";
-import { ValidationPipe } from "./cities.validation.pipe";
+import { ObjectTransformPipe, ValidationPipe } from "./cities.validation.pipe";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 @Controller("cities")
@@ -28,8 +32,21 @@ export class CitiesController {
   })
   async create(@Body() createCityDto: CreateCityDto) {
     try {
-      return await this.citiesService.create(createCityDto);
+      const city = await this.citiesService.getByEssentialData(
+        createCityDto.name,
+        createCityDto.country
+      );
+      if (city) {
+        throw new ConflictException(
+          "City with this name and country already exists"
+        );
+      } else {
+        return await this.citiesService.create(createCityDto);
+      }
     } catch (error: any) {
+      if (error instanceof ConflictException) {
+        throw error;
+      }
       throw new BadRequestException(
         error.message || "An error occurred while creating the city"
       );
@@ -76,6 +93,69 @@ export class CitiesController {
       throw new BadRequestException(
         error.message ||
           `An error occurred while fetching the city with id: ${id}`
+      );
+    }
+  }
+
+  @Put()
+  @UsePipes(ObjectTransformPipe)
+  @ApiOperation({ summary: "Update cities" })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully updated cities cities.",
+    isArray: true,
+    type: CityDto,
+  })
+  async update(@Body() data: CityDto[]) {
+    try {
+      if (data.length === 1) {
+        const [city] = data;
+        const existing = await this.citiesService.getById(Number(city.id));
+        if (existing) {
+          return await this.citiesService.updateSingle(Number(city.id), city);
+        } else {
+          throw new NotFoundException(`City with ID ${city.id} not found`);
+        }
+      } else if (data.length > 1) {
+        return await this.citiesService.updateMany(data);
+      } else {
+        throw new UnprocessableEntityException(
+          "When you update multiple cities you need to provide array of CityDto."
+        );
+      }
+    } catch (error: any) {
+      if (error instanceof UnprocessableEntityException) {
+        throw error;
+      }
+      throw new BadRequestException(
+        error.message || "An error occurred while fetching all the cities"
+      );
+    }
+  }
+
+  @Delete(":id")
+  @ApiOperation({ summary: "Delete city by id." })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully deleted city by id.",
+    type: CityDto,
+  })
+  async delete(@Param("id") id: string) {
+    try {
+      const city = await this.citiesService.getById(Number(id));
+      if (city) {
+        return await this.citiesService.delete(Number(id));
+      } else {
+        throw new NotFoundException(`City with ID ${id} not found`);
+      }
+    } catch (error: any) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new BadRequestException(
+        error.message ||
+          `An error occurred while deleting the city with id: ${id}`
       );
     }
   }
