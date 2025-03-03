@@ -7,13 +7,14 @@ export class CitiesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createCityDto: CreateCityDto) {
-    const { name, country } = createCityDto;
+    const { name, country, numbeo_id } = createCityDto;
 
     try {
       return await this.prisma.cities.create({
         data: {
           name,
           country,
+          numbeo_id
         },
       });
     } catch (error: any) {
@@ -99,6 +100,20 @@ export class CitiesService {
       throw new BadRequestException(
         error.message ||
           `An error occurred while updating city with the id: ${id}`
+      );
+    }
+  }
+
+  async delete(id: number) {
+    try {
+      return await this.prisma.cities.delete({
+        where: {
+          id: id
+        }
+      })
+    } catch (error: any) {
+      throw new BadRequestException(
+        error.message || "An error occurred while deleting city by id."
       );
     }
   }

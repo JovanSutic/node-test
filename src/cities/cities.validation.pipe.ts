@@ -4,6 +4,7 @@ import {
   type ArgumentMetadata,
   BadRequestException,
 } from "@nestjs/common";
+import { isNumber } from "../utils/numbers";
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {
@@ -25,6 +26,12 @@ export class ValidationPipe implements PipeTransform {
     ) {
       throw new BadRequestException(
         "Country must be a string with at least 3 characters"
+      );
+    }
+
+    if (!value.numbeo_id || !isNumber(value.numbeo_id)) {
+      throw new BadRequestException(
+        "Numbeo id must be a number with at least 3 length"
       );
     }
 

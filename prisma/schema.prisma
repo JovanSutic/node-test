@@ -14,6 +14,7 @@ model users {
 
 model cities {
   id   Int     @id @default(autoincrement())
-  name String?
-  country String?
+  name String
+  country String
+  numbeo_id Int?
 }
