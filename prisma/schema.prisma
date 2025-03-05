@@ -17,4 +17,40 @@ model cities {
   name String
   country String
   numbeo_id Int?
+
+  prices  prices[]
+}
+
+model years {
+  id    Int    @id @default(autoincrement())
+  year  Int    @unique
+
+  prices prices[]
+}
+
+model products {
+  id          Int     @id @default(autoincrement())
+  name        String
+  category    String
+  unit        String
+  description String?
+
+  prices prices[]
+}
+
+model prices {
+  id         Int     @id @default(autoincrement()) 
+  price      Float   
+  currency   String  
+  cityId     Int     
+  productId  Int     
+  yearId     Int     
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  city       cities    @relation(fields: [cityId], references: [id])
+  product    products @relation(fields: [productId], references: [id])
+  year       years    @relation(fields: [yearId], references: [id])
+
+  @@unique([cityId, productId, yearId])
 }
