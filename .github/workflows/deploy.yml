@@ -114,14 +114,14 @@ jobs:
 
             # Step 7: Run Prisma migrations inside the production container
 
-            status_output=$(docker-compose exec -it hopeful_cohen bun prisma migrate status)
+            status_output=$(docker-compose exec hopeful_cohen bash -c "bun prisma migrate status")
             echo "$status_output"
 
             if echo "$status_output" | grep -q "up-to-date"; then
               echo "Migrations are up to date, skipping deployment."
             else
               echo "Applying migrations..."
-              docker exec -it hopeful_cohen bun prisma migrate deploy
+              docker exec hopeful_cohen bash -c "bun prisma migrate deploy"
             fi
 
              # Step 8: Upload the Swagger JSON file to S3
