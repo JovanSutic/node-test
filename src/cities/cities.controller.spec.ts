@@ -7,7 +7,7 @@ import type { INestApplication } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CityDto } from "./cities.dto";
 
-describe("CityController", () => {
+describe("CitiesController", () => {
   let app: INestApplication;
   let citiesService: CitiesService;
 
