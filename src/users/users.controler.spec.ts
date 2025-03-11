@@ -7,7 +7,7 @@ import type { INestApplication } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { UserDto } from "./users.dto";
 
-describe("UserController", () => {
+describe("UsersController", () => {
   let app: INestApplication;
   let usersService: UsersService;
 

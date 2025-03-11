@@ -7,7 +7,7 @@ import type { INestApplication } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { YearDto } from "./years.dto";
 
-describe("YearController", () => {
+describe("YearsController", () => {
   let app: INestApplication;
   let yearsService: YearsService;
 
