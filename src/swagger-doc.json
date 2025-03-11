@@ -159,7 +159,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully updated cities cities.",
+            "description": "Successfully updated cities.",
             "content": {
               "application/json": {
                 "schema": {

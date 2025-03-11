@@ -102,7 +102,7 @@ export class CitiesController {
   @ApiOperation({ summary: "Update cities" })
   @ApiResponse({
     status: 200,
-    description: "Successfully updated cities cities.",
+    description: "Successfully updated cities.",
     isArray: true,
     type: CityDto,
   })

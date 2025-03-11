@@ -1,79 +1,83 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { CityDto, CreateCityDto } from "./cities.dto";
+import { ProductDto, CreateProductDto } from "./products.dto";
 
 @Injectable()
-export class CitiesService {
+export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createCityDto: CreateCityDto) {
-    const { name, country, numbeo_id } = createCityDto;
+  async create(createCityDto: CreateProductDto) {
+    const { name, category, unit, description } = createCityDto;
+
+    console.log(category);
 
     try {
-      return await this.prisma.cities.create({
+      return await this.prisma.products.create({
         data: {
           name,
-          country,
-          numbeo_id
+          category,
+          unit,
+          description: description || "",
         },
       });
     } catch (error: any) {
       throw new BadRequestException(
         error.message ||
-          "An error occurred while creating the city in the database"
+          "An error occurred while creating the product in the database"
       );
     }
   }
 
   async getAll() {
     try {
-      return await this.prisma.cities.findMany({ orderBy: [{ id: "asc" }] });
+      return await this.prisma.products.findMany({ orderBy: [{ id: "asc" }] });
     } catch (error: any) {
       throw new BadRequestException(
         error.message ||
-          "An error occurred while fetching all cities from the database"
+          "An error occurred while fetching all products from the database"
       );
     }
   }
 
   async getById(id: number) {
     try {
-      return await this.prisma.cities.findUnique({ where: { id } });
+      return await this.prisma.products.findUnique({ where: { id } });
     } catch (error: any) {
       throw new BadRequestException(
         error.message ||
-          `An error occurred while fetching city with the id: ${id}`
+          `An error occurred while fetching product with the id: ${id}`
       );
     }
   }
 
-  async getByEssentialData(name: string, country: string) {
+  async getByName(name: string) {
     try {
-      return await this.prisma.cities.findFirst({
+      return await this.prisma.products.findFirst({
         where: {
           name,
-          country,
         },
       });
     } catch (error: any) {
       throw new BadRequestException(
         error.message ||
-          `An error occurred while fetching city by essential data: ${name} and ${country}`
+          `An error occurred while fetching product by name: ${name}`
       );
     }
   }
 
-  async updateMany(data: CityDto[]) {
+  async updateMany(data: ProductDto[]) {
     try {
       return await this.prisma.$transaction(
         data.map((item) =>
-          this.prisma.cities.update({
+          this.prisma.products.update({
             where: {
               id: item.id,
             },
             data: {
               name: item.name,
-              country: item.country,
+              unit: item.unit,
+              category: item.category,
+              description: item.description
             },
           })
         )
@@ -85,35 +89,37 @@ export class CitiesService {
     }
   }
 
-  async updateSingle(id: number, data: CreateCityDto) {
+  async updateSingle(id: number, data: CreateProductDto) {
     try {
-      return await this.prisma.cities.update({
+      return await this.prisma.products.update({
         where: {
           id,
         },
         data: {
           name: data.name,
-          country: data.country,
+          unit: data.unit,
+          category: data.category,
+          description: data.description
         },
       });
     } catch (error: any) {
       throw new BadRequestException(
         error.message ||
-          `An error occurred while updating city with the id: ${id}`
+          `An error occurred while updating product with the id: ${id}`
       );
     }
   }
 
   async delete(id: number) {
     try {
-      return await this.prisma.cities.delete({
+      return await this.prisma.products.delete({
         where: {
-          id: id
-        }
-      })
+          id: id,
+        },
+      });
     } catch (error: any) {
       throw new BadRequestException(
-        error.message || "An error occurred while deleting city by id."
+        error.message || "An error occurred while deleting product by id."
       );
     }
   }
