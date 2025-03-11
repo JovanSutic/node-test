@@ -159,7 +159,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully updated cities cities.",
+            "description": "Successfully updated cities.",
             "content": {
               "application/json": {
                 "schema": {
@@ -237,6 +237,82 @@
           "cities"
         ]
       }
+    },
+    "/years": {
+      "post": {
+        "operationId": "YearsController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Successfully created a year",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/YearDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create new year.",
+        "tags": [
+          "years"
+        ]
+      },
+      "get": {
+        "operationId": "YearsController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved years.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/YearDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return all years.",
+        "tags": [
+          "years"
+        ]
+      }
+    },
+    "/years/{id}": {
+      "get": {
+        "operationId": "YearsController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved year by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/YearDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return year by id.",
+        "tags": [
+          "years"
+        ]
+      }
     }
   },
   "info": {
@@ -262,6 +338,10 @@
         "properties": {}
       },
       "CityDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "YearDto": {
         "type": "object",
         "properties": {}
       }
