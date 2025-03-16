@@ -104,6 +104,10 @@ jobs:
             echo "Building the Docker image for production"
             docker-compose -f docker-compose.prod.yml build 
 
+            # Step 5.1: Removing all dangling images
+            echo "Remove dangling Docker images"
+            docker image prune -f --filter "dangling=true"
+
             # Step 6: Run production containers using docker-compose.yml
             echo "Running docker-compose up for production containers"
             docker-compose -f docker-compose.prod.yml up -d
