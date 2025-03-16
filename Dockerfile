@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json ./
 
 # Install dependencies inside the container
-RUN bun install
+RUN bun install --verbose
 
 # Copy the Prisma schema (make sure this is done before generating Prisma client)
 COPY prisma ./prisma
