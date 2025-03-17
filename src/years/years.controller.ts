@@ -9,9 +9,9 @@ import {
   Post,
   UsePipes,
 } from "@nestjs/common";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { YearsService } from "./years.service";
-import { YearDto, type CreateYearDto } from "./years.dto";
+import { CreateYearDto, YearDto } from "./years.dto";
 import { ValidationPipe } from "./years.validation.pipe";
 
 @Controller("years")
@@ -26,6 +26,26 @@ export class YearsController {
     status: 201,
     description: "Successfully created a year",
     type: YearDto,
+    examples: {
+      "application/json": {
+        summary: "Year DTO",
+        value: {
+          id: 1,
+          year: 2020,
+        },
+      },
+    },
+  })
+  @ApiBody({
+    description: "The data to create new city",
+    type: CreateYearDto,
+    examples: {
+      "application/json": {
+        value: {
+          year: 2020,
+        },
+      },
+    },
   })
   async create(@Body() createYearDto: CreateYearDto) {
     try {
@@ -52,6 +72,21 @@ export class YearsController {
     description: "Successfully retrieved years.",
     isArray: true,
     type: YearDto,
+    examples: {
+      "application/json": {
+        summary: "Year DTO array",
+        value: [
+          {
+            id: 1,
+            year: 2020,
+          },
+          {
+            id: 2,
+            year: 2021,
+          },
+        ],
+      },
+    },
   })
   async getAll() {
     try {
@@ -69,6 +104,15 @@ export class YearsController {
     status: 200,
     description: "Successfully retrieved year by id.",
     type: YearDto,
+    examples: {
+      "application/json": {
+        summary: "Year DTO",
+        value: {
+          id: 1,
+          year: 2020,
+        },
+      },
+    },
   })
   async getById(@Param("id") id: string) {
     try {

@@ -1,16 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNumber, IsOptional } from "class-validator";
+import { IsString, IsNumber } from "class-validator";
 
 export class CreateCityDto {
-  @ApiProperty({
-    description: "The unique identifier of the city",
-    required: false, // The id is optional in CreateCityDto
-    type: Number,
-  })
-  @IsOptional()
-  @IsNumber()
-  id?: number;
-
   @ApiProperty({
     description: "The name of the city",
     type: String,
@@ -39,7 +30,6 @@ export class CityDto {
     required: true,
     type: Number,
   })
-  @IsOptional()
   @IsNumber()
   id: number;
 
