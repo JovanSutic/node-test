@@ -93,10 +93,20 @@
         "parameters": [],
         "requestBody": {
           "required": true,
+          "description": "The data to create new city",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/CreateCityDto"
+              },
+              "examples": {
+                "application/json": {
+                  "value": {
+                    "name": "Amsterdam",
+                    "country": "Netherlands",
+                    "numbeo_id": 12345
+                  }
+                }
               }
             }
           }
@@ -108,6 +118,17 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CityDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "City DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Amsterdam",
+                      "country": "Netherlands",
+                      "numbeo_id": 12345
+                    }
+                  }
                 }
               }
             }

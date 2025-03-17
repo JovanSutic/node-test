@@ -15,7 +15,7 @@ import {
 import { CreateCityDto, CityDto } from "./cities.dto";
 import { CitiesService } from "./cities.service";
 import { ObjectTransformPipe, ValidationPipe } from "./cities.validation.pipe";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 @Controller("cities")
 @ApiTags("cities")
@@ -29,6 +29,30 @@ export class CitiesController {
     status: 201,
     description: "Successfully created a city",
     type: CityDto,
+    examples: {
+      'application/json': {
+        summary: "City DTO",
+        value: {
+          id: 1,
+          name: "Amsterdam",
+          country: "Netherlands",
+          numbeo_id: 12345,
+        },
+      },
+    },
+  })
+  @ApiBody({
+    description: "The data to create new city",
+    type: CreateCityDto,
+    examples: {
+      "application/json": {
+        value: {
+          name: "Amsterdam",
+          country: "Netherlands",
+          numbeo_id: 12345,
+        },
+      },
+    },
   })
   async create(@Body() createCityDto: CreateCityDto) {
     try {
