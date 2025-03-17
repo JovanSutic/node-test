@@ -93,10 +93,20 @@
         "parameters": [],
         "requestBody": {
           "required": true,
+          "description": "The data to create new city",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/CreateCityDto"
+              },
+              "examples": {
+                "application/json": {
+                  "value": {
+                    "name": "Amsterdam",
+                    "country": "Netherlands",
+                    "numbeo_id": 12345
+                  }
+                }
               }
             }
           }
@@ -108,6 +118,17 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CityDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "City DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Amsterdam",
+                      "country": "Netherlands",
+                      "numbeo_id": 12345
+                    }
+                  }
                 }
               }
             }
@@ -131,6 +152,25 @@
                   "items": {
                     "$ref": "#/components/schemas/CityDto"
                   }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "City DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Amsterdam",
+                        "country": "Netherlands",
+                        "numbeo_id": 12345
+                      },
+                      {
+                        "id": 2,
+                        "name": "Belgrade",
+                        "country": "Serbia",
+                        "numbeo_id": 123456
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -146,12 +186,36 @@
         "parameters": [],
         "requestBody": {
           "required": true,
+          "description": "The data to update city",
           "content": {
             "application/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
+                "$ref": "#/components/schemas/CreateCityDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "id": 1,
+                    "name": "Amsterdam",
+                    "country": "Netherlands",
+                    "numbeo_id": 12345
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "name": "Amsterdam",
+                      "country": "Netherlands",
+                      "numbeo_id": 12345
+                    },
+                    {
+                      "id": 2,
+                      "name": "Belgrade",
+                      "country": "Serbia",
+                      "numbeo_id": 12346
+                    }
+                  ]
                 }
               }
             }
@@ -166,6 +230,34 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/CityDto"
+                  }
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single updated city",
+                    "value": {
+                      "id": 1,
+                      "name": "Amsterdam",
+                      "country": "Netherlands",
+                      "numbeo_id": 12345
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Multiple updated cities",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Amsterdam",
+                        "country": "Netherlands",
+                        "numbeo_id": 12345
+                      },
+                      {
+                        "id": 2,
+                        "name": "Belgrade",
+                        "country": "Serbia",
+                        "numbeo_id": 12346
+                      }
+                    ]
                   }
                 }
               }
@@ -198,6 +290,17 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CityDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "City DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Amsterdam",
+                      "country": "Netherlands",
+                      "numbeo_id": 12345
+                    }
+                  }
                 }
               }
             }
@@ -227,6 +330,17 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CityDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "City DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Amsterdam",
+                      "country": "Netherlands",
+                      "numbeo_id": 12345
+                    }
+                  }
                 }
               }
             }
@@ -242,6 +356,24 @@
       "post": {
         "operationId": "YearsController_create",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to create new city",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateYearDto"
+              },
+              "examples": {
+                "application/json": {
+                  "value": {
+                    "year": 2020
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "Successfully created a year",
@@ -249,6 +381,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/YearDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Year DTO",
+                    "value": {
+                      "id": 1,
+                      "year": 2020
+                    }
+                  }
                 }
               }
             }
@@ -271,6 +412,21 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/YearDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Year DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "year": 2020
+                      },
+                      {
+                        "id": 2,
+                        "year": 2021
+                      }
+                    ]
                   }
                 }
               }
@@ -303,6 +459,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/YearDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Year DTO",
+                    "value": {
+                      "id": 1,
+                      "year": 2020
+                    }
+                  }
                 }
               }
             }
@@ -320,10 +485,21 @@
         "parameters": [],
         "requestBody": {
           "required": true,
+          "description": "The data to create new product",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateProductDto"
+                "$ref": "#/components/schemas/ProductDto"
+              },
+              "examples": {
+                "application/json": {
+                  "value": {
+                    "name": "men shoes",
+                    "category": "clothing and shoes",
+                    "unit": "1 pair",
+                    "description": "1 pair of leather men shoes"
+                  }
+                }
               }
             }
           }
@@ -335,6 +511,18 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProductDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Product DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "men shoes",
+                      "category": "clothing and shoes",
+                      "unit": "1 pair",
+                      "description": "1 pair of leather men shoes"
+                    }
+                  }
                 }
               }
             }
@@ -358,6 +546,27 @@
                   "items": {
                     "$ref": "#/components/schemas/ProductDto"
                   }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Product DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "man shoes",
+                        "category": "clothing and shoes",
+                        "unit": "1 pair",
+                        "description": "1 pair of leather man shoes"
+                      },
+                      {
+                        "id": 2,
+                        "name": "internet",
+                        "category": "utilities",
+                        "unit": "monthly subscription",
+                        "description": "1 month internet subscription"
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -373,12 +582,39 @@
         "parameters": [],
         "requestBody": {
           "required": true,
+          "description": "The data to create new product",
           "content": {
             "application/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "type": "string"
+                "$ref": "#/components/schemas/ProductDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "id": 1,
+                    "name": "men shoes",
+                    "category": "clothing and shoes",
+                    "unit": "1 pair",
+                    "description": "1 pair of leather men shoes"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "name": "men shoes",
+                      "category": "clothing and shoes",
+                      "unit": "1 pair",
+                      "description": "1 pair of leather men shoes"
+                    },
+                    {
+                      "id": 2,
+                      "name": "internet",
+                      "category": "utilities",
+                      "unit": "monthly subscription",
+                      "description": "1 month internet subscription"
+                    }
+                  ]
                 }
               }
             }
@@ -393,6 +629,37 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/ProductDto"
+                  }
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single updated product",
+                    "value": {
+                      "id": 1,
+                      "name": "men shoes",
+                      "category": "clothing and shoes",
+                      "unit": "1 pair",
+                      "description": "1 pair of leather men shoes"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Single updated product",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "men shoes",
+                        "category": "clothing and shoes",
+                        "unit": "1 pair",
+                        "description": "1 pair of leather men shoes"
+                      },
+                      {
+                        "id": 2,
+                        "name": "internet",
+                        "category": "utilities",
+                        "unit": "monthly subscription",
+                        "description": "1 month internet subscription"
+                      }
+                    ]
                   }
                 }
               }
@@ -425,6 +692,18 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProductDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Product DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "men shoes",
+                      "category": "clothing and shoes",
+                      "unit": "1 pair",
+                      "description": "1 pair of leather men shoes"
+                    }
+                  }
                 }
               }
             }
@@ -454,6 +733,18 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProductDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Product DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "men shoes",
+                      "category": "clothing and shoes",
+                      "unit": "1 pair",
+                      "description": "1 pair of leather men shoes"
+                    }
+                  }
                 }
               }
             }
@@ -486,23 +777,112 @@
       },
       "CreateCityDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the city"
+          },
+          "country": {
+            "type": "string",
+            "description": "The country where the city is located"
+          },
+          "numbeo_id": {
+            "type": "number",
+            "description": "The numbeo ID for the city"
+          }
+        },
+        "required": [
+          "name",
+          "country",
+          "numbeo_id"
+        ]
       },
       "CityDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the city"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the city"
+          },
+          "country": {
+            "type": "string",
+            "description": "The country where the city is located"
+          },
+          "numbeo_id": {
+            "type": "number",
+            "description": "The numbeo ID for the city"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "country",
+          "numbeo_id"
+        ]
+      },
+      "CreateYearDto": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "number",
+            "description": "The year number"
+          }
+        },
+        "required": [
+          "year"
+        ]
       },
       "YearDto": {
         "type": "object",
-        "properties": {}
-      },
-      "CreateProductDto": {
-        "type": "object",
-        "properties": {}
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the year"
+          },
+          "year": {
+            "type": "number",
+            "description": "The year number"
+          }
+        },
+        "required": [
+          "id",
+          "year"
+        ]
       },
       "ProductDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the product"
+          },
+          "name": {
+            "type": "string",
+            "description": "Product name"
+          },
+          "category": {
+            "type": "string",
+            "description": "Product category"
+          },
+          "unit": {
+            "type": "string",
+            "description": "Product unit"
+          },
+          "description": {
+            "type": "string",
+            "description": "Product description, optional"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "category",
+          "unit"
+        ]
       }
     }
   }

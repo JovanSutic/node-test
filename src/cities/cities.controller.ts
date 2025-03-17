@@ -15,7 +15,7 @@ import {
 import { CreateCityDto, CityDto } from "./cities.dto";
 import { CitiesService } from "./cities.service";
 import { ObjectTransformPipe, ValidationPipe } from "./cities.validation.pipe";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 @Controller("cities")
 @ApiTags("cities")
@@ -29,6 +29,30 @@ export class CitiesController {
     status: 201,
     description: "Successfully created a city",
     type: CityDto,
+    examples: {
+      "application/json": {
+        summary: "City DTO",
+        value: {
+          id: 1,
+          name: "Amsterdam",
+          country: "Netherlands",
+          numbeo_id: 12345,
+        },
+      },
+    },
+  })
+  @ApiBody({
+    description: "The data to create new city",
+    type: CreateCityDto,
+    examples: {
+      "application/json": {
+        value: {
+          name: "Amsterdam",
+          country: "Netherlands",
+          numbeo_id: 12345,
+        },
+      },
+    },
   })
   async create(@Body() createCityDto: CreateCityDto) {
     try {
@@ -60,6 +84,25 @@ export class CitiesController {
     description: "Successfully retrieved cities.",
     isArray: true,
     type: CityDto,
+    examples: {
+      "application/json": {
+        summary: "City DTO array",
+        value: [
+          {
+            id: 1,
+            name: "Amsterdam",
+            country: "Netherlands",
+            numbeo_id: 12345,
+          },
+          {
+            id: 2,
+            name: "Belgrade",
+            country: "Serbia",
+            numbeo_id: 123456,
+          },
+        ],
+      },
+    },
   })
   async getAll() {
     try {
@@ -77,6 +120,17 @@ export class CitiesController {
     status: 200,
     description: "Successfully retrieved city by id.",
     type: CityDto,
+    examples: {
+      "application/json": {
+        summary: "City DTO",
+        value: {
+          id: 1,
+          name: "Amsterdam",
+          country: "Netherlands",
+          numbeo_id: 12345,
+        },
+      },
+    },
   })
   async getById(@Param("id") id: string) {
     try {
@@ -105,6 +159,64 @@ export class CitiesController {
     description: "Successfully updated cities.",
     isArray: true,
     type: CityDto,
+    examples: {
+      single: {
+        summary: "Single updated city",
+        value: {
+          id: 1,
+          name: "Amsterdam",
+          country: "Netherlands",
+          numbeo_id: 12345,
+        },
+      },
+      multiple: {
+        summary: "Multiple updated cities",
+        value: [
+          {
+            id: 1,
+            name: "Amsterdam",
+            country: "Netherlands",
+            numbeo_id: 12345,
+          },
+          {
+            id: 2,
+            name: "Belgrade",
+            country: "Serbia",
+            numbeo_id: 12346,
+          },
+        ],
+      },
+    },
+  })
+  @ApiBody({
+    description: "The data to update city",
+    type: CreateCityDto,
+    examples: {
+      single: {
+        value: {
+          id: 1,
+          name: "Amsterdam",
+          country: "Netherlands",
+          numbeo_id: 12345,
+        },
+      },
+      multiple: {
+        value: [
+          {
+            id: 1,
+            name: "Amsterdam",
+            country: "Netherlands",
+            numbeo_id: 12345,
+          },
+          {
+            id: 2,
+            name: "Belgrade",
+            country: "Serbia",
+            numbeo_id: 12346,
+          },
+        ],
+      },
+    },
   })
   async update(@Body() data: CityDto[]) {
     try {
@@ -139,6 +251,17 @@ export class CitiesController {
     status: 200,
     description: "Successfully deleted city by id.",
     type: CityDto,
+    examples: {
+      "application/json": {
+        summary: "City DTO",
+        value: {
+          id: 1,
+          name: "Amsterdam",
+          country: "Netherlands",
+          numbeo_id: 12345,
+        },
+      },
+    },
   })
   async delete(@Param("id") id: string) {
     try {

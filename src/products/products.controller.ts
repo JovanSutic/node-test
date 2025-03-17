@@ -16,7 +16,7 @@ import { CreateProductDto, ProductDto } from "./products.dto";
 import { ProductsService } from "./products.service";
 import { ObjectTransformPipe } from "../cities/cities.validation.pipe";
 import { ValidationPipe } from "./products.validation.pipe";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 @Controller("products")
 @ApiTags("products")
@@ -30,6 +30,32 @@ export class ProductsController {
     status: 201,
     description: "Successfully created a product",
     type: ProductDto,
+    examples: {
+      "application/json": {
+        summary: "Product DTO",
+        value: {
+          id: 1,
+          name: "men shoes",
+          category: "clothing and shoes",
+          unit: "1 pair",
+          description: "1 pair of leather men shoes",
+        },
+      },
+    },
+  })
+  @ApiBody({
+    description: "The data to create new product",
+    type: ProductDto,
+    examples: {
+      "application/json": {
+        value: {
+          name: "men shoes",
+          category: "clothing and shoes",
+          unit: "1 pair",
+          description: "1 pair of leather men shoes",
+        },
+      },
+    },
   })
   async create(@Body() createProductDto: CreateProductDto) {
     try {
@@ -58,6 +84,27 @@ export class ProductsController {
     description: "Successfully retrieved products.",
     isArray: true,
     type: ProductDto,
+    examples: {
+      "application/json": {
+        summary: "Product DTO array",
+        value: [
+          {
+            id: 1,
+            name: "man shoes",
+            category: "clothing and shoes",
+            unit: "1 pair",
+            description: "1 pair of leather man shoes",
+          },
+          {
+            id: 2,
+            name: "internet",
+            category: "utilities",
+            unit: "monthly subscription",
+            description: "1 month internet subscription",
+          },
+        ],
+      },
+    },
   })
   async getAll() {
     try {
@@ -75,6 +122,18 @@ export class ProductsController {
     status: 200,
     description: "Successfully retrieved product by id.",
     type: ProductDto,
+    examples: {
+      "application/json": {
+        summary: "Product DTO",
+        value: {
+          id: 1,
+          name: "men shoes",
+          category: "clothing and shoes",
+          unit: "1 pair",
+          description: "1 pair of leather men shoes",
+        },
+      },
+    },
   })
   async getById(@Param("id") id: string) {
     try {
@@ -103,6 +162,70 @@ export class ProductsController {
     description: "Successfully updated products.",
     isArray: true,
     type: ProductDto,
+    examples: {
+      single: {
+        summary: "Single updated product",
+        value: {
+          id: 1,
+          name: "men shoes",
+          category: "clothing and shoes",
+          unit: "1 pair",
+          description: "1 pair of leather men shoes",
+        },
+      },
+      multiple: {
+        summary: "Single updated product",
+        value: [
+          {
+            id: 1,
+            name: "men shoes",
+            category: "clothing and shoes",
+            unit: "1 pair",
+            description: "1 pair of leather men shoes",
+          },
+          {
+            id: 2,
+            name: "internet",
+            category: "utilities",
+            unit: "monthly subscription",
+            description: "1 month internet subscription",
+          },
+        ],
+      },
+    },
+  })
+  @ApiBody({
+    description: "The data to create new product",
+    type: ProductDto,
+    examples: {
+      single: {
+        value: {
+          id: 1,
+          name: "men shoes",
+          category: "clothing and shoes",
+          unit: "1 pair",
+          description: "1 pair of leather men shoes",
+        },
+      },
+      multiple: {
+        value: [
+          {
+            id: 1,
+            name: "men shoes",
+            category: "clothing and shoes",
+            unit: "1 pair",
+            description: "1 pair of leather men shoes",
+          },
+          {
+            id: 2,
+            name: "internet",
+            category: "utilities",
+            unit: "monthly subscription",
+            description: "1 month internet subscription",
+          },
+        ],
+      },
+    },
   })
   async update(@Body() data: ProductDto[]) {
     try {
@@ -142,6 +265,18 @@ export class ProductsController {
     status: 200,
     description: "Successfully deleted product by id.",
     type: ProductDto,
+    examples: {
+      "application/json": {
+        summary: "Product DTO",
+        value: {
+          id: 1,
+          name: "men shoes",
+          category: "clothing and shoes",
+          unit: "1 pair",
+          description: "1 pair of leather men shoes",
+        },
+      },
+    },
   })
   async delete(@Param("id") id: string) {
     try {
