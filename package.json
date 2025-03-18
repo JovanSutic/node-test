@@ -9,7 +9,7 @@
   "scripts": {
     "test": "jest --runInBand --verbose",
     "build": "tsc",
-    "dev": "bun --hot ./src/main.ts",
+    "dev": "bun --watch ./src/main.ts",
     "start": "bun ./src/main.ts",
     "prepare": "husky"
   },
