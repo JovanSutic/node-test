@@ -1,13 +1,12 @@
 import {
   Injectable,
   type PipeTransform,
-  type ArgumentMetadata,
   BadRequestException,
 } from "@nestjs/common";
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {
-  transform(value: any, metadata: ArgumentMetadata) {
+  transform(value: any) {
     if (
       !value.name ||
       typeof value.name !== "string" ||
