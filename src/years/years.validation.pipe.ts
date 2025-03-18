@@ -1,13 +1,12 @@
 import {
   BadRequestException,
   Injectable,
-  type ArgumentMetadata,
   type PipeTransform,
 } from "@nestjs/common";
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {
-  transform(value: any, metadata: ArgumentMetadata) {
+  transform(value: any) {
     const currentYear = new Date().getFullYear();
     if (
       !value.year ||

@@ -1,14 +1,13 @@
 import {
   Injectable,
   type PipeTransform,
-  type ArgumentMetadata,
   BadRequestException,
 } from "@nestjs/common";
 import { isNumber } from "../utils/numbers";
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {
-  transform(value: any, metadata: ArgumentMetadata) {
+  transform(value: any) {
     if (
       !value.name ||
       typeof value.name !== "string" ||
@@ -40,7 +39,7 @@ export class ValidationPipe implements PipeTransform {
 }
 @Injectable()
 export class ObjectTransformPipe implements PipeTransform {
-  transform(value: any, metadata: ArgumentMetadata) {
+  transform(value: any) {
     if (value && typeof value === "object") {
       if (Array.isArray(value)) {
         value.forEach((item, index) => {

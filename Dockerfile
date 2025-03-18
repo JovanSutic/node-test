@@ -1,11 +1,11 @@
 # Use an official Bun image as the base
-FROM oven/bun:latest
+FROM oven/bun:latest AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy package files and install dependencies
-COPY package.json ./
+# Copy only the package files (not the whole app) to leverage Docker cache
+COPY package.json bun.lock ./
 
 # Install dependencies inside the container
 RUN timeout 180s bun install --verbose
