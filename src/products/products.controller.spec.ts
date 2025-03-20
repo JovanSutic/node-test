@@ -6,6 +6,9 @@ import request from "supertest";
 import type { INestApplication } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { ProductDto } from "./products.dto";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
+import { AuthGuard } from "../utils/auth.guard";
 
 describe("ProductsController", () => {
   let app: INestApplication;
@@ -14,8 +17,13 @@ describe("ProductsController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProductsController],
-      providers: [ProductsService, PrismaService],
-    }).compile();
+      providers: [ProductsService, PrismaService, JwtService, ConfigService],
+    })
+      .overrideGuard(AuthGuard)
+      .useValue({
+        canActivate: jest.fn(() => true),
+      })
+      .compile();
 
     app = module.createNestApplication();
     productsService = module.get<ProductsService>(ProductsService);
