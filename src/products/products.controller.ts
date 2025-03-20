@@ -11,12 +11,14 @@ import {
   UnprocessableEntityException,
   Put,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { CreateProductDto, ProductDto } from "./products.dto";
 import { ProductsService } from "./products.service";
 import { ObjectTransformPipe } from "../cities/cities.validation.pipe";
 import { ValidationPipe } from "./products.validation.pipe";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "../utils/auth.guard";
 
 @Controller("products")
 @ApiTags("products")
@@ -25,6 +27,7 @@ export class ProductsController {
 
   @Post()
   @UsePipes(ValidationPipe)
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Create the new product." })
   @ApiResponse({
     status: 201,
