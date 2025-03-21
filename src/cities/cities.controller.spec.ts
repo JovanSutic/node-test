@@ -6,6 +6,9 @@ import request from "supertest";
 import type { INestApplication } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CityDto } from "./cities.dto";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
+import { AuthGuard } from "../utils/auth.guard";
 
 describe("CitiesController", () => {
   let app: INestApplication;
@@ -14,8 +17,13 @@ describe("CitiesController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CitiesController],
-      providers: [CitiesService, PrismaService],
-    }).compile();
+      providers: [CitiesService, PrismaService, JwtService, ConfigService],
+    })
+      .overrideGuard(AuthGuard)
+      .useValue({
+        canActivate: jest.fn(() => true),
+      })
+      .compile();
 
     app = module.createNestApplication();
     citiesService = module.get<CitiesService>(CitiesService);
@@ -27,7 +35,11 @@ describe("CitiesController", () => {
   });
 
   it("should create a new city via POST /cities", async () => {
-    const createCityDto = { name: 'Belgrade', country: "Serbia", numbeo_id: 12345 };
+    const createCityDto = {
+      name: "Belgrade",
+      country: "Serbia",
+      numbeo_id: 12345,
+    };
 
     jest.spyOn(citiesService, "create").mockResolvedValue({
       id: 1,
@@ -47,21 +59,28 @@ describe("CitiesController", () => {
     expect(response.body.numbeo_id).toBe(12345);
   });
 
-  it('should return an array of cities', async () => {
+  it("should return an array of cities", async () => {
     const mockCities: CityDto[] = [
-      { id: 1, name: 'Belgrade', country: "Serbia", numbeo_id: 12345 },
-      { id: 2, name: 'Novi Sad', country: "Serbia", numbeo_id: 12346 },
+      { id: 1, name: "Belgrade", country: "Serbia", numbeo_id: 12345 },
+      { id: 2, name: "Novi Sad", country: "Serbia", numbeo_id: 12346 },
     ];
-    jest.spyOn(citiesService, 'getAll').mockResolvedValue(mockCities);
+    jest.spyOn(citiesService, "getAll").mockResolvedValue(mockCities);
 
-    const response = await request(app.getHttpServer()).get('/cities').expect(200);
+    const response = await request(app.getHttpServer())
+      .get("/cities")
+      .expect(200);
 
     expect(response.body).toEqual(mockCities);
     expect(response.status).toBe(200);
   });
 
   it("should return a city by ID via GET /cities/:id", async () => {
-    const city = { id: 1, name: 'Belgrade', country: "Serbia", numbeo_id: 12345 };
+    const city = {
+      id: 1,
+      name: "Belgrade",
+      country: "Serbia",
+      numbeo_id: 12345,
+    };
 
     jest.spyOn(citiesService, "getById").mockResolvedValue(city);
 
@@ -89,37 +108,49 @@ describe("CitiesController", () => {
     });
   });
 
-  it('should update a city by the PUT object /cities/', async () => {
+  it("should update a city by the PUT object /cities/", async () => {
     const cityId = 1;
-    const mockExistingCity = { id: cityId, name: 'Belgrade', country: "Serbia", numbeo_id: 12345 };
-    const mockUpdatedCity = [{ id: cityId, name: 'Novi Sad', country: "Serbia", numbeo_id: 11111 }];
+    const mockExistingCity = {
+      id: cityId,
+      name: "Belgrade",
+      country: "Serbia",
+      numbeo_id: 12345,
+    };
+    const mockUpdatedCity = [
+      { id: cityId, name: "Novi Sad", country: "Serbia", numbeo_id: 11111 },
+    ];
 
-    
-    jest.spyOn(citiesService, 'updateSingle').mockResolvedValue(mockUpdatedCity);
+    jest
+      .spyOn(citiesService, "updateSingle")
+      .mockResolvedValue(mockUpdatedCity);
     jest.spyOn(citiesService, "getById").mockResolvedValue(mockExistingCity);
-    
+
     const response = await request(app.getHttpServer())
       .put(`/cities/`)
       .send(mockUpdatedCity)
       .expect(200);
-  
+
     expect(response.body).toEqual(mockUpdatedCity);
     expect(response.status).toBe(200);
   });
 
-  it('should delete a city by ID via DELETE /cities/:id', async () => {
+  it("should delete a city by ID via DELETE /cities/:id", async () => {
     const cityId = 1;
-    const mockDeletedCity = { id: cityId, name: 'Belgrade', country: "Serbia", numbeo_id: 12345 };
-    
-    jest.spyOn(citiesService, 'delete').mockResolvedValue(mockDeletedCity);
+    const mockDeletedCity = {
+      id: cityId,
+      name: "Belgrade",
+      country: "Serbia",
+      numbeo_id: 12345,
+    };
+
+    jest.spyOn(citiesService, "delete").mockResolvedValue(mockDeletedCity);
     jest.spyOn(citiesService, "getById").mockResolvedValue(mockDeletedCity);
-    
+
     const response = await request(app.getHttpServer())
       .delete(`/cities/${cityId}`)
       .expect(200);
-  
+
     expect(response.body).toEqual(mockDeletedCity);
     expect(response.status).toBe(200);
   });
-
 });

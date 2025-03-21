@@ -1,12 +1,6 @@
 import { CreateCityDto } from "../src/cities/cities.dto";
-
-export const users = [
-  { name: "Jovan" },
-  { name: "John" },
-  { name: "Jane" },
-  { name: "Nick" },
-  { name: "Lola" },
-];
+import { CreateProductDto } from "../src/products/products.dto";
+import { CreateYearDto } from "../src/years/years.dto";
 
 export const cities: CreateCityDto[] = [
   {
@@ -38,5 +32,31 @@ export const cities: CreateCityDto[] = [
     name: "Rome",
     country: "Italy",
     numbeo_id: 12343,
+  },
+];
+
+export const years: CreateYearDto[] = [
+  { year: 2017 },
+  { year: 2018 },
+  { year: 2019 },
+  { year: 2020 },
+  { year: 2021 },
+  { year: 2022 },
+  { year: 2023 },
+  { year: 2024 },
+];
+
+export const products: CreateProductDto[] = [
+  {
+    name: "Man business shoes",
+    category: "clothing and shoes",
+    unit: "1 pair",
+    description: "just text",
+  },
+  {
+    name: "Cinema ticket",
+    category: "sport and leisure",
+    unit: "1",
+    description: "just text 1",
   },
 ];

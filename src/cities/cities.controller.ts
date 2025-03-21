@@ -11,11 +11,13 @@ import {
   UnprocessableEntityException,
   Put,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { CreateCityDto, CityDto } from "./cities.dto";
 import { CitiesService } from "./cities.service";
 import { ObjectTransformPipe, ValidationPipe } from "./cities.validation.pipe";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "../utils/auth.guard";
 
 @Controller("cities")
 @ApiTags("cities")
@@ -23,6 +25,7 @@ export class CitiesController {
   constructor(private readonly citiesService: CitiesService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @UsePipes(ValidationPipe)
   @ApiOperation({ summary: "Create the new city." })
   @ApiResponse({
@@ -152,6 +155,7 @@ export class CitiesController {
   }
 
   @Put()
+  @UseGuards(AuthGuard)
   @UsePipes(ObjectTransformPipe)
   @ApiOperation({ summary: "Update cities" })
   @ApiResponse({
@@ -246,6 +250,7 @@ export class CitiesController {
   }
 
   @Delete(":id")
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Delete city by id." })
   @ApiResponse({
     status: 200,
