@@ -7,12 +7,14 @@ import {
   NotFoundException,
   Param,
   Post,
+  UseGuards,
   UsePipes,
 } from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { YearsService } from "./years.service";
 import { CreateYearDto, YearDto } from "./years.dto";
 import { ValidationPipe } from "./years.validation.pipe";
+import { AuthGuard } from "../utils/auth.guard";
 
 @Controller("years")
 @ApiTags("years")
@@ -20,6 +22,7 @@ export class YearsController {
   constructor(private readonly yearsService: YearsService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @UsePipes(ValidationPipe)
   @ApiOperation({ summary: "Create new year." })
   @ApiResponse({

@@ -26,8 +26,8 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  @UsePipes(ValidationPipe)
   @UseGuards(AuthGuard)
+  @UsePipes(ValidationPipe)
   @ApiOperation({ summary: "Create the new product." })
   @ApiResponse({
     status: 201,
@@ -158,6 +158,7 @@ export class ProductsController {
   }
 
   @Put()
+  @UseGuards(AuthGuard)
   @UsePipes(ObjectTransformPipe)
   @ApiOperation({ summary: "Update products" })
   @ApiResponse({
@@ -263,6 +264,7 @@ export class ProductsController {
   }
 
   @Delete(":id")
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Delete product by id." })
   @ApiResponse({
     status: 200,
