@@ -45,6 +45,8 @@ jobs:
             export POSTGRES_PASSWORD=${{ secrets.AWS_POSTGRES_PASSWORD }}
             export POSTGRES_DB=${{ secrets.AWS_POSTGRES_DB }}
             export DATABASE_URL=${{ secrets.AWS_DATABASE_URL }}
+            export AWS_COGNITO_APP_SUB=${{ secrets.AWS_COGNITO_APP_SUB }}
+            export AWS_COGNITO_RESOURCE_SEVER=${{ secrets.AWS_COGNITO_RESOURCE_SEVER }}
 
             # Step 1: Ensure Docker is installed on EC2
             if ! command -v docker &> /dev/null; then

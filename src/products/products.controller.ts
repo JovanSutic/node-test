@@ -11,12 +11,14 @@ import {
   UnprocessableEntityException,
   Put,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { CreateProductDto, ProductDto } from "./products.dto";
 import { ProductsService } from "./products.service";
 import { ObjectTransformPipe } from "../cities/cities.validation.pipe";
 import { ValidationPipe } from "./products.validation.pipe";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "../utils/auth.guard";
 
 @Controller("products")
 @ApiTags("products")
@@ -24,6 +26,7 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @UsePipes(ValidationPipe)
   @ApiOperation({ summary: "Create the new product." })
   @ApiResponse({
@@ -155,6 +158,7 @@ export class ProductsController {
   }
 
   @Put()
+  @UseGuards(AuthGuard)
   @UsePipes(ObjectTransformPipe)
   @ApiOperation({ summary: "Update products" })
   @ApiResponse({
@@ -260,6 +264,7 @@ export class ProductsController {
   }
 
   @Delete(":id")
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Delete product by id." })
   @ApiResponse({
     status: 200,

@@ -2,7 +2,9 @@ import {
   Injectable,
   type PipeTransform,
   BadRequestException,
+  UnauthorizedException
 } from "@nestjs/common";
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {
@@ -36,3 +38,4 @@ export class ValidationPipe implements PipeTransform {
     return value;
   }
 }
+

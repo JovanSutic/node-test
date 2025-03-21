@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { cities, users } from "./seedData";
+import { cities, years, products } from "./seedData";
 
 const prisma = new PrismaClient();
 
@@ -7,19 +7,27 @@ const prisma = new PrismaClient();
   try {
     console.log("Seeding the database...");
 
-    const user = await prisma.users.findUnique({ where: { id: 1 } });
-
-    if (!user) {
-      await prisma.users.createMany({
-        data: users,
-      });
-    }
-
     const city = await prisma.cities.findUnique({ where: { id: 1 } });
 
     if (!city) {
       await prisma.cities.createMany({
         data: cities,
+      });
+    }
+
+    const year = await prisma.years.findUnique({ where: { id: 1 } });
+
+    if (!year) {
+      await prisma.years.createMany({
+        data: years,
+      });
+    }
+
+    const product = await prisma.products.findUnique({ where: { id: 1 } });
+
+    if (!product) {
+      await prisma.products.createMany({
+        data: products,
       });
     }
 
