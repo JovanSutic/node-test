@@ -53,7 +53,26 @@ describe("YearsController", () => {
     expect(response.body.year).toBe(2012);
   });
 
-  it("should return an array of years", async () => {
+  it("should not create duplicate year via POST /years", async () => {
+    const createYearDto = { year: 2012 };
+
+    jest
+      .spyOn(yearsService, "getByYear")
+      .mockResolvedValue({ id: 1, year: 2012 });
+
+    const response = await request(app.getHttpServer())
+      .post("/years")
+      .send(createYearDto)
+      .expect(409);
+
+    expect(response.body).toEqual({
+      error: "Conflict",
+      message: "This year already exists",
+      statusCode: 409,
+    });
+  });
+
+  it("should return an array of years via GET /years", async () => {
     const mockYears: YearDto[] = [
       { id: 1, year: 2012 },
       { id: 2, year: 2013 },

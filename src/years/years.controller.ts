@@ -54,7 +54,7 @@ export class YearsController {
     try {
       const year = await this.yearsService.getByYear(createYearDto.year);
       if (year) {
-        throw new ConflictException("this Year already exists");
+        throw new ConflictException("This year already exists");
       } else {
         return await this.yearsService.create(createYearDto);
       }
