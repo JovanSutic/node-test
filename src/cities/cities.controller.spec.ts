@@ -59,7 +59,37 @@ describe("CitiesController", () => {
     expect(response.body.numbeo_id).toBe(12345);
   });
 
-  it("should return an array of cities", async () => {
+  it("should not create duplicate via POST /cities", async () => {
+    const createCityDto = {
+      name: "Belgrade",
+      country: "Serbia",
+      numbeo_id: 12345,
+    };
+
+    const existingCityDto = {
+      id: 1,
+      name: "Belgrade",
+      country: "Serbia",
+      numbeo_id: 12345,
+    };
+
+    jest
+      .spyOn(citiesService, "getByEssentialData")
+      .mockResolvedValue(existingCityDto);
+
+    const response = await request(app.getHttpServer())
+      .post("/cities")
+      .send(createCityDto)
+      .expect(409);
+
+    expect(response.body).toEqual({
+      error: "Conflict",
+      message: "City with this name and country already exists",
+      statusCode: 409,
+    });
+  });
+
+  it("should return an array of cities via GET /cities", async () => {
     const mockCities: CityDto[] = [
       { id: 1, name: "Belgrade", country: "Serbia", numbeo_id: 12345 },
       { id: 2, name: "Novi Sad", country: "Serbia", numbeo_id: 12346 },
@@ -108,7 +138,7 @@ describe("CitiesController", () => {
     });
   });
 
-  it("should update a city by the PUT object /cities/", async () => {
+  it("should update a city via PUT object /cities/", async () => {
     const cityId = 1;
     const mockExistingCity = {
       id: cityId,
@@ -134,6 +164,32 @@ describe("CitiesController", () => {
     expect(response.status).toBe(200);
   });
 
+  it("should register unknown ID via PUT object /cities/", async () => {
+    const cityId = 1;
+    const mockExistingCity = {
+      id: cityId,
+      name: "Belgrade",
+      country: "Serbia",
+      numbeo_id: 12345,
+    };
+    const mockUpdatedCity = [
+      { id: cityId, name: "Novi Sad", country: "Serbia", numbeo_id: 11111 },
+    ];
+
+    jest.spyOn(citiesService, "getById").mockResolvedValue(null);
+
+    const response = await request(app.getHttpServer())
+      .put(`/cities/`)
+      .send(mockUpdatedCity)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      error: "Bad Request",
+      message: "City with ID 1 not found",
+      statusCode: 400,
+    });
+  });
+
   it("should delete a city by ID via DELETE /cities/:id", async () => {
     const cityId = 1;
     const mockDeletedCity = {
@@ -152,5 +208,20 @@ describe("CitiesController", () => {
 
     expect(response.body).toEqual(mockDeletedCity);
     expect(response.status).toBe(200);
+  });
+
+  it("should register unknown ID via DELETE /cities/:id", async () => {
+    const cityId = 1;
+    jest.spyOn(citiesService, "getById").mockResolvedValue(null);
+
+    const response = await request(app.getHttpServer())
+      .delete(`/cities/${cityId}`)
+      .expect(404);
+
+    expect(response.body).toEqual({
+      error: "Not Found",
+      message: "City with ID 1 not found",
+      statusCode: 404,
+    });
   });
 });
