@@ -64,7 +64,35 @@ describe("ProductsController", () => {
     expect(response.body.description).toBe("just text");
   });
 
-  it("should return an array of products", async () => {
+  it("should not create create duplicates via POST /products", async () => {
+    const createProductDto = {
+      name: "Man business shoes",
+      category: "clothing and shoes",
+      unit: "1 pair",
+      description: "just text",
+    };
+
+    jest.spyOn(productsService, "getByName").mockResolvedValue({
+      id: 1,
+      name: "Man business shoes",
+      category: "clothing and shoes",
+      unit: "1 pair",
+      description: "just text",
+    });
+
+    const response = await request(app.getHttpServer())
+      .post("/products")
+      .send(createProductDto)
+      .expect(409);
+
+    expect(response.body).toEqual({
+      error: "Conflict",
+      message: "Product with this name already exists",
+      statusCode: 409,
+    });
+  });
+
+  it("should return an array of products via GET /products", async () => {
     const mockProducts: ProductDto[] = [
       {
         id: 1,
@@ -162,6 +190,30 @@ describe("ProductsController", () => {
     expect(response.status).toBe(200);
   });
 
+  it("should register unknown ID via PUT object /products/", async () => {
+    const mockUpdatedProduct = [
+      {
+        id: 1,
+        name: "Man business shoes",
+        category: "clothing and shoes",
+        unit: "1 pair",
+        description: "just text and something added",
+      },
+    ];
+    jest.spyOn(productsService, "getById").mockResolvedValue(null);
+
+    const response = await request(app.getHttpServer())
+      .put(`/products/`)
+      .send(mockUpdatedProduct)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      error: "Bad Request",
+      message: "Product with ID 1 not found",
+      statusCode: 400,
+    });
+  });
+
   it("should delete a city by ID via DELETE /products/:id", async () => {
     const productId = 1;
     const mockDeletedProduct = {
@@ -183,5 +235,21 @@ describe("ProductsController", () => {
 
     expect(response.body).toEqual(mockDeletedProduct);
     expect(response.status).toBe(200);
+  });
+
+  it("should register unknown ID via DELETE /products/:id", async () => {
+    const productId = 1;
+
+    jest.spyOn(productsService, "getById").mockResolvedValue(null);
+
+    const response = await request(app.getHttpServer())
+      .delete(`/products/${productId}`)
+      .expect(404);
+
+    expect(response.body).toEqual({
+      error: "Not Found",
+      message: "Product with ID 1 not found",
+      statusCode: 404,
+    });
   });
 });
