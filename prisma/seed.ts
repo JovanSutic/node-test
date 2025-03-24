@@ -1,11 +1,19 @@
 import { PrismaClient } from "@prisma/client";
-import { cities, years, products } from "./seedData";
+import { cities, years, products, categories } from "./seedData";
 
 const prisma = new PrismaClient();
 
 (async () => {
   try {
     console.log("Seeding the database...");
+
+    const category = await prisma.categories.findUnique({ where: { id: 1 } });
+
+    if (!category) {
+      await prisma.categories.createMany({
+        data: categories,
+      });
+    }
 
     const city = await prisma.cities.findUnique({ where: { id: 1 } });
 
