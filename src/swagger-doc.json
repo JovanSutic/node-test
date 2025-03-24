@@ -495,7 +495,7 @@
                 "application/json": {
                   "value": {
                     "name": "men shoes",
-                    "category": "clothing and shoes",
+                    "categoryId": 5,
                     "unit": "1 pair",
                     "description": "1 pair of leather men shoes"
                   }
@@ -518,7 +518,7 @@
                     "value": {
                       "id": 1,
                       "name": "men shoes",
-                      "category": "clothing and shoes",
+                      "categoryId": 5,
                       "unit": "1 pair",
                       "description": "1 pair of leather men shoes"
                     }
@@ -554,14 +554,14 @@
                       {
                         "id": 1,
                         "name": "man shoes",
-                        "category": "clothing and shoes",
+                        "categoryId": 5,
                         "unit": "1 pair",
                         "description": "1 pair of leather man shoes"
                       },
                       {
                         "id": 2,
                         "name": "internet",
-                        "category": "utilities",
+                        "categoryId": 6,
                         "unit": "monthly subscription",
                         "description": "1 month internet subscription"
                       }
@@ -593,7 +593,7 @@
                   "value": {
                     "id": 1,
                     "name": "men shoes",
-                    "category": "clothing and shoes",
+                    "categoryId": 5,
                     "unit": "1 pair",
                     "description": "1 pair of leather men shoes"
                   }
@@ -603,14 +603,14 @@
                     {
                       "id": 1,
                       "name": "men shoes",
-                      "category": "clothing and shoes",
+                      "categoryId": 5,
                       "unit": "1 pair",
                       "description": "1 pair of leather men shoes"
                     },
                     {
                       "id": 2,
                       "name": "internet",
-                      "category": "utilities",
+                      "categoryId": 6,
                       "unit": "monthly subscription",
                       "description": "1 month internet subscription"
                     }
@@ -637,7 +637,7 @@
                     "value": {
                       "id": 1,
                       "name": "men shoes",
-                      "category": "clothing and shoes",
+                      "categoryId": 5,
                       "unit": "1 pair",
                       "description": "1 pair of leather men shoes"
                     }
@@ -648,14 +648,14 @@
                       {
                         "id": 1,
                         "name": "men shoes",
-                        "category": "clothing and shoes",
+                        "categoryId": 5,
                         "unit": "1 pair",
                         "description": "1 pair of leather men shoes"
                       },
                       {
                         "id": 2,
                         "name": "internet",
-                        "category": "utilities",
+                        "categoryId": 6,
                         "unit": "monthly subscription",
                         "description": "1 month internet subscription"
                       }
@@ -699,7 +699,7 @@
                     "value": {
                       "id": 1,
                       "name": "men shoes",
-                      "category": "clothing and shoes",
+                      "categoryId": 5,
                       "unit": "1 pair",
                       "description": "1 pair of leather men shoes"
                     }
@@ -740,7 +740,7 @@
                     "value": {
                       "id": 1,
                       "name": "men shoes",
-                      "category": "clothing and shoes",
+                      "categoryId": 1,
                       "unit": "1 pair",
                       "description": "1 pair of leather men shoes"
                     }
@@ -864,9 +864,9 @@
             "type": "string",
             "description": "Product name"
           },
-          "category": {
-            "type": "string",
-            "description": "Product category"
+          "categoryId": {
+            "type": "number",
+            "description": "Category id of the product"
           },
           "unit": {
             "type": "string",
@@ -880,7 +880,7 @@
         "required": [
           "id",
           "name",
-          "category",
+          "categoryId",
           "unit"
         ]
       }

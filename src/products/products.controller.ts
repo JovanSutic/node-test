@@ -39,7 +39,7 @@ export class ProductsController {
         value: {
           id: 1,
           name: "men shoes",
-          category: "clothing and shoes",
+          categoryId: 5,
           unit: "1 pair",
           description: "1 pair of leather men shoes",
         },
@@ -53,7 +53,7 @@ export class ProductsController {
       "application/json": {
         value: {
           name: "men shoes",
-          category: "clothing and shoes",
+          categoryId: 5,
           unit: "1 pair",
           description: "1 pair of leather men shoes",
         },
@@ -74,6 +74,7 @@ export class ProductsController {
       if (error instanceof ConflictException) {
         throw error;
       }
+      
       throw new BadRequestException(
         error.message || "An error occurred while creating the product"
       );
@@ -94,14 +95,14 @@ export class ProductsController {
           {
             id: 1,
             name: "man shoes",
-            category: "clothing and shoes",
+            categoryId: 5,
             unit: "1 pair",
             description: "1 pair of leather man shoes",
           },
           {
             id: 2,
             name: "internet",
-            category: "utilities",
+            categoryId: 6,
             unit: "monthly subscription",
             description: "1 month internet subscription",
           },
@@ -131,7 +132,7 @@ export class ProductsController {
         value: {
           id: 1,
           name: "men shoes",
-          category: "clothing and shoes",
+          categoryId: 5,
           unit: "1 pair",
           description: "1 pair of leather men shoes",
         },
@@ -172,7 +173,7 @@ export class ProductsController {
         value: {
           id: 1,
           name: "men shoes",
-          category: "clothing and shoes",
+          categoryId: 5,
           unit: "1 pair",
           description: "1 pair of leather men shoes",
         },
@@ -183,14 +184,14 @@ export class ProductsController {
           {
             id: 1,
             name: "men shoes",
-            category: "clothing and shoes",
+            categoryId: 5,
             unit: "1 pair",
             description: "1 pair of leather men shoes",
           },
           {
             id: 2,
             name: "internet",
-            category: "utilities",
+            categoryId: 6,
             unit: "monthly subscription",
             description: "1 month internet subscription",
           },
@@ -206,7 +207,7 @@ export class ProductsController {
         value: {
           id: 1,
           name: "men shoes",
-          category: "clothing and shoes",
+          categoryId: 5,
           unit: "1 pair",
           description: "1 pair of leather men shoes",
         },
@@ -216,14 +217,14 @@ export class ProductsController {
           {
             id: 1,
             name: "men shoes",
-            category: "clothing and shoes",
+            categoryId: 5,
             unit: "1 pair",
             description: "1 pair of leather men shoes",
           },
           {
             id: 2,
             name: "internet",
-            category: "utilities",
+            categoryId: 6,
             unit: "monthly subscription",
             description: "1 month internet subscription",
           },
@@ -276,7 +277,7 @@ export class ProductsController {
         value: {
           id: 1,
           name: "men shoes",
-          category: "clothing and shoes",
+          categoryId: 1,
           unit: "1 pair",
           description: "1 pair of leather men shoes",
         },

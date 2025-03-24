@@ -4,17 +4,19 @@ import { IsNumber, IsString, IsOptional } from "class-validator";
 export class CreateProductDto {
   @ApiProperty({
     description: "Product name",
+    required: true,
     type: String,
   })
   @IsString()
   name: string;
 
   @ApiProperty({
-    description: "Product category",
-    type: String,
+    description: "Category id of the product",
+    required: true,
+    type: Number,
   })
-  @IsString()
-  category: string;
+  @IsNumber()
+  categoryId: number;
 
   @ApiProperty({
     description: "Product unit",
@@ -49,11 +51,11 @@ export class ProductDto {
   name: string;
 
   @ApiProperty({
-    description: "Product category",
-    type: String,
+    description: "Category id of the product",
+    type: Number,
   })
-  @IsString()
-  category: string;
+  @IsNumber()
+  categoryId: number;
 
   @ApiProperty({
     description: "Product unit",

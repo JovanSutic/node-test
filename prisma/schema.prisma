@@ -16,7 +16,7 @@ model cities {
   id   Int     @id @default(autoincrement())
   name String
   country String
-  numbeo_id Int?
+  numbeo_id Int? @map("numbeo_id")
 
   prices  prices[]
 }
@@ -28,13 +28,21 @@ model years {
   prices prices[]
 }
 
+model categories {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+
+  products    products[]
+}
+
 model products {
   id          Int     @id @default(autoincrement())
   name        String
-  category    String
+  categoryId    Int  @map("category_id")
   unit        String
   description String?
 
+  category    categories @relation(fields: [categoryId], references: [id])
   prices prices[]
 }
 
@@ -42,15 +50,21 @@ model prices {
   id         Int     @id @default(autoincrement()) 
   price      Float   
   currency   String  
-  cityId     Int     
-  productId  Int     
-  yearId     Int     
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  cityId     Int    @map("city_id")
+  productId  Int    @map("product_id")
+  yearId     Int    @map("year_id")
+  createdAt  DateTime @default(now())  @map("created_at")
+  updatedAt  DateTime @updatedAt  @map("updated_at")
+  priceType  PriceType  @map("price_type")
 
   city       cities    @relation(fields: [cityId], references: [id])
   product    products @relation(fields: [productId], references: [id])
   year       years    @relation(fields: [yearId], references: [id])
 
   @@unique([cityId, productId, yearId])
+}
+
+enum PriceType {
+  CURRENT    // The current price (most recent one)
+  HISTORICAL // A historical price at a specific time
 }

@@ -7,17 +7,15 @@ export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createCityDto: CreateProductDto) {
-    const { name, category, unit, description } = createCityDto;
-
-    console.log(category);
+    const { name, categoryId, unit, description } = createCityDto;
 
     try {
       return await this.prisma.products.create({
         data: {
           name,
-          category,
           unit,
-          description: description || "",
+          categoryId,
+          description: description || ""
         },
       });
     } catch (error: any) {
@@ -76,7 +74,7 @@ export class ProductsService {
             data: {
               name: item.name,
               unit: item.unit,
-              category: item.category,
+              categoryId: item.categoryId,
               description: item.description
             },
           })
@@ -98,7 +96,7 @@ export class ProductsService {
         data: {
           name: data.name,
           unit: data.unit,
-          category: data.category,
+          categoryId: data.categoryId,
           description: data.description
         },
       });

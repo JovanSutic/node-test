@@ -1,6 +1,16 @@
 import { CreateCityDto } from "../src/cities/cities.dto";
 import { CreateProductDto } from "../src/products/products.dto";
 import { CreateYearDto } from "../src/years/years.dto";
+import { CreateCategoryDto } from '../src/categories/categories.dto';
+
+export const categories: CreateCategoryDto[] = [
+  {name: "Restaurants"},
+  {name: "Markets"},
+  {name: "Rent per month"},
+  {name: "Utilities"},
+  {name: "Clothing and shoes"},
+  {name: "Sport and leisure"},
+]
 
 export const cities: CreateCityDto[] = [
   {
@@ -49,13 +59,13 @@ export const years: CreateYearDto[] = [
 export const products: CreateProductDto[] = [
   {
     name: "Man business shoes",
-    category: "clothing and shoes",
+    categoryId: 5,
     unit: "1 pair",
     description: "just text",
   },
   {
     name: "Cinema ticket",
-    category: "sport and leisure",
+    categoryId: 6,
     unit: "1",
     description: "just text 1",
   },
