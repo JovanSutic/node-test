@@ -755,6 +755,247 @@
           "products"
         ]
       }
+    },
+    "/categories": {
+      "post": {
+        "operationId": "CategoriesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to create new category",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              },
+              "examples": {
+                "application/json": {
+                  "value": {
+                    "name": "Markets"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "category DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Markets"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create the new category.",
+        "tags": [
+          "categories"
+        ]
+      },
+      "get": {
+        "operationId": "CategoriesController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved categories.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "category DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Markets"
+                      },
+                      {
+                        "id": 2,
+                        "name": "Restaurants"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return all categories.",
+        "tags": [
+          "categories"
+        ]
+      },
+      "put": {
+        "operationId": "CategoriesController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to update category",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "id": 1,
+                    "name": "Markets"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "name": "Markets"
+                    },
+                    {
+                      "id": 2,
+                      "name": "Restaurants"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated categories.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single updated category",
+                    "value": {
+                      "id": 1,
+                      "name": "Markets"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Multiple updated categories",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Markets"
+                      },
+                      {
+                        "id": 2,
+                        "name": "Restaurants"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update categories",
+        "tags": [
+          "categories"
+        ]
+      }
+    },
+    "/categories/{id}": {
+      "get": {
+        "operationId": "CategoriesController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved category by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "category DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Markets"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return category by id.",
+        "tags": [
+          "categories"
+        ]
+      },
+      "delete": {
+        "operationId": "CategoriesController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted category by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "category DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Markets"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete category by id.",
+        "tags": [
+          "categories"
+        ]
+      }
     }
   },
   "info": {
@@ -882,6 +1123,35 @@
           "name",
           "categoryId",
           "unit"
+        ]
+      },
+      "CreateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the category"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the category"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the category"
+          }
+        },
+        "required": [
+          "id",
+          "name"
         ]
       }
     }
