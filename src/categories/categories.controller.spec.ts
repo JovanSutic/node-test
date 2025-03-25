@@ -36,7 +36,7 @@ describe("CategoriesController", () => {
 
   it("should create a new category via POST /categories", async () => {
     const createCategoryDto = {
-      name: "Belgrade",
+      name: "Markets",
     };
 
     jest.spyOn(categoriesService, "create").mockResolvedValue({
@@ -52,17 +52,17 @@ describe("CategoriesController", () => {
       .expect(201);
 
     expect(response.body).toEqual({ id: expect.any(Number), ...createCategoryDto });
-    expect(response.body.name).toBe("Belgrade");
+    expect(response.body.name).toBe("Markets");
   });
 
   it("should not create duplicate via POST /categories", async () => {
     const createCategoryDto = {
-      name: "Belgrade",
+      name: "Markets",
     };
 
     const existingCategoryDto = {
       id: 1,
-      name: "Belgrade",
+      name: "Markets",
     };
 
     jest
@@ -83,8 +83,8 @@ describe("CategoriesController", () => {
 
   it("should return an array of categories via GET /categories", async () => {
     const mockCities: CategoryDto[] = [
-      { id: 1, name: "Belgrade" },
-      { id: 2, name: "Novi Sad"},
+      { id: 1, name: "Markets" },
+      { id: 2, name: "Restaurants"},
     ];
     jest.spyOn(categoriesService, "getAll").mockResolvedValue(mockCities);
 
@@ -99,7 +99,7 @@ describe("CategoriesController", () => {
   it("should return a category by ID via GET /categories/:id", async () => {
     const category = {
       id: 1,
-      name: "Belgrade",
+      name: "Markets",
     };
 
     jest.spyOn(categoriesService, "getById").mockResolvedValue(category);
@@ -109,7 +109,7 @@ describe("CategoriesController", () => {
       .expect(200);
 
     expect(response.body).toEqual(category);
-    expect(response.body.name).toBe("Belgrade");
+    expect(response.body.name).toBe("Markets");
   });
 
   it("should return 404 if category not found via GET /categories/:id", async () => {
@@ -130,10 +130,10 @@ describe("CategoriesController", () => {
     const categoryId = 1;
     const mockExistingCategory = {
       id: categoryId,
-      name: "Belgrade",
+      name: "Markets",
     };
     const mockUpdatedCategory = [
-      { id: categoryId, name: "Novi Sad" },
+      { id: categoryId, name: "Restaurants" },
     ];
 
     jest
@@ -154,10 +154,10 @@ describe("CategoriesController", () => {
     const categoryId = 1;
     const mockExistingCategory = {
       id: categoryId,
-      name: "Belgrade",
+      name: "Markets",
     };
     const mockUpdatedCategory = [
-      { id: categoryId, name: "Novi Sad" },
+      { id: categoryId, name: "Restaurants" },
     ];
 
     jest.spyOn(categoriesService, "getById").mockResolvedValue(null);
@@ -178,7 +178,7 @@ describe("CategoriesController", () => {
     const categoryId = 1;
     const mockDeletedCategory = {
       id: categoryId,
-      name: "Belgrade",
+      name: "Markets",
     };
 
     jest.spyOn(categoriesService, "delete").mockResolvedValue(mockDeletedCategory);
