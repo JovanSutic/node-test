@@ -35,7 +35,6 @@ export class ForeignKeyValidationPipe implements PipeTransform {
 
 const checkPrice = (priceDto: CreatePriceDto) => {
   const { price, currency, priceType } = priceDto;
-  console.log(priceDto);
   if (!Number.isInteger(price) || price <= 0) {
     throw new BadRequestException("Price must be a positive integer");
   }
