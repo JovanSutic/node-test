@@ -996,6 +996,323 @@
           "categories"
         ]
       }
+    },
+    "/prices": {
+      "post": {
+        "operationId": "PricesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to create new price",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePriceDto"
+              },
+              "examples": {
+                "application/json": {
+                  "value": {
+                    "price": 300,
+                    "currency": "EUR",
+                    "cityId": 1,
+                    "productId": 1,
+                    "yearId": 1,
+                    "priceType": "HISTORICAL"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a price",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Price DTO",
+                    "value": {
+                      "id": 1,
+                      "price": 300,
+                      "currency": "EUR",
+                      "cityId": 1,
+                      "productId": 1,
+                      "yearId": 1,
+                      "priceType": "HISTORICAL",
+                      "createdAt": "2025-03-26T19:50:30.809Z",
+                      "updatedAt": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create the new price.",
+        "tags": [
+          "prices"
+        ]
+      },
+      "get": {
+        "operationId": "PricesController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved prices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PriceDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "price DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "price": 300,
+                        "currency": "EUR",
+                        "cityId": 1,
+                        "productId": 1,
+                        "yearId": 1,
+                        "priceType": "HISTORICAL",
+                        "createdAt": "2025-03-26T19:50:30.809Z",
+                        "updatedAt": "2025-03-26T19:50:30.809Z"
+                      },
+                      {
+                        "id": 2,
+                        "price": 400,
+                        "currency": "EUR",
+                        "cityId": 1,
+                        "productId": 1,
+                        "yearId": 1,
+                        "priceType": "HISTORICAL",
+                        "createdAt": "2025-03-26T19:50:30.809Z",
+                        "updatedAt": "2025-03-26T19:50:30.809Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return all prices.",
+        "tags": [
+          "prices"
+        ]
+      },
+      "put": {
+        "operationId": "PricesController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to update price",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePriceDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "id": 1,
+                    "price": 300,
+                    "currency": "EUR",
+                    "cityId": 1,
+                    "productId": 1,
+                    "yearId": 1,
+                    "priceType": "HISTORICAL"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "price": 300,
+                      "currency": "EUR",
+                      "cityId": 1,
+                      "productId": 1,
+                      "yearId": 1,
+                      "priceType": "HISTORICAL"
+                    },
+                    {
+                      "id": 2,
+                      "price": 300,
+                      "currency": "EUR",
+                      "cityId": 1,
+                      "productId": 1,
+                      "yearId": 1,
+                      "priceType": "HISTORICAL"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated prices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PriceDto"
+                  }
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single updated price",
+                    "value": {
+                      "id": 1,
+                      "price": 300,
+                      "currency": "EUR",
+                      "cityId": 1,
+                      "productId": 1,
+                      "yearId": 1,
+                      "priceType": "HISTORICAL",
+                      "createdAt": "2025-03-26T19:50:30.809Z",
+                      "updatedAt": "2025-03-26T19:50:30.809Z"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Multiple updated prices",
+                    "value": [
+                      {
+                        "id": 1,
+                        "price": 300,
+                        "currency": "EUR",
+                        "cityId": 1,
+                        "productId": 1,
+                        "yearId": 1,
+                        "priceType": "HISTORICAL",
+                        "createdAt": "2025-03-26T19:50:30.809Z",
+                        "updatedAt": "2025-03-26T19:50:30.809Z"
+                      },
+                      {
+                        "id": 2,
+                        "price": 400,
+                        "currency": "EUR",
+                        "cityId": 1,
+                        "productId": 1,
+                        "yearId": 1,
+                        "priceType": "HISTORICAL",
+                        "createdAt": "2025-03-26T19:50:30.809Z",
+                        "updatedAt": "2025-03-26T19:50:30.809Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update prices",
+        "tags": [
+          "prices"
+        ]
+      }
+    },
+    "/prices/{id}": {
+      "get": {
+        "operationId": "PricesController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved price by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Price DTO",
+                    "value": {
+                      "id": 1,
+                      "price": 300,
+                      "currency": "EUR",
+                      "cityId": 1,
+                      "productId": 1,
+                      "yearId": 1,
+                      "priceType": "HISTORICAL",
+                      "createdAt": "2025-03-26T19:50:30.809Z",
+                      "updatedAt": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return price by id.",
+        "tags": [
+          "prices"
+        ]
+      },
+      "delete": {
+        "operationId": "PricesController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted price by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Price DTO",
+                    "value": {
+                      "id": 1,
+                      "price": 300,
+                      "currency": "EUR",
+                      "cityId": 1,
+                      "productId": 1,
+                      "yearId": 1,
+                      "priceType": "HISTORICAL",
+                      "createdAt": "2025-03-26T19:50:30.809Z",
+                      "updatedAt": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete price by id.",
+        "tags": [
+          "prices"
+        ]
+      }
     }
   },
   "info": {
@@ -1152,6 +1469,105 @@
         "required": [
           "id",
           "name"
+        ]
+      },
+      "CreatePriceDto": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "description": "The price value"
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency of the price"
+          },
+          "cityId": {
+            "type": "number",
+            "description": "The id of the city (cities table foreign key)"
+          },
+          "productId": {
+            "type": "number",
+            "description": "The id of the product (products table foreign key)"
+          },
+          "yearId": {
+            "type": "number",
+            "description": "The id of the year (years table foreign key)"
+          },
+          "priceType": {
+            "type": "string",
+            "description": "Price Type",
+            "enum": [
+              "CURRENT",
+              "HISTORICAL"
+            ]
+          }
+        },
+        "required": [
+          "price",
+          "currency",
+          "cityId",
+          "productId",
+          "yearId",
+          "priceType"
+        ]
+      },
+      "PriceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the price"
+          },
+          "price": {
+            "type": "number",
+            "description": "The price value"
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency of the price"
+          },
+          "cityId": {
+            "type": "number",
+            "description": "The id of the city (cities table foreign key)"
+          },
+          "productId": {
+            "type": "number",
+            "description": "The id of the product (products table foreign key)"
+          },
+          "yearId": {
+            "type": "number",
+            "description": "The id of the year (years table foreign key)"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when the record was created",
+            "example": "2025-03-26T12:00:00Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when the record was last updated",
+            "example": "2025-03-26T12:00:00Z"
+          },
+          "priceType": {
+            "type": "string",
+            "description": "Price Type",
+            "enum": [
+              "CURRENT",
+              "HISTORICAL"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "price",
+          "currency",
+          "cityId",
+          "productId",
+          "yearId",
+          "priceType"
         ]
       }
     }

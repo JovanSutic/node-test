@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { PriceType } from './prices.dto';
+import { CreatePriceDto, PriceType } from "./prices.dto";
 
 @Injectable()
 export class ForeignKeyValidationPipe implements PipeTransform {
@@ -33,21 +33,33 @@ export class ForeignKeyValidationPipe implements PipeTransform {
   }
 }
 
+const checkPrice = (priceDto: CreatePriceDto) => {
+  const { price, currency, priceType } = priceDto;
+  console.log(priceDto);
+  if (!Number.isInteger(price) || price <= 0) {
+    throw new BadRequestException("Price must be a positive integer");
+  }
+
+  if (typeof currency !== "string" || currency.trim() === "") {
+    throw new BadRequestException("Currency must be a non-empty string");
+  }
+
+  if (!Object.values(PriceType).includes(priceType)) {
+    throw new BadRequestException(
+      `PriceType must be one of the following: ${Object.values(PriceType).join(
+        ", "
+      )}`
+    );
+  }
+};
+
 @Injectable()
 export class StaticFieldValidationPipe implements PipeTransform {
   transform(value: any) {
-    const { price, currency, priceType } = value;
-
-    if (!Number.isInteger(price) || price <= 0) {
-      throw new BadRequestException('Price must be a positive integer');
-    }
-
-    if (typeof currency !== 'string' || currency.trim() === '') {
-      throw new BadRequestException('Currency must be a non-empty string');
-    }
-
-    if (!Object.values(PriceType).includes(priceType)) {
-      throw new BadRequestException(`PriceType must be one of the following: ${Object.values(PriceType).join(', ')}`);
+    if (Array.isArray(value)) {
+      value.forEach((item) => checkPrice(item));
+    } else {
+      checkPrice(value);
     }
 
     return value;
