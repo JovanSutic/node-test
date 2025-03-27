@@ -270,7 +270,7 @@ export class PricesController {
         if (existing) {
           return await this.pricesService.updateSingle(Number(price.id), price);
         } else {
-          throw new NotFoundException(`price with ID ${price.id} not found`);
+          throw new NotFoundException(`Price with ID ${price.id} not found`);
         }
       } else if (data.length > 1) {
         return await this.pricesService.updateMany(data);
