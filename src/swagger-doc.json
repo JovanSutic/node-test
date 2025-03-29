@@ -100,12 +100,28 @@
                 "$ref": "#/components/schemas/CreateCityDto"
               },
               "examples": {
-                "application/json": {
+                "single": {
                   "value": {
                     "name": "Amsterdam",
                     "country": "Netherlands",
                     "numbeo_id": 12345
                   }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "name": "Amsterdam",
+                      "country": "Netherlands",
+                      "numbeo_id": 12345
+                    },
+                    {
+                      "id": 2,
+                      "name": "Belgrade",
+                      "country": "Serbia",
+                      "numbeo_id": 12346
+                    }
+                  ]
                 }
               }
             }
@@ -120,14 +136,31 @@
                   "$ref": "#/components/schemas/CityDto"
                 },
                 "examples": {
-                  "application/json": {
-                    "summary": "City DTO",
+                  "single": {
+                    "summary": "Single created city",
                     "value": {
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
                       "numbeo_id": 12345
                     }
+                  },
+                  "multiple": {
+                    "summary": "Multiple created cities",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Amsterdam",
+                        "country": "Netherlands",
+                        "numbeo_id": 12345
+                      },
+                      {
+                        "id": 2,
+                        "name": "Belgrade",
+                        "country": "Serbia",
+                        "numbeo_id": 12346
+                      }
+                    ]
                   }
                 }
               }

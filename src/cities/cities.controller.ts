@@ -15,7 +15,12 @@ import {
 } from "@nestjs/common";
 import { CreateCityDto, CityDto } from "./cities.dto";
 import { CitiesService } from "./cities.service";
-import { ObjectTransformPipe, ValidationPipe } from "./cities.validation.pipe";
+import {
+  ExistenceValidationPipe,
+  ObjectTransformPipe,
+  UniqueExistenceValidation,
+  ValidationPipe,
+} from "./cities.validation.pipe";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "../utils/auth.guard";
 
@@ -26,15 +31,15 @@ export class CitiesController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @UsePipes(ValidationPipe)
+  @UsePipes(ValidationPipe, ExistenceValidationPipe)
   @ApiOperation({ summary: "Create the new city." })
   @ApiResponse({
     status: 201,
     description: "Successfully created a city",
     type: CityDto,
     examples: {
-      "application/json": {
-        summary: "City DTO",
+      single: {
+        summary: "Single created city",
         value: {
           id: 1,
           name: "Amsterdam",
@@ -42,34 +47,57 @@ export class CitiesController {
           numbeo_id: 12345,
         },
       },
+      multiple: {
+        summary: "Multiple created cities",
+        value: [
+          {
+            id: 1,
+            name: "Amsterdam",
+            country: "Netherlands",
+            numbeo_id: 12345,
+          },
+          {
+            id: 2,
+            name: "Belgrade",
+            country: "Serbia",
+            numbeo_id: 12346,
+          },
+        ],
+      },
     },
   })
   @ApiBody({
     description: "The data to create new city",
     type: CreateCityDto,
     examples: {
-      "application/json": {
+      single: {
         value: {
           name: "Amsterdam",
           country: "Netherlands",
           numbeo_id: 12345,
         },
       },
+      multiple: {
+        value: [
+          {
+            id: 1,
+            name: "Amsterdam",
+            country: "Netherlands",
+            numbeo_id: 12345,
+          },
+          {
+            id: 2,
+            name: "Belgrade",
+            country: "Serbia",
+            numbeo_id: 12346,
+          },
+        ],
+      },
     },
   })
-  async create(@Body() createCityDto: CreateCityDto) {
+  async create(@Body() createCityDto: CreateCityDto | CreateCityDto[]) {
     try {
-      const city = await this.citiesService.getByEssentialData(
-        createCityDto.name,
-        createCityDto.country
-      );
-      if (city) {
-        throw new ConflictException(
-          "City with this name and country already exists"
-        );
-      } else {
-        return await this.citiesService.create(createCityDto);
-      }
+      return await this.citiesService.create(createCityDto);
     } catch (error: any) {
       if (error instanceof ConflictException) {
         throw error;
@@ -118,6 +146,7 @@ export class CitiesController {
   }
 
   @Get(":id")
+  @UsePipes(UniqueExistenceValidation)
   @ApiOperation({ summary: "Return city by id." })
   @ApiResponse({
     status: 200,
@@ -137,11 +166,7 @@ export class CitiesController {
   })
   async getById(@Param("id") id: string) {
     try {
-      const result = await this.citiesService.getById(Number(id));
-      if (!result) {
-        throw new NotFoundException(`City with ID ${id} not found`);
-      }
-      return result;
+      return await this.citiesService.getById(Number(id));
     } catch (error: any) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -156,7 +181,7 @@ export class CitiesController {
 
   @Put()
   @UseGuards(AuthGuard)
-  @UsePipes(ObjectTransformPipe)
+  @UsePipes(ObjectTransformPipe, ExistenceValidationPipe)
   @ApiOperation({ summary: "Update cities" })
   @ApiResponse({
     status: 200,
@@ -226,12 +251,7 @@ export class CitiesController {
     try {
       if (data.length === 1) {
         const [city] = data;
-        const existing = await this.citiesService.getById(Number(city.id));
-        if (existing) {
-          return await this.citiesService.updateSingle(Number(city.id), city);
-        } else {
-          throw new NotFoundException(`City with ID ${city.id} not found`);
-        }
+        return await this.citiesService.updateSingle(Number(city.id), city);
       } else if (data.length > 1) {
         return await this.citiesService.updateMany(data);
       } else {
@@ -251,6 +271,7 @@ export class CitiesController {
 
   @Delete(":id")
   @UseGuards(AuthGuard)
+  @UsePipes(UniqueExistenceValidation)
   @ApiOperation({ summary: "Delete city by id." })
   @ApiResponse({
     status: 200,
@@ -270,12 +291,7 @@ export class CitiesController {
   })
   async delete(@Param("id") id: string) {
     try {
-      const city = await this.citiesService.getById(Number(id));
-      if (city) {
-        return await this.citiesService.delete(Number(id));
-      } else {
-        throw new NotFoundException(`City with ID ${id} not found`);
-      }
+      return await this.citiesService.delete(Number(id));
     } catch (error: any) {
       if (error instanceof NotFoundException) {
         throw error;

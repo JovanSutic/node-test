@@ -13,12 +13,21 @@ import { AuthGuard } from "../utils/auth.guard";
 describe("CitiesController", () => {
   let app: INestApplication;
   let citiesService: CitiesService;
+  let prismaServiceMock: Partial<PrismaService>;
 
   beforeEach(async () => {
+    prismaServiceMock = {
+      cities: { findUnique: jest.fn(), findFirst: jest.fn() },
+      products: { findUnique: jest.fn(), findFirst: jest.fn() },
+      years: { findUnique: jest.fn(), findFirst: jest.fn() },
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CitiesController],
       providers: [CitiesService, PrismaService, JwtService, ConfigService],
     })
+      .overrideProvider(PrismaService)
+      .useValue(prismaServiceMock)
       .overrideGuard(AuthGuard)
       .useValue({
         canActivate: jest.fn(() => true),
@@ -46,7 +55,7 @@ describe("CitiesController", () => {
       ...createCityDto,
     });
 
-    jest.spyOn(citiesService, "getByEssentialData").mockResolvedValue(null);
+    prismaServiceMock.cities.findFirst = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .post("/cities")
@@ -66,16 +75,9 @@ describe("CitiesController", () => {
       numbeo_id: 12345,
     };
 
-    const existingCityDto = {
-      id: 1,
-      name: "Belgrade",
-      country: "Serbia",
-      numbeo_id: 12345,
-    };
-
-    jest
-      .spyOn(citiesService, "getByEssentialData")
-      .mockResolvedValue(existingCityDto);
+    prismaServiceMock.cities.findFirst = jest
+      .fn()
+      .mockResolvedValue({ ...createCityDto, id: 1 });
 
     const response = await request(app.getHttpServer())
       .post("/cities")
@@ -105,17 +107,18 @@ describe("CitiesController", () => {
   });
 
   it("should return a city by ID via GET /cities/:id", async () => {
+    const cityId = 1;
     const city = {
-      id: 1,
+      id: cityId,
       name: "Belgrade",
       country: "Serbia",
       numbeo_id: 12345,
     };
 
-    jest.spyOn(citiesService, "getById").mockResolvedValue(city);
+    prismaServiceMock.cities.findUnique = jest.fn().mockResolvedValue(city);
 
     const response = await request(app.getHttpServer())
-      .get("/cities/1")
+      .get(`/cities/${cityId}`)
       .expect(200);
 
     expect(response.body).toEqual(city);
@@ -125,7 +128,7 @@ describe("CitiesController", () => {
   });
 
   it("should return 404 if city not found via GET /cities/:id", async () => {
-    jest.spyOn(citiesService, "getById").mockResolvedValue(null);
+    prismaServiceMock.cities.findUnique = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .get("/cities/999")
@@ -153,7 +156,9 @@ describe("CitiesController", () => {
     jest
       .spyOn(citiesService, "updateSingle")
       .mockResolvedValue(mockUpdatedCity);
-    jest.spyOn(citiesService, "getById").mockResolvedValue(mockExistingCity);
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue(mockExistingCity);
 
     const response = await request(app.getHttpServer())
       .put(`/cities/`)
@@ -176,17 +181,17 @@ describe("CitiesController", () => {
       { id: cityId, name: "Novi Sad", country: "Serbia", numbeo_id: 11111 },
     ];
 
-    jest.spyOn(citiesService, "getById").mockResolvedValue(null);
+    prismaServiceMock.cities.findUnique = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .put(`/cities/`)
       .send(mockUpdatedCity)
-      .expect(400);
+      .expect(404);
 
     expect(response.body).toEqual({
-      error: "Bad Request",
+      error: "Not Found",
       message: "City with ID 1 not found",
-      statusCode: 400,
+      statusCode: 404,
     });
   });
 
@@ -198,6 +203,10 @@ describe("CitiesController", () => {
       country: "Serbia",
       numbeo_id: 12345,
     };
+
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue({ id: cityId });
 
     jest.spyOn(citiesService, "delete").mockResolvedValue(mockDeletedCity);
     jest.spyOn(citiesService, "getById").mockResolvedValue(mockDeletedCity);
@@ -212,7 +221,7 @@ describe("CitiesController", () => {
 
   it("should register unknown ID via DELETE /cities/:id", async () => {
     const cityId = 1;
-    jest.spyOn(citiesService, "getById").mockResolvedValue(null);
+    prismaServiceMock.cities.findUnique = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .delete(`/cities/${cityId}`)
