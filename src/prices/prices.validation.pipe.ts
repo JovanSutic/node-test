@@ -6,19 +6,19 @@ import {
 import { PrismaService } from "../prisma/prisma.service";
 import { CreatePriceDto, PriceType } from "./prices.dto";
 
-@Injectable()
-export class ForeignKeyValidationPipe implements PipeTransform {
-  constructor(private readonly prisma: PrismaService) {}
+const checkForeignKeys = async (
+  priceDto: CreatePriceDto,
+  prisma: PrismaService
+) => {
+  const { cityId, productId, yearId } = priceDto;
 
-  async transform(value: any) {
-    const { cityId, productId, yearId } = value;
-
+  try {
     const [city, product, year] = await Promise.all([
-      this.prisma.cities.findUnique({ where: { id: cityId } }),
-      this.prisma.products.findUnique({ where: { id: productId } }),
-      this.prisma.years.findUnique({ where: { id: yearId } }),
+      prisma.cities.findUnique({ where: { id: cityId } }),
+      prisma.products.findUnique({ where: { id: productId } }),
+      prisma.years.findUnique({ where: { id: yearId } }),
     ]);
-
+  
     if (!city) {
       throw new BadRequestException(`City with ID ${cityId} not found`);
     }
@@ -27,6 +27,21 @@ export class ForeignKeyValidationPipe implements PipeTransform {
     }
     if (!year) {
       throw new BadRequestException(`Year with ID ${yearId} not found`);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+@Injectable()
+export class ForeignKeyValidationPipe implements PipeTransform {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async transform(value: any) {
+    if (Array.isArray(value)) {
+      value.forEach((item) => checkForeignKeys(item, this.prisma));
+    } else {
+      checkForeignKeys(value, this.prisma);
     }
 
     return value;
