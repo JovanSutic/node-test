@@ -13,7 +13,7 @@ import {
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { YearsService } from "./years.service";
 import { CreateYearDto, YearDto } from "./years.dto";
-import { ValidationPipe } from "./years.validation.pipe";
+import { ExistenceValidationPipe, UniqueExistenceValidation, ValidationPipe } from "./years.validation.pipe";
 import { AuthGuard } from "../utils/auth.guard";
 
 @Controller("years")
@@ -23,19 +23,32 @@ export class YearsController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @UsePipes(ValidationPipe)
+  @UsePipes(ValidationPipe, ExistenceValidationPipe)
   @ApiOperation({ summary: "Create new year." })
   @ApiResponse({
     status: 201,
     description: "Successfully created a year",
     type: YearDto,
     examples: {
-      "application/json": {
+      single: {
         summary: "Year DTO",
         value: {
           id: 1,
           year: 2020,
         },
+      },
+      multiple: {
+        summary: "Year DTO array",
+        value: [
+          {
+            id: 1,
+            year: 2020,
+          },
+          {
+            id: 2,
+            year: 2021,
+          },
+        ],
       },
     },
   })
@@ -43,21 +56,26 @@ export class YearsController {
     description: "The data to create new city",
     type: CreateYearDto,
     examples: {
-      "application/json": {
+      single: {
         value: {
           year: 2020,
         },
+      },
+      multiple: {
+        value: [
+          {
+            year: 2020,
+          },
+          {
+            year: 2021,
+          },
+        ],
       },
     },
   })
   async create(@Body() createYearDto: CreateYearDto) {
     try {
-      const year = await this.yearsService.getByYear(createYearDto.year);
-      if (year) {
-        throw new ConflictException("This year already exists");
-      } else {
-        return await this.yearsService.create(createYearDto);
-      }
+      return await this.yearsService.create(createYearDto);
     } catch (error: any) {
       if (error instanceof ConflictException) {
         throw error;
@@ -102,6 +120,7 @@ export class YearsController {
   }
 
   @Get(":id")
+  @UsePipes(UniqueExistenceValidation)
   @ApiOperation({ summary: "Return year by id." })
   @ApiResponse({
     status: 200,
@@ -119,11 +138,7 @@ export class YearsController {
   })
   async getById(@Param("id") id: string) {
     try {
-      const result = await this.yearsService.getById(Number(id));
-      if (!result) {
-        throw new NotFoundException(`Year with ID ${id} not found`);
-      }
-      return result;
+      return await this.yearsService.getById(Number(id));
     } catch (error: any) {
       if (error instanceof NotFoundException) {
         throw error;
