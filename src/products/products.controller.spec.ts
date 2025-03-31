@@ -13,12 +13,19 @@ import { AuthGuard } from "../utils/auth.guard";
 describe("ProductsController", () => {
   let app: INestApplication;
   let productsService: ProductsService;
+  let prismaServiceMock: Partial<PrismaService>;
 
   beforeEach(async () => {
+    prismaServiceMock = {
+      products: { findUnique: jest.fn(), findFirst: jest.fn() },
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProductsController],
       providers: [ProductsService, PrismaService, JwtService, ConfigService],
     })
+      .overrideProvider(PrismaService)
+      .useValue(prismaServiceMock)
       .overrideGuard(AuthGuard)
       .useValue({
         canActivate: jest.fn(() => true),
@@ -47,17 +54,13 @@ describe("ProductsController", () => {
       ...createProductDto,
     });
 
-    jest.spyOn(productsService, "getByName").mockResolvedValue(null);
+    prismaServiceMock.products.findFirst = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .post("/products")
       .send(createProductDto)
-      // .expect(201);
+      .expect(201);
 
-    expect(response.body).toEqual({
-      id: expect.any(Number),
-      ...createProductDto,
-    });
     expect(response.body.name).toBe("Man business shoes");
     expect(response.body.categoryId).toBe(1);
     expect(response.body.unit).toBe("1 pair");
@@ -72,12 +75,9 @@ describe("ProductsController", () => {
       description: "just text",
     };
 
-    jest.spyOn(productsService, "getByName").mockResolvedValue({
+    prismaServiceMock.products.findFirst = jest.fn().mockResolvedValue({
+      ...createProductDto,
       id: 1,
-      name: "Man business shoes",
-      categoryId: 1,
-      unit: "1 pair",
-      description: "just text",
     });
 
     const response = await request(app.getHttpServer())
@@ -128,7 +128,9 @@ describe("ProductsController", () => {
       description: "just text",
     };
 
-    jest.spyOn(productsService, "getById").mockResolvedValue(product);
+    prismaServiceMock.products.findUnique = jest
+      .fn()
+      .mockResolvedValue(product);
 
     const response = await request(app.getHttpServer())
       .get("/products/1")
@@ -142,7 +144,7 @@ describe("ProductsController", () => {
   });
 
   it("should return 404 if product not found via GET /products/:id", async () => {
-    jest.spyOn(productsService, "getById").mockResolvedValue(null);
+    prismaServiceMock.products.findUnique = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .get("/products/999")
@@ -177,8 +179,8 @@ describe("ProductsController", () => {
     jest
       .spyOn(productsService, "updateSingle")
       .mockResolvedValue(mockUpdatedProduct);
-    jest
-      .spyOn(productsService, "getById")
+    prismaServiceMock.products.findUnique = jest
+      .fn()
       .mockResolvedValue(mockExistingProduct);
 
     const response = await request(app.getHttpServer())
@@ -200,17 +202,17 @@ describe("ProductsController", () => {
         description: "just text and something added",
       },
     ];
-    jest.spyOn(productsService, "getById").mockResolvedValue(null);
+    prismaServiceMock.products.findUnique = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .put(`/products/`)
       .send(mockUpdatedProduct)
-      .expect(400);
+      .expect(404);
 
     expect(response.body).toEqual({
-      error: "Bad Request",
+      error: "Not Found",
       message: "Product with ID 1 not found",
-      statusCode: 400,
+      statusCode: 404,
     });
   });
 
@@ -225,13 +227,13 @@ describe("ProductsController", () => {
     };
 
     jest.spyOn(productsService, "delete").mockResolvedValue(mockDeletedProduct);
-    jest
-      .spyOn(productsService, "getById")
+    prismaServiceMock.products.findUnique = jest
+      .fn()
       .mockResolvedValue(mockDeletedProduct);
 
-    const response = await request(app.getHttpServer())
-      .delete(`/products/${productId}`)
-      .expect(200);
+    const response = await request(app.getHttpServer()).delete(
+      `/products/${productId}`
+    );
 
     expect(response.body).toEqual(mockDeletedProduct);
     expect(response.status).toBe(200);
@@ -240,7 +242,7 @@ describe("ProductsController", () => {
   it("should register unknown ID via DELETE /products/:id", async () => {
     const productId = 1;
 
-    jest.spyOn(productsService, "getById").mockResolvedValue(null);
+    prismaServiceMock.products.findUnique = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .delete(`/products/${productId}`)

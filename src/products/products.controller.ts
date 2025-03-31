@@ -16,7 +16,11 @@ import {
 import { CreateProductDto, ProductDto } from "./products.dto";
 import { ProductsService } from "./products.service";
 import { ObjectTransformPipe } from "../cities/cities.validation.pipe";
-import { ValidationPipe } from "./products.validation.pipe";
+import {
+  ExistenceValidationPipe,
+  UniqueExistenceValidation,
+  ValidationPipe,
+} from "./products.validation.pipe";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "../utils/auth.guard";
 
@@ -27,14 +31,14 @@ export class ProductsController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @UsePipes(ValidationPipe)
+  @UsePipes(ValidationPipe, ExistenceValidationPipe)
   @ApiOperation({ summary: "Create the new product." })
   @ApiResponse({
     status: 201,
     description: "Successfully created a product",
     type: ProductDto,
     examples: {
-      "application/json": {
+      single: {
         summary: "Product DTO",
         value: {
           id: 1,
@@ -44,13 +48,32 @@ export class ProductsController {
           description: "1 pair of leather men shoes",
         },
       },
+      multiple: {
+        summary: "Product DTO array",
+        value: [
+          {
+            id: 1,
+            name: "men shoes",
+            categoryId: 5,
+            unit: "1 pair",
+            description: "1 pair of leather men shoes",
+          },
+          {
+            id: 2,
+            name: "internet",
+            categoryId: 6,
+            unit: "monthly subscription",
+            description: "1 month internet subscription",
+          },
+        ],
+      },
     },
   })
   @ApiBody({
     description: "The data to create new product",
     type: ProductDto,
     examples: {
-      "application/json": {
+      single: {
         value: {
           name: "men shoes",
           categoryId: 5,
@@ -58,23 +81,32 @@ export class ProductsController {
           description: "1 pair of leather men shoes",
         },
       },
+      multiple: {
+        value: [
+          {
+            name: "men shoes",
+            categoryId: 5,
+            unit: "1 pair",
+            description: "1 pair of leather men shoes",
+          },
+          {
+            name: "internet",
+            categoryId: 6,
+            unit: "monthly subscription",
+            description: "1 month internet subscription",
+          },
+        ],
+      },
     },
   })
-  async create(@Body() createProductDto: CreateProductDto) {
+  async create(@Body() createProductDto: CreateProductDto | CreateProductDto[]) {
     try {
-      const product = await this.productsService.getByName(
-        createProductDto.name
-      );
-      if (product) {
-        throw new ConflictException("Product with this name already exists");
-      } else {
-        return await this.productsService.create(createProductDto);
-      }
+      return await this.productsService.create(createProductDto);
     } catch (error: any) {
       if (error instanceof ConflictException) {
         throw error;
       }
-      
+
       throw new BadRequestException(
         error.message || "An error occurred while creating the product"
       );
@@ -121,6 +153,7 @@ export class ProductsController {
   }
 
   @Get(":id")
+  @UsePipes(UniqueExistenceValidation)
   @ApiOperation({ summary: "Return product by id." })
   @ApiResponse({
     status: 200,
@@ -141,11 +174,7 @@ export class ProductsController {
   })
   async getById(@Param("id") id: string) {
     try {
-      const result = await this.productsService.getById(Number(id));
-      if (!result) {
-        throw new NotFoundException(`Product with ID ${id} not found`);
-      }
-      return result;
+      return await this.productsService.getById(Number(id));
     } catch (error: any) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -160,7 +189,7 @@ export class ProductsController {
 
   @Put()
   @UseGuards(AuthGuard)
-  @UsePipes(ObjectTransformPipe)
+  @UsePipes(ObjectTransformPipe, ExistenceValidationPipe)
   @ApiOperation({ summary: "Update products" })
   @ApiResponse({
     status: 200,
@@ -266,6 +295,7 @@ export class ProductsController {
 
   @Delete(":id")
   @UseGuards(AuthGuard)
+  @UsePipes(UniqueExistenceValidation)
   @ApiOperation({ summary: "Delete product by id." })
   @ApiResponse({
     status: 200,

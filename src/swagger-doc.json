@@ -398,10 +398,20 @@
                 "$ref": "#/components/schemas/CreateYearDto"
               },
               "examples": {
-                "application/json": {
+                "single": {
                   "value": {
                     "year": 2020
                   }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "year": 2020
+                    },
+                    {
+                      "year": 2021
+                    }
+                  ]
                 }
               }
             }
@@ -416,12 +426,25 @@
                   "$ref": "#/components/schemas/YearDto"
                 },
                 "examples": {
-                  "application/json": {
+                  "single": {
                     "summary": "Year DTO",
                     "value": {
                       "id": 1,
                       "year": 2020
                     }
+                  },
+                  "multiple": {
+                    "summary": "Year DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "year": 2020
+                      },
+                      {
+                        "id": 2,
+                        "year": 2021
+                      }
+                    ]
                   }
                 }
               }
@@ -525,13 +548,29 @@
                 "$ref": "#/components/schemas/ProductDto"
               },
               "examples": {
-                "application/json": {
+                "single": {
                   "value": {
                     "name": "men shoes",
                     "categoryId": 5,
                     "unit": "1 pair",
                     "description": "1 pair of leather men shoes"
                   }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "name": "men shoes",
+                      "categoryId": 5,
+                      "unit": "1 pair",
+                      "description": "1 pair of leather men shoes"
+                    },
+                    {
+                      "name": "internet",
+                      "categoryId": 6,
+                      "unit": "monthly subscription",
+                      "description": "1 month internet subscription"
+                    }
+                  ]
                 }
               }
             }
@@ -546,7 +585,7 @@
                   "$ref": "#/components/schemas/ProductDto"
                 },
                 "examples": {
-                  "application/json": {
+                  "single": {
                     "summary": "Product DTO",
                     "value": {
                       "id": 1,
@@ -555,6 +594,25 @@
                       "unit": "1 pair",
                       "description": "1 pair of leather men shoes"
                     }
+                  },
+                  "multiple": {
+                    "summary": "Product DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "men shoes",
+                        "categoryId": 5,
+                        "unit": "1 pair",
+                        "description": "1 pair of leather men shoes"
+                      },
+                      {
+                        "id": 2,
+                        "name": "internet",
+                        "categoryId": 6,
+                        "unit": "monthly subscription",
+                        "description": "1 month internet subscription"
+                      }
+                    ]
                   }
                 }
               }
