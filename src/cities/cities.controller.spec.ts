@@ -18,8 +18,6 @@ describe("CitiesController", () => {
   beforeEach(async () => {
     prismaServiceMock = {
       cities: { findUnique: jest.fn(), findFirst: jest.fn() },
-      products: { findUnique: jest.fn(), findFirst: jest.fn() },
-      years: { findUnique: jest.fn(), findFirst: jest.fn() },
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -209,7 +207,6 @@ describe("CitiesController", () => {
       .mockResolvedValue({ id: cityId });
 
     jest.spyOn(citiesService, "delete").mockResolvedValue(mockDeletedCity);
-    jest.spyOn(citiesService, "getById").mockResolvedValue(mockDeletedCity);
 
     const response = await request(app.getHttpServer())
       .delete(`/cities/${cityId}`)

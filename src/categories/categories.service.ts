@@ -6,26 +6,43 @@ import { CategoryDto, CreateCategoryDto } from "./categories.dto";
 export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(CreateCategoryDto: CreateCategoryDto) {
-    const { name } = CreateCategoryDto;
+  async create(createCategoryDto: CreateCategoryDto | CreateCategoryDto[]) {
+    if (Array.isArray(createCategoryDto)) {
+      try {
+        return await this.prisma.categories.createMany({
+          data: createCategoryDto.map((item) => ({
+            name: item.name,
+          })),
+        });
+      } catch (error: any) {
+        throw new BadRequestException(
+          error.message ||
+            "An error occurred while creating the category in the database"
+        );
+      }
+    } else {
+      const { name } = createCategoryDto;
 
-    try {
-      return await this.prisma.categories.create({
-        data: {
-          name,
-        },
-      });
-    } catch (error: any) {
-      throw new BadRequestException(
-        error.message ||
-          "An error occurred while creating the category in the database"
-      );
+      try {
+        return await this.prisma.categories.create({
+          data: {
+            name,
+          },
+        });
+      } catch (error: any) {
+        throw new BadRequestException(
+          error.message ||
+            "An error occurred while creating the category in the database"
+        );
+      }
     }
   }
 
   async getAll() {
     try {
-      return await this.prisma.categories.findMany({ orderBy: [{ id: "asc" }] });
+      return await this.prisma.categories.findMany({
+        orderBy: [{ id: "asc" }],
+      });
     } catch (error: any) {
       throw new BadRequestException(
         error.message ||
@@ -103,9 +120,9 @@ export class CategoriesService {
     try {
       return await this.prisma.categories.delete({
         where: {
-          id: id
-        }
-      })
+          id: id,
+        },
+      });
     } catch (error: any) {
       throw new BadRequestException(
         error.message || "An error occurred while deleting category by id."
