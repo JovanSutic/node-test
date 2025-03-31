@@ -29,7 +29,7 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @UsePipes(ValidationPipe, ExistenceValidationPipe)
   @ApiOperation({ summary: "Create the new category." })
   @ApiResponse({
@@ -161,7 +161,7 @@ export class CategoriesController {
   }
 
   @Put()
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @UsePipes(ExistenceValidationPipe)
   @ApiOperation({ summary: "Update categories" })
   @ApiResponse({
@@ -242,7 +242,7 @@ export class CategoriesController {
   }
 
   @Delete(":id")
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @UsePipes(UniqueExistenceValidation)
   @ApiOperation({ summary: "Delete category by id." })
   @ApiResponse({

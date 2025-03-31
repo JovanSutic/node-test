@@ -13,12 +13,19 @@ import { AuthGuard } from "../utils/auth.guard";
 describe("YearsController", () => {
   let app: INestApplication;
   let yearsService: YearsService;
+  let prismaServiceMock: Partial<PrismaService>;
 
   beforeEach(async () => {
+    prismaServiceMock = {
+      years: { findUnique: jest.fn(), findFirst: jest.fn() },
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [YearsService, PrismaService, JwtService, ConfigService],
       controllers: [YearsController],
     })
+      .overrideProvider(PrismaService)
+      .useValue(prismaServiceMock)
       .overrideGuard(AuthGuard)
       .useValue({
         canActivate: jest.fn(() => true),
@@ -42,7 +49,7 @@ describe("YearsController", () => {
       ...createYearDto,
     });
 
-    jest.spyOn(yearsService, "getByYear").mockResolvedValue(null);
+    prismaServiceMock.years.findFirst = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .post("/years")
@@ -56,8 +63,8 @@ describe("YearsController", () => {
   it("should not create duplicate year via POST /years", async () => {
     const createYearDto = { year: 2012 };
 
-    jest
-      .spyOn(yearsService, "getByYear")
+    prismaServiceMock.years.findFirst = jest
+      .fn()
       .mockResolvedValue({ id: 1, year: 2012 });
 
     const response = await request(app.getHttpServer())
@@ -90,7 +97,7 @@ describe("YearsController", () => {
   it("should return a year by ID via GET /years/:id", async () => {
     const year = { id: 1, year: 2012 };
 
-    jest.spyOn(yearsService, "getById").mockResolvedValue(year);
+    prismaServiceMock.years.findUnique = jest.fn().mockResolvedValue(year);
 
     const response = await request(app.getHttpServer())
       .get("/years/1")
@@ -101,7 +108,7 @@ describe("YearsController", () => {
   });
 
   it("should return 404 if year not found via GET /years/:id", async () => {
-    jest.spyOn(yearsService, "getById").mockResolvedValue(null);
+    prismaServiceMock.years.findUnique = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .get("/years/999")
