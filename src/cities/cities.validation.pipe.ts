@@ -81,30 +81,34 @@ const checkCityExistence = async (
   city: CityDto | CreateCityDto,
   prisma: PrismaService
 ) => {
-  let item = undefined;
-  if ("id" in city) {
-    item = await prisma.cities.findUnique({
-      where: { id: Number(city.id) },
-    });
-  } else {
-    item = await prisma.cities.findFirst({
-      where: {
-        name: city.name,
-        country: city.country,
-      },
-    });
-  }
+  try {
+    let item = undefined;
+    if ("id" in city) {
+      item = await prisma.cities.findUnique({
+        where: { id: Number(city.id) },
+      });
+    } else {
+      item = await prisma.cities.findFirst({
+        where: {
+          name: city.name,
+          country: city.country,
+        },
+      });
+    }
 
-  if ("id" in city) {
-    if (!item) {
-      throw new NotFoundException(`City with ID ${city.id} not found`);
+    if ("id" in city) {
+      if (!item) {
+        throw new NotFoundException(`City with ID ${city.id} not found`);
+      }
+    } else {
+      if (item) {
+        throw new ConflictException(
+          "City with this name and country already exists"
+        );
+      }
     }
-  } else {
-    if (item) {
-      throw new ConflictException(
-        "City with this name and country already exists"
-      );
-    }
+  } catch (error) {
+    throw error;
   }
 };
 

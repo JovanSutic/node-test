@@ -802,10 +802,20 @@
                 "$ref": "#/components/schemas/CreateCategoryDto"
               },
               "examples": {
-                "application/json": {
+                "single": {
                   "value": {
                     "name": "Markets"
                   }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "name": "Markets"
+                    },
+                    {
+                      "name": "Restaurants"
+                    }
+                  ]
                 }
               }
             }
@@ -820,12 +830,25 @@
                   "$ref": "#/components/schemas/CategoryDto"
                 },
                 "examples": {
-                  "application/json": {
-                    "summary": "category DTO",
+                  "single": {
+                    "summary": "Category DTO",
                     "value": {
                       "id": 1,
                       "name": "Markets"
                     }
+                  },
+                  "multiple": {
+                    "summary": "Category DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Markets"
+                      },
+                      {
+                        "id": 2,
+                        "name": "Restaurants"
+                      }
+                    ]
                   }
                 }
               }
@@ -853,7 +876,7 @@
                 },
                 "examples": {
                   "application/json": {
-                    "summary": "category DTO array",
+                    "summary": "Category DTO array",
                     "value": [
                       {
                         "id": 1,
@@ -975,7 +998,7 @@
                 },
                 "examples": {
                   "application/json": {
-                    "summary": "category DTO",
+                    "summary": "Category DTO",
                     "value": {
                       "id": 1,
                       "name": "Markets"
