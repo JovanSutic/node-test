@@ -6,19 +6,34 @@ import type { CreateYearDto } from "./years.dto";
 export class YearsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createYearDto: CreateYearDto) {
-    const { year } = createYearDto;
-    try {
-      return await this.prisma.years.create({
-        data: {
-          year,
-        },
-      });
-    } catch (error: any) {
-      throw new BadRequestException(
-        error.message ||
-          "An error occurred while creating the city in the database"
-      );
+  async create(createYearDto: CreateYearDto | CreateYearDto[]) {
+    if (Array.isArray(createYearDto)) {
+      try {
+        return await this.prisma.years.createMany({
+          data: createYearDto.map((item) => ({
+            year: item.year,
+          })),
+        });
+      } catch (error: any) {
+        throw new BadRequestException(
+          error.message ||
+            "An error occurred while creating the city in the database"
+        );
+      }
+    } else {
+      const { year } = createYearDto;
+      try {
+        return await this.prisma.years.create({
+          data: {
+            year,
+          },
+        });
+      } catch (error: any) {
+        throw new BadRequestException(
+          error.message ||
+            "An error occurred while creating the city in the database"
+        );
+      }
     }
   }
 

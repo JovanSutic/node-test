@@ -43,118 +43,118 @@ describe("PricesController", () => {
     await app.close();
   });
 
-  // it("should create a new price via POST /prices", async () => {
-  //   const createPriceDto = {
-  //     price: 300,
-  //     currency: "EUR",
-  //     cityId: 1,
-  //     productId: 1,
-  //     yearId: 1,
-  //     priceType: "HISTORICAL",
-  //   };
+  it("should create a new price via POST /prices", async () => {
+    const createPriceDto = {
+      price: 300,
+      currency: "EUR",
+      cityId: 1,
+      productId: 1,
+      yearId: 1,
+      priceType: "HISTORICAL",
+    };
 
-  //   prismaServiceMock.cities.findUnique = jest
-  //     .fn()
-  //     .mockResolvedValue({ id: 1 });
-  //   prismaServiceMock.products.findUnique = jest
-  //     .fn()
-  //     .mockResolvedValue({ id: 1 });
-  //   prismaServiceMock.years.findUnique = jest.fn().mockResolvedValue({ id: 1 });
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue({ id: 1 });
+    prismaServiceMock.products.findUnique = jest
+      .fn()
+      .mockResolvedValue({ id: 1 });
+    prismaServiceMock.years.findUnique = jest.fn().mockResolvedValue({ id: 1 });
 
-  //   jest.spyOn(pricesService, "create").mockResolvedValue({
-  //     id: 1,
-  //     ...createPriceDto,
-  //   });
+    jest.spyOn(pricesService, "create").mockResolvedValue({
+      id: 1,
+      ...createPriceDto,
+    });
 
-  //   const response = await request(app.getHttpServer())
-  //     .post("/prices")
-  //     .send(createPriceDto)
-  //     .expect(201);
+    const response = await request(app.getHttpServer())
+      .post("/prices")
+      .send(createPriceDto)
+      .expect(201);
 
-  //   expect(response.body.price).toBe(300);
-  //   expect(response.body.currency).toBe("EUR");
-  //   expect(response.body.cityId).toBe(1);
-  //   expect(response.body.productId).toBe(1);
-  //   expect(response.body.yearId).toBe(1);
-  //   expect(response.body.priceType).toBe("HISTORICAL");
-  // });
+    expect(response.body.price).toBe(300);
+    expect(response.body.currency).toBe("EUR");
+    expect(response.body.cityId).toBe(1);
+    expect(response.body.productId).toBe(1);
+    expect(response.body.yearId).toBe(1);
+    expect(response.body.priceType).toBe("HISTORICAL");
+  });
 
-  // it("should return an array of prices via GET /prices", async () => {
-  //   const mockCities: PriceDto[] = [
-  //     {
-  //       id: 1,
-  //       price: 300,
-  //       currency: "EUR",
-  //       cityId: 1,
-  //       productId: 1,
-  //       yearId: 1,
-  //       priceType: "HISTORICAL",
-  //       createdAt: "2025-03-26T19:50:30.809Z",
-  //       updatedAt: "2025-03-26T19:50:30.809Z",
-  //     },
-  //     {
-  //       id: 2,
-  //       price: 200,
-  //       currency: "EUR",
-  //       cityId: 1,
-  //       productId: 1,
-  //       yearId: 1,
-  //       priceType: "HISTORICAL",
-  //       createdAt: "2025-03-26T19:50:30.809Z",
-  //       updatedAt: "2025-03-26T19:50:30.809Z",
-  //     },
-  //   ];
-  //   jest.spyOn(pricesService, "getAll").mockResolvedValue(mockCities);
+  it("should return an array of prices via GET /prices", async () => {
+    const mockCities: PriceDto[] = [
+      {
+        id: 1,
+        price: 300,
+        currency: "EUR",
+        cityId: 1,
+        productId: 1,
+        yearId: 1,
+        priceType: "HISTORICAL",
+        createdAt: "2025-03-26T19:50:30.809Z",
+        updatedAt: "2025-03-26T19:50:30.809Z",
+      },
+      {
+        id: 2,
+        price: 200,
+        currency: "EUR",
+        cityId: 1,
+        productId: 1,
+        yearId: 1,
+        priceType: "HISTORICAL",
+        createdAt: "2025-03-26T19:50:30.809Z",
+        updatedAt: "2025-03-26T19:50:30.809Z",
+      },
+    ];
+    jest.spyOn(pricesService, "getAll").mockResolvedValue(mockCities);
 
-  //   const response = await request(app.getHttpServer())
-  //     .get("/prices")
-  //     .expect(200);
+    const response = await request(app.getHttpServer())
+      .get("/prices")
+      .expect(200);
 
-  //   expect(response.body).toEqual(mockCities);
-  //   expect(response.status).toBe(200);
-  // });
+    expect(response.body).toEqual(mockCities);
+    expect(response.status).toBe(200);
+  });
 
-  // it("should return a price by ID via GET /prices/:id", async () => {
-  //   const price = {
-  //     id: 1,
-  //     price: 300,
-  //     currency: "EUR",
-  //     cityId: 1,
-  //     productId: 1,
-  //     yearId: 1,
-  //     priceType: "HISTORICAL",
-  //     createdAt: "2025-03-26T19:50:30.809Z",
-  //     updatedAt: "2025-03-26T19:50:30.809Z",
-  //   };
+  it("should return a price by ID via GET /prices/:id", async () => {
+    const price = {
+      id: 1,
+      price: 300,
+      currency: "EUR",
+      cityId: 1,
+      productId: 1,
+      yearId: 1,
+      priceType: "HISTORICAL",
+      createdAt: "2025-03-26T19:50:30.809Z",
+      updatedAt: "2025-03-26T19:50:30.809Z",
+    };
 
-  //   jest.spyOn(pricesService, "getById").mockResolvedValue(price);
+    jest.spyOn(pricesService, "getById").mockResolvedValue(price);
 
-  //   const response = await request(app.getHttpServer())
-  //     .get("/prices/1")
-  //     .expect(200);
+    const response = await request(app.getHttpServer())
+      .get("/prices/1")
+      .expect(200);
 
-  //   expect(response.body).toEqual(price);
-  //   expect(response.body.price).toBe(300);
-  //   expect(response.body.currency).toBe("EUR");
-  //   expect(response.body.cityId).toBe(1);
-  //   expect(response.body.productId).toBe(1);
-  //   expect(response.body.yearId).toBe(1);
-  //   expect(response.body.priceType).toBe("HISTORICAL");
-  // });
+    expect(response.body).toEqual(price);
+    expect(response.body.price).toBe(300);
+    expect(response.body.currency).toBe("EUR");
+    expect(response.body.cityId).toBe(1);
+    expect(response.body.productId).toBe(1);
+    expect(response.body.yearId).toBe(1);
+    expect(response.body.priceType).toBe("HISTORICAL");
+  });
 
-  // it("should return 404 if price not found via GET /prices/:id", async () => {
-  //   jest.spyOn(pricesService, "getById").mockResolvedValue(null);
+  it("should return 404 if price not found via GET /prices/:id", async () => {
+    jest.spyOn(pricesService, "getById").mockResolvedValue(null);
 
-  //   const response = await request(app.getHttpServer())
-  //     .get("/prices/999")
-  //     .expect(404);
+    const response = await request(app.getHttpServer())
+      .get("/prices/999")
+      .expect(404);
 
-  //   expect(response.body).toEqual({
-  //     message: "Price with ID 999 not found",
-  //     error: "Not Found",
-  //     statusCode: 404,
-  //   });
-  // });
+    expect(response.body).toEqual({
+      message: "Price with ID 999 not found",
+      error: "Not Found",
+      statusCode: 404,
+    });
+  });
 
   it("should update a price via PUT object /prices/", async () => {
     const priceId = 1;

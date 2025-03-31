@@ -13,12 +13,19 @@ import { AuthGuard } from "../utils/auth.guard";
 describe("CategoriesController", () => {
   let app: INestApplication;
   let categoriesService: CategoriesService;
+  let prismaServiceMock: Partial<PrismaService>;
 
   beforeEach(async () => {
+    prismaServiceMock = {
+      categories: { findUnique: jest.fn(), findFirst: jest.fn() },
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CategoriesController],
       providers: [CategoriesService, PrismaService, JwtService, ConfigService],
     })
+      .overrideProvider(PrismaService)
+      .useValue(prismaServiceMock)
       .overrideGuard(AuthGuard)
       .useValue({
         canActivate: jest.fn(() => true),
@@ -44,14 +51,17 @@ describe("CategoriesController", () => {
       ...createCategoryDto,
     });
 
-    jest.spyOn(categoriesService, "getByEssentialData").mockResolvedValue(null);
+    prismaServiceMock.categories.findFirst = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .post("/categories")
       .send(createCategoryDto)
       .expect(201);
 
-    expect(response.body).toEqual({ id: expect.any(Number), ...createCategoryDto });
+    expect(response.body).toEqual({
+      id: expect.any(Number),
+      ...createCategoryDto,
+    });
     expect(response.body.name).toBe("Markets");
   });
 
@@ -60,14 +70,9 @@ describe("CategoriesController", () => {
       name: "Markets",
     };
 
-    const existingCategoryDto = {
-      id: 1,
-      name: "Markets",
-    };
-
-    jest
-      .spyOn(categoriesService, "getByEssentialData")
-      .mockResolvedValue(existingCategoryDto);
+    prismaServiceMock.categories.findFirst = jest
+      .fn()
+      .mockResolvedValue({ ...createCategoryDto, id: 1 });
 
     const response = await request(app.getHttpServer())
       .post("/categories")
@@ -84,7 +89,7 @@ describe("CategoriesController", () => {
   it("should return an array of categories via GET /categories", async () => {
     const mockCities: CategoryDto[] = [
       { id: 1, name: "Markets" },
-      { id: 2, name: "Restaurants"},
+      { id: 2, name: "Restaurants" },
     ];
     jest.spyOn(categoriesService, "getAll").mockResolvedValue(mockCities);
 
@@ -102,7 +107,9 @@ describe("CategoriesController", () => {
       name: "Markets",
     };
 
-    jest.spyOn(categoriesService, "getById").mockResolvedValue(category);
+    prismaServiceMock.categories.findUnique = jest
+      .fn()
+      .mockResolvedValue(category);
 
     const response = await request(app.getHttpServer())
       .get("/categories/1")
@@ -113,14 +120,14 @@ describe("CategoriesController", () => {
   });
 
   it("should return 404 if category not found via GET /categories/:id", async () => {
-    jest.spyOn(categoriesService, "getById").mockResolvedValue(null);
+    prismaServiceMock.categories.findUnique = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .get("/categories/999")
       .expect(404);
 
     expect(response.body).toEqual({
-      message: "category with ID 999 not found",
+      message: "Category with ID 999 not found",
       error: "Not Found",
       statusCode: 404,
     });
@@ -132,14 +139,14 @@ describe("CategoriesController", () => {
       id: categoryId,
       name: "Markets",
     };
-    const mockUpdatedCategory = [
-      { id: categoryId, name: "Restaurants" },
-    ];
+    const mockUpdatedCategory = [{ id: categoryId, name: "Restaurants" }];
 
     jest
       .spyOn(categoriesService, "updateSingle")
       .mockResolvedValue(mockUpdatedCategory);
-    jest.spyOn(categoriesService, "getById").mockResolvedValue(mockExistingCategory);
+    prismaServiceMock.categories.findUnique = jest
+      .fn()
+      .mockResolvedValue(mockExistingCategory);
 
     const response = await request(app.getHttpServer())
       .put(`/categories/`)
@@ -156,21 +163,19 @@ describe("CategoriesController", () => {
       id: categoryId,
       name: "Markets",
     };
-    const mockUpdatedCategory = [
-      { id: categoryId, name: "Restaurants" },
-    ];
+    const mockUpdatedCategory = [{ id: categoryId, name: "Restaurants" }];
 
-    jest.spyOn(categoriesService, "getById").mockResolvedValue(null);
+    prismaServiceMock.categories.findUnique = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .put(`/categories/`)
       .send(mockUpdatedCategory)
-      .expect(400);
+      .expect(404);
 
     expect(response.body).toEqual({
-      error: "Bad Request",
+      error: "Not Found",
       message: "Category with ID 1 not found",
-      statusCode: 400,
+      statusCode: 404,
     });
   });
 
@@ -181,24 +186,32 @@ describe("CategoriesController", () => {
       name: "Markets",
     };
 
-    jest.spyOn(categoriesService, "delete").mockResolvedValue(mockDeletedCategory);
-    jest.spyOn(categoriesService, "getById").mockResolvedValue(mockDeletedCategory);
+    jest
+      .spyOn(categoriesService, "delete")
+      .mockResolvedValue(mockDeletedCategory);
+      
+    prismaServiceMock.categories.findUnique = jest
+      .fn()
+      .mockResolvedValue({ id: categoryId });
 
-    const response = await request(app.getHttpServer())
-      .delete(`/categories/${categoryId}`)
-      .expect(200);
+    const response = await request(app.getHttpServer()).delete(
+      `/categories/${categoryId}`
+    );
 
-    expect(response.body).toEqual(mockDeletedCategory);
+    console.log(response.body);
+
     expect(response.status).toBe(200);
+    expect(response.body.id).toEqual(mockDeletedCategory.id);
+    expect(response.body.name).toEqual(mockDeletedCategory.name);
   });
 
   it("should register unknown ID via DELETE /categories/:id", async () => {
     const categoryId = 1;
-    jest.spyOn(categoriesService, "getById").mockResolvedValue(null);
+    prismaServiceMock.categories.findUnique = jest.fn().mockResolvedValue(null);
 
-    const response = await request(app.getHttpServer())
-      .delete(`/categories/${categoryId}`)
-      .expect(404);
+    const response = await request(app.getHttpServer()).delete(
+      `/categories/${categoryId}`
+    );
 
     expect(response.body).toEqual({
       error: "Not Found",

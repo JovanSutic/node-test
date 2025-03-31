@@ -6,22 +6,39 @@ import { CityDto, CreateCityDto } from "./cities.dto";
 export class CitiesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createCityDto: CreateCityDto) {
-    const { name, country, numbeo_id } = createCityDto;
+  async create(createCityDto: CreateCityDto | CreateCityDto[]) {
+    if (Array.isArray(createCityDto)) {
+      try {
+        return await this.prisma.cities.createMany({
+          data: createCityDto.map((city) => ({
+            name: city.name,
+            country: city.country,
+            numbeo_id: city.numbeo_id,
+          })),
+        });
+      } catch (error: any) {
+        throw new BadRequestException(
+          error.message ||
+            "An error occurred while creating the cities in the database"
+        );
+      }
+    } else {
+      const { name, country, numbeo_id } = createCityDto;
 
-    try {
-      return await this.prisma.cities.create({
-        data: {
-          name,
-          country,
-          numbeo_id
-        },
-      });
-    } catch (error: any) {
-      throw new BadRequestException(
-        error.message ||
-          "An error occurred while creating the city in the database"
-      );
+      try {
+        return await this.prisma.cities.create({
+          data: {
+            name,
+            country,
+            numbeo_id,
+          },
+        });
+      } catch (error: any) {
+        throw new BadRequestException(
+          error.message ||
+            "An error occurred while creating the city in the database"
+        );
+      }
     }
   }
 
@@ -108,9 +125,9 @@ export class CitiesService {
     try {
       return await this.prisma.cities.delete({
         where: {
-          id: id
-        }
-      })
+          id: id,
+        },
+      });
     } catch (error: any) {
       throw new BadRequestException(
         error.message || "An error occurred while deleting city by id."

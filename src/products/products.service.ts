@@ -6,23 +6,41 @@ import { ProductDto, CreateProductDto } from "./products.dto";
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createCityDto: CreateProductDto) {
-    const { name, categoryId, unit, description } = createCityDto;
+  async create(createCityDto: CreateProductDto | CreateProductDto[]) {
+    if (Array.isArray(createCityDto)) {
+      try {
+        return await this.prisma.products.createMany({
+          data: createCityDto.map((item) => ({
+            name: item.name,
+            unit: item.unit,
+            categoryId: item.categoryId,
+            description: item.description || "",
+          })),
+        });
+      } catch (error: any) {
+        throw new BadRequestException(
+          error.message ||
+            "An error occurred while creating the product in the database"
+        );
+      }
+    } else {
+      const { name, categoryId, unit, description } = createCityDto;
 
-    try {
-      return await this.prisma.products.create({
-        data: {
-          name,
-          unit,
-          categoryId,
-          description: description || ""
-        },
-      });
-    } catch (error: any) {
-      throw new BadRequestException(
-        error.message ||
-          "An error occurred while creating the product in the database"
-      );
+      try {
+        return await this.prisma.products.create({
+          data: {
+            name,
+            unit,
+            categoryId,
+            description: description || "",
+          },
+        });
+      } catch (error: any) {
+        throw new BadRequestException(
+          error.message ||
+            "An error occurred while creating the product in the database"
+        );
+      }
     }
   }
 
@@ -75,7 +93,7 @@ export class ProductsService {
               name: item.name,
               unit: item.unit,
               categoryId: item.categoryId,
-              description: item.description
+              description: item.description,
             },
           })
         )
@@ -97,7 +115,7 @@ export class ProductsService {
           name: data.name,
           unit: data.unit,
           categoryId: data.categoryId,
-          description: data.description
+          description: data.description,
         },
       });
     } catch (error: any) {
