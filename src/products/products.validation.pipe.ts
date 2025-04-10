@@ -64,6 +64,7 @@ const checkProductExistence = async (
       item = await prisma.products.findFirst({
         where: {
           name: product.name,
+          categoryId: product.categoryId,
         },
       });
     }
