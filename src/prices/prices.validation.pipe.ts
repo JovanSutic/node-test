@@ -50,7 +50,7 @@ export class ForeignKeyValidationPipe implements PipeTransform {
 
 const checkPrice = (priceDto: CreatePriceDto) => {
   const { price, currency, priceType } = priceDto;
-  if (!Number.isInteger(price) || price < 0.01) {
+  if (typeof price !== 'number' || isNaN(price) || price < 0.01) {
     throw new BadRequestException("Price must be a positive integer");
   }
 
