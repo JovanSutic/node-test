@@ -45,7 +45,7 @@ describe("PricesController", () => {
 
   it("should create a new price via POST /prices", async () => {
     const createPriceDto = {
-      price: 300,
+      price: 0.52,
       currency: "EUR",
       cityId: 1,
       productId: 1,
@@ -69,9 +69,10 @@ describe("PricesController", () => {
     const response = await request(app.getHttpServer())
       .post("/prices")
       .send(createPriceDto)
-      .expect(201);
+      .expect(201)
 
-    expect(response.body.price).toBe(300);
+   
+    expect(response.body.price).toBe(0.52);
     expect(response.body.currency).toBe("EUR");
     expect(response.body.cityId).toBe(1);
     expect(response.body.productId).toBe(1);
