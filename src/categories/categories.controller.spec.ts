@@ -198,8 +198,6 @@ describe("CategoriesController", () => {
       `/categories/${categoryId}`
     );
 
-    console.log(response.body);
-
     expect(response.status).toBe(200);
     expect(response.body.id).toEqual(mockDeletedCategory.id);
     expect(response.body.name).toEqual(mockDeletedCategory.name);
