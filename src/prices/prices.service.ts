@@ -6,29 +6,51 @@ import { PriceDto, CreatePriceDto } from "./prices.dto";
 export class PricesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(CreatePriceDto: CreatePriceDto) {
+  async create(createPriceDto: CreatePriceDto | CreatePriceDto[]) {
     const today = new Date();
-    const { price, currency, cityId, productId, yearId, priceType } =
-      CreatePriceDto;
+    if (Array.isArray(createPriceDto)) {
+      try {
+        return await this.prisma.prices.createMany({
+          data: createPriceDto.map((item) => ({
+            price: item.price,
+            currency: item.currency,
+            cityId: item.cityId,
+            productId: item.productId,
+            yearId: item.yearId,
+            priceType: item.priceType,
+            createdAt: today,
+            updatedAt: today,
+          })),
+        });
+      } catch (error: any) {
+        throw new BadRequestException(
+          error.message ||
+            "An error occurred while creating the category in the database"
+        );
+      }
+    } else {
+      const { price, currency, cityId, productId, yearId, priceType } =
+        createPriceDto;
 
-    try {
-      return await this.prisma.prices.create({
-        data: {
-          price,
-          currency,
-          cityId,
-          productId,
-          yearId,
-          priceType,
-          createdAt: today,
-          updatedAt: today,
-        },
-      });
-    } catch (error: any) {
-      throw new BadRequestException(
-        error.message ||
-          "An error occurred while creating the price in the database"
-      );
+      try {
+        return await this.prisma.prices.create({
+          data: {
+            price,
+            currency,
+            cityId,
+            productId,
+            yearId,
+            priceType,
+            createdAt: today,
+            updatedAt: today,
+          },
+        });
+      } catch (error: any) {
+        throw new BadRequestException(
+          error.message ||
+            "An error occurred while creating the price in the database"
+        );
+      }
     }
   }
 

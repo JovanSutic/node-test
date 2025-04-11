@@ -1124,7 +1124,7 @@
                 "$ref": "#/components/schemas/CreatePriceDto"
               },
               "examples": {
-                "application/json": {
+                "single": {
                   "value": {
                     "price": 300,
                     "currency": "EUR",
@@ -1133,6 +1133,26 @@
                     "yearId": 1,
                     "priceType": "HISTORICAL"
                   }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "price": 300,
+                      "currency": "EUR",
+                      "cityId": 1,
+                      "productId": 1,
+                      "yearId": 1,
+                      "priceType": "HISTORICAL"
+                    },
+                    {
+                      "price": 200,
+                      "currency": "EUR",
+                      "cityId": 1,
+                      "productId": 1,
+                      "yearId": 1,
+                      "priceType": "HISTORICAL"
+                    }
+                  ]
                 }
               }
             }
@@ -1147,7 +1167,7 @@
                   "$ref": "#/components/schemas/PriceDto"
                 },
                 "examples": {
-                  "application/json": {
+                  "single": {
                     "summary": "Price DTO",
                     "value": {
                       "id": 1,
@@ -1159,6 +1179,12 @@
                       "priceType": "HISTORICAL",
                       "createdAt": "2025-03-26T19:50:30.809Z",
                       "updatedAt": "2025-03-26T19:50:30.809Z"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Count",
+                    "value": {
+                      "count": 100
                     }
                   }
                 }
