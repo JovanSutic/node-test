@@ -20,6 +20,7 @@ describe("PricesController", () => {
       cities: { findUnique: jest.fn() },
       products: { findUnique: jest.fn() },
       years: { findUnique: jest.fn() },
+      prices: { findUnique: jest.fn(), findFirst: jest.fn() },
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -61,6 +62,8 @@ describe("PricesController", () => {
       .mockResolvedValue({ id: 1 });
     prismaServiceMock.years.findUnique = jest.fn().mockResolvedValue({ id: 1 });
 
+    prismaServiceMock.prices.findFirst = jest.fn().mockResolvedValue(null);
+
     jest.spyOn(pricesService, "create").mockResolvedValue({
       id: 1,
       ...createPriceDto,
@@ -69,15 +72,53 @@ describe("PricesController", () => {
     const response = await request(app.getHttpServer())
       .post("/prices")
       .send(createPriceDto)
-      .expect(201)
+      .expect(201);
 
-   
     expect(response.body.price).toBe(0.52);
     expect(response.body.currency).toBe("EUR");
     expect(response.body.cityId).toBe(1);
     expect(response.body.productId).toBe(1);
     expect(response.body.yearId).toBe(1);
     expect(response.body.priceType).toBe("HISTORICAL");
+  });
+
+  it("should not create duplicates via POST /prices", async () => {
+    const createPriceDto = {
+      price: 0.52,
+      currency: "EUR",
+      cityId: 1,
+      productId: 1,
+      yearId: 1,
+      priceType: "HISTORICAL",
+    };
+
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue({ id: 1 });
+    prismaServiceMock.products.findUnique = jest
+      .fn()
+      .mockResolvedValue({ id: 1 });
+    prismaServiceMock.years.findUnique = jest.fn().mockResolvedValue({ id: 1 });
+
+    prismaServiceMock.prices.findFirst = jest.fn().mockResolvedValue({
+      id: 1,
+      price: 0.52,
+      currency: "EUR",
+      cityId: 1,
+      productId: 1,
+      yearId: 1,
+      priceType: "HISTORICAL",
+    });
+
+    const response = await request(app.getHttpServer())
+      .post("/prices")
+      .send(createPriceDto);
+
+    expect(response.body).toEqual({
+      error: "Conflict",
+      message: "Price with this name already exists",
+      statusCode: 409,
+    });
   });
 
   it("should return an array of prices via GET /prices", async () => {
@@ -128,6 +169,8 @@ describe("PricesController", () => {
       updatedAt: "2025-03-26T19:50:30.809Z",
     };
 
+    prismaServiceMock.prices.findUnique = jest.fn().mockResolvedValue(price);
+
     jest.spyOn(pricesService, "getById").mockResolvedValue(price);
 
     const response = await request(app.getHttpServer())
@@ -144,6 +187,7 @@ describe("PricesController", () => {
   });
 
   it("should return 404 if price not found via GET /prices/:id", async () => {
+    prismaServiceMock.prices.findUnique = jest.fn().mockResolvedValue(null);
     jest.spyOn(pricesService, "getById").mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
@@ -190,10 +234,13 @@ describe("PricesController", () => {
       .mockResolvedValue({ id: 1 });
     prismaServiceMock.years.findUnique = jest.fn().mockResolvedValue({ id: 1 });
 
+    prismaServiceMock.prices.findUnique = jest
+      .fn()
+      .mockResolvedValue(mockExistingPrice);
+
     jest
       .spyOn(pricesService, "updateSingle")
       .mockResolvedValue(mockUpdatedPrice);
-    jest.spyOn(pricesService, "getById").mockResolvedValue(mockExistingPrice);
 
     const response = await request(app.getHttpServer())
       .put(`/prices/`)
@@ -236,17 +283,17 @@ describe("PricesController", () => {
       .mockResolvedValue({ id: 1 });
     prismaServiceMock.years.findUnique = jest.fn().mockResolvedValue({ id: 1 });
 
-    jest.spyOn(pricesService, "getById").mockResolvedValue(null);
+    prismaServiceMock.prices.findUnique = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .put(`/prices/`)
       .send(mockUpdatedPrice)
-      .expect(400);
+      .expect(404);
 
     expect(response.body).toEqual({
-      error: "Bad Request",
+      error: "Not Found",
       message: "Price with ID 1 not found",
-      statusCode: 400,
+      statusCode: 404,
     });
   });
 
@@ -264,8 +311,8 @@ describe("PricesController", () => {
       updatedAt: "2025-03-26T19:50:30.809Z",
     };
 
+    prismaServiceMock.prices.findUnique = jest.fn().mockResolvedValue(mockDeletedCity);
     jest.spyOn(pricesService, "delete").mockResolvedValue(mockDeletedCity);
-    jest.spyOn(pricesService, "getById").mockResolvedValue(mockDeletedCity);
 
     const response = await request(app.getHttpServer())
       .delete(`/prices/${priceId}`)
@@ -277,7 +324,7 @@ describe("PricesController", () => {
 
   it("should register unknown ID via DELETE /prices/:id", async () => {
     const priceId = 1;
-    jest.spyOn(pricesService, "getById").mockResolvedValue(null);
+    prismaServiceMock.prices.findUnique = jest.fn().mockResolvedValue(null);
 
     const response = await request(app.getHttpServer())
       .delete(`/prices/${priceId}`)

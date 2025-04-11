@@ -18,6 +18,8 @@ import { PricesService } from "./prices.service";
 import {
   StaticFieldValidationPipe,
   ForeignKeyValidationPipe,
+  ExistenceValidationPipe,
+  UniqueExistenceValidation,
 } from "./prices.validation.pipe";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "../utils/auth.guard";
@@ -29,14 +31,18 @@ export class PricesController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @UsePipes(StaticFieldValidationPipe, ForeignKeyValidationPipe)
+  @UsePipes(
+    StaticFieldValidationPipe,
+    ForeignKeyValidationPipe,
+    ExistenceValidationPipe
+  )
   @ApiOperation({ summary: "Create the new price." })
   @ApiResponse({
     status: 201,
     description: "Successfully created a price",
     type: PriceDto,
     examples: {
-      "application/json": {
+      single: {
         summary: "Price DTO",
         value: {
           id: 1,
@@ -50,13 +56,17 @@ export class PricesController {
           updatedAt: "2025-03-26T19:50:30.809Z",
         },
       },
+      multiple: {
+        summary: "Count",
+        value: { count: 100 },
+      },
     },
   })
   @ApiBody({
     description: "The data to create new price",
     type: CreatePriceDto,
     examples: {
-      "application/json": {
+      single: {
         value: {
           price: 300,
           currency: "EUR",
@@ -66,9 +76,29 @@ export class PricesController {
           priceType: "HISTORICAL",
         },
       },
+      multiple: {
+        value: [
+          {
+            price: 300,
+            currency: "EUR",
+            cityId: 1,
+            productId: 1,
+            yearId: 1,
+            priceType: "HISTORICAL",
+          },
+          {
+            price: 200,
+            currency: "EUR",
+            cityId: 1,
+            productId: 1,
+            yearId: 1,
+            priceType: "HISTORICAL",
+          },
+        ],
+      },
     },
   })
-  async create(@Body() createPriceDto: CreatePriceDto) {
+  async create(@Body() createPriceDto: CreatePriceDto | CreatePriceDto[]) {
     try {
       return await this.pricesService.create(createPriceDto);
     } catch (error: any) {
@@ -129,6 +159,7 @@ export class PricesController {
   }
 
   @Get(":id")
+  @UsePipes(UniqueExistenceValidation)
   @ApiOperation({ summary: "Return price by id." })
   @ApiResponse({
     status: 200,
@@ -153,11 +184,7 @@ export class PricesController {
   })
   async getById(@Param("id") id: string) {
     try {
-      const result = await this.pricesService.getById(Number(id));
-      if (!result) {
-        throw new NotFoundException(`Price with ID ${id} not found`);
-      }
-      return result;
+      return await this.pricesService.getById(Number(id));
     } catch (error: any) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -172,7 +199,11 @@ export class PricesController {
 
   @Put()
   @UseGuards(AuthGuard)
-  @UsePipes(StaticFieldValidationPipe, ForeignKeyValidationPipe)
+  @UsePipes(
+    StaticFieldValidationPipe,
+    ForeignKeyValidationPipe,
+    ExistenceValidationPipe
+  )
   @ApiOperation({ summary: "Update prices" })
   @ApiResponse({
     status: 200,
@@ -266,12 +297,7 @@ export class PricesController {
     try {
       if (data.length === 1) {
         const [price] = data;
-        const existing = await this.pricesService.getById(Number(price.id));
-        if (existing) {
-          return await this.pricesService.updateSingle(Number(price.id), price);
-        } else {
-          throw new NotFoundException(`Price with ID ${price.id} not found`);
-        }
+        return await this.pricesService.updateSingle(Number(price.id), price);
       } else if (data.length > 1) {
         return await this.pricesService.updateMany(data);
       } else {
@@ -291,6 +317,7 @@ export class PricesController {
 
   @Delete(":id")
   @UseGuards(AuthGuard)
+  @UsePipes(UniqueExistenceValidation)
   @ApiOperation({ summary: "Delete price by id." })
   @ApiResponse({
     status: 200,
@@ -315,12 +342,7 @@ export class PricesController {
   })
   async delete(@Param("id") id: string) {
     try {
-      const price = await this.pricesService.getById(Number(id));
-      if (price) {
-        return await this.pricesService.delete(Number(id));
-      } else {
-        throw new NotFoundException(`Price with ID ${id} not found`);
-      }
+      return await this.pricesService.delete(Number(id));
     } catch (error: any) {
       if (error instanceof NotFoundException) {
         throw error;
