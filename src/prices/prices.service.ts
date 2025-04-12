@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { PriceDto, CreatePriceDto } from "./prices.dto";
+import { PriceDto, CreatePriceDto, PriceQueryDto } from "./prices.dto";
 
 @Injectable()
 export class PricesService {
@@ -54,9 +54,51 @@ export class PricesService {
     }
   }
 
-  async getAll() {
+  async getAll(filters: PriceQueryDto) {
+    const {
+      currency,
+      cityId,
+      productId,
+      yearId,
+      priceType,
+      limit = 10,
+      offset = 0,
+      sortBy = "createdAt",
+      order = "desc",
+    } = filters;
     try {
-      return await this.prisma.prices.findMany({ orderBy: [{ id: "asc" }] });
+      const [data, total] = await this.prisma.$transaction([
+        this.prisma.prices.findMany({
+          where: {
+            ...(currency && { currency }),
+            ...(cityId && { cityId: Number(cityId) }),
+            ...(productId && { productId: Number(productId) }),
+            ...(yearId && { yearId: Number(yearId) }),
+            ...(priceType && { priceType }),
+          },
+          skip: Number(offset),
+          take: Number(limit),
+          orderBy: {
+            [sortBy]: order,
+          },
+        }),
+        this.prisma.prices.count({
+          where: {
+            ...(currency && { currency }),
+            ...(cityId && { cityId: Number(cityId) }),
+            ...(productId && { productId: Number(productId) }),
+            ...(yearId && { yearId: Number(yearId) }),
+            ...(priceType && { priceType }),
+          },
+        }),
+      ]);
+
+      return {
+        data,
+        total,
+        limit,
+        offset,
+      };
     } catch (error: any) {
       throw new BadRequestException(
         error.message ||

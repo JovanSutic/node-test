@@ -1199,7 +1199,100 @@
       },
       "get": {
         "operationId": "PricesController_getAll",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "currency",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "EUR",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cityId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "productId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "yearId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "priceType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "HISTORICAL",
+              "type": "string",
+              "enum": [
+                "CURRENT",
+                "HISTORICAL"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Items to skip",
+            "schema": {
+              "example": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "$ref": "#/components/schemas/Object"
+            }
+          },
+          {
+            "name": "order",
+            "required": false,
+            "in": "query",
+            "description": "Sort order: asc or desc",
+            "schema": {
+              "example": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved prices.",
@@ -1208,36 +1301,41 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/PriceDto"
+                    "$ref": "#/components/schemas/PricePaginationDto"
                   }
                 },
                 "examples": {
                   "application/json": {
                     "summary": "price DTO array",
-                    "value": [
-                      {
-                        "id": 1,
-                        "price": 300,
-                        "currency": "EUR",
-                        "cityId": 1,
-                        "productId": 1,
-                        "yearId": 1,
-                        "priceType": "HISTORICAL",
-                        "createdAt": "2025-03-26T19:50:30.809Z",
-                        "updatedAt": "2025-03-26T19:50:30.809Z"
-                      },
-                      {
-                        "id": 2,
-                        "price": 400,
-                        "currency": "EUR",
-                        "cityId": 1,
-                        "productId": 1,
-                        "yearId": 1,
-                        "priceType": "HISTORICAL",
-                        "createdAt": "2025-03-26T19:50:30.809Z",
-                        "updatedAt": "2025-03-26T19:50:30.809Z"
-                      }
-                    ]
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "price": 300,
+                          "currency": "EUR",
+                          "cityId": 1,
+                          "productId": 1,
+                          "yearId": 1,
+                          "priceType": "HISTORICAL",
+                          "createdAt": "2025-03-26T19:50:30.809Z",
+                          "updatedAt": "2025-03-26T19:50:30.809Z"
+                        },
+                        {
+                          "id": 2,
+                          "price": 400,
+                          "currency": "EUR",
+                          "cityId": 1,
+                          "productId": 1,
+                          "yearId": 1,
+                          "priceType": "HISTORICAL",
+                          "createdAt": "2025-03-26T19:50:30.809Z",
+                          "updatedAt": "2025-03-26T19:50:30.809Z"
+                        }
+                      ],
+                      "total": 100,
+                      "limit": 10,
+                      "page": 1
+                    }
                   }
                 }
               }
@@ -1708,6 +1806,43 @@
           "productId",
           "yearId",
           "priceType"
+        ]
+      },
+      "Object": {
+        "type": "object",
+        "properties": {}
+      },
+      "PricePaginationDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "Array of prices matching the query filters",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriceDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total number of prices matching the query filters",
+            "example": 100
+          },
+          "limit": {
+            "type": "number",
+            "description": "Limit of items per page",
+            "example": 10
+          },
+          "offset": {
+            "type": "number",
+            "description": "Offset of items to skip for pagination",
+            "example": 1
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "limit",
+          "offset"
         ]
       }
     }
