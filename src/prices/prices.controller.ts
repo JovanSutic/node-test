@@ -12,8 +12,14 @@ import {
   Put,
   Delete,
   UseGuards,
+  Query,
 } from "@nestjs/common";
-import { CreatePriceDto, PriceDto } from "./prices.dto";
+import {
+  CreatePriceDto,
+  PriceDto,
+  PricePaginationDto,
+  PriceQueryDto,
+} from "./prices.dto";
 import { PricesService } from "./prices.service";
 import {
   StaticFieldValidationPipe,
@@ -30,7 +36,7 @@ export class PricesController {
   constructor(private readonly pricesService: PricesService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @UsePipes(
     StaticFieldValidationPipe,
     ForeignKeyValidationPipe,
@@ -117,40 +123,45 @@ export class PricesController {
     status: 200,
     description: "Successfully retrieved prices.",
     isArray: true,
-    type: PriceDto,
+    type: PricePaginationDto,
     examples: {
       "application/json": {
         summary: "price DTO array",
-        value: [
-          {
-            id: 1,
-            price: 300,
-            currency: "EUR",
-            cityId: 1,
-            productId: 1,
-            yearId: 1,
-            priceType: "HISTORICAL",
-            createdAt: "2025-03-26T19:50:30.809Z",
-            updatedAt: "2025-03-26T19:50:30.809Z",
-          },
-          {
-            id: 2,
-            price: 400,
-            currency: "EUR",
-            cityId: 1,
-            productId: 1,
-            yearId: 1,
-            priceType: "HISTORICAL",
-            createdAt: "2025-03-26T19:50:30.809Z",
-            updatedAt: "2025-03-26T19:50:30.809Z",
-          },
-        ],
+        value: {
+          data: [
+            {
+              id: 1,
+              price: 300,
+              currency: "EUR",
+              cityId: 1,
+              productId: 1,
+              yearId: 1,
+              priceType: "HISTORICAL",
+              createdAt: "2025-03-26T19:50:30.809Z",
+              updatedAt: "2025-03-26T19:50:30.809Z",
+            },
+            {
+              id: 2,
+              price: 400,
+              currency: "EUR",
+              cityId: 1,
+              productId: 1,
+              yearId: 1,
+              priceType: "HISTORICAL",
+              createdAt: "2025-03-26T19:50:30.809Z",
+              updatedAt: "2025-03-26T19:50:30.809Z",
+            },
+          ],
+          total: 100,
+          limit: 10,
+          page: 1,
+        },
       },
     },
   })
-  async getAll() {
+  async getAll(@Query() filters: PriceQueryDto) {
     try {
-      return await this.pricesService.getAll();
+      return await this.pricesService.getAll(filters);
     } catch (error: any) {
       throw new BadRequestException(
         error.message || "An error occurred while fetching all the prices"

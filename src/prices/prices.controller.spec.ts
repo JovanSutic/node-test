@@ -122,7 +122,7 @@ describe("PricesController", () => {
   });
 
   it("should return an array of prices via GET /prices", async () => {
-    const mockCities: PriceDto[] = [
+    const mockPrices: PriceDto[] = [
       {
         id: 1,
         price: 300,
@@ -138,7 +138,7 @@ describe("PricesController", () => {
         id: 2,
         price: 200,
         currency: "EUR",
-        cityId: 1,
+        cityId: 2,
         productId: 1,
         yearId: 1,
         priceType: "HISTORICAL",
@@ -146,13 +146,28 @@ describe("PricesController", () => {
         updatedAt: "2025-03-26T19:50:30.809Z",
       },
     ];
-    jest.spyOn(pricesService, "getAll").mockResolvedValue(mockCities);
+
+    const mockPaginatedResult = {
+      data: mockPrices,
+      total: 2,
+      limit: 10,
+      offset: 0,
+    };
+
+    const spy = jest
+      .spyOn(pricesService, "getAll")
+      .mockResolvedValue(mockPaginatedResult);
 
     const response = await request(app.getHttpServer())
       .get("/prices")
+      .query({ limit: "10", offset: "0" })
       .expect(200);
 
-    expect(response.body).toEqual(mockCities);
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({ limit: "10", offset: "0" })
+    );
+
+    expect(response.body).toEqual(mockPaginatedResult);
     expect(response.status).toBe(200);
   });
 
@@ -311,7 +326,9 @@ describe("PricesController", () => {
       updatedAt: "2025-03-26T19:50:30.809Z",
     };
 
-    prismaServiceMock.prices.findUnique = jest.fn().mockResolvedValue(mockDeletedCity);
+    prismaServiceMock.prices.findUnique = jest
+      .fn()
+      .mockResolvedValue(mockDeletedCity);
     jest.spyOn(pricesService, "delete").mockResolvedValue(mockDeletedCity);
 
     const response = await request(app.getHttpServer())
