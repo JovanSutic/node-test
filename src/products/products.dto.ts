@@ -1,5 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString, IsOptional } from "class-validator";
+import { IsNumber, IsString, IsOptional, IsEnum } from "class-validator";
+
+export enum ProductType {
+  ALL = "ALL",
+  CURRENT = "CURRENT",
+  HISTORICAL = "HISTORICAL",
+}
 
 export class CreateProductDto {
   @ApiProperty({
@@ -33,6 +39,14 @@ export class CreateProductDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({
+    description: "Product Type",
+    enum: ProductType,
+  })
+  @IsOptional()
+  @IsEnum(ProductType)
+  type?: ProductType;
 }
 
 export class ProductDto {
@@ -72,4 +86,12 @@ export class ProductDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({
+    description: "Product Type",
+    enum: ProductType,
+  })
+  @IsOptional()
+  @IsEnum(ProductType)
+  type?: ProductType;
 }

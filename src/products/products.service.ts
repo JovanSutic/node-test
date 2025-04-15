@@ -15,6 +15,7 @@ export class ProductsService {
             unit: item.unit,
             categoryId: item.categoryId,
             description: item.description || "",
+            type: item.type || undefined,
           })),
         });
       } catch (error: any) {
@@ -24,7 +25,7 @@ export class ProductsService {
         );
       }
     } else {
-      const { name, categoryId, unit, description } = createCityDto;
+      const { name, categoryId, unit, description, type } = createCityDto;
 
       try {
         return await this.prisma.products.create({
@@ -33,6 +34,7 @@ export class ProductsService {
             unit,
             categoryId,
             description: description || "",
+            type: type || undefined,
           },
         });
       } catch (error: any) {
@@ -94,6 +96,7 @@ export class ProductsService {
               unit: item.unit,
               categoryId: item.categoryId,
               description: item.description,
+              type: item.type,
             },
           })
         )
@@ -116,6 +119,7 @@ export class ProductsService {
           unit: data.unit,
           categoryId: data.categoryId,
           description: data.description,
+          type: data.type,
         },
       });
     } catch (error: any) {

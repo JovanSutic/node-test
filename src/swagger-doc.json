@@ -1671,13 +1671,23 @@
           "description": {
             "type": "string",
             "description": "Product description, optional"
+          },
+          "type": {
+            "type": "string",
+            "description": "Product Type",
+            "enum": [
+              "ALL",
+              "CURRENT",
+              "HISTORICAL"
+            ]
           }
         },
         "required": [
           "id",
           "name",
           "categoryId",
-          "unit"
+          "unit",
+          "type"
         ]
       },
       "CreateCategoryDto": {
@@ -1715,6 +1725,14 @@
           "price": {
             "type": "number",
             "description": "The price value"
+          },
+          "top": {
+            "type": "number",
+            "description": "Top of the price range"
+          },
+          "bottom": {
+            "type": "number",
+            "description": "Bottom of the price range"
           },
           "currency": {
             "type": "string",
@@ -1760,6 +1778,14 @@
           "price": {
             "type": "number",
             "description": "The price value"
+          },
+          "top": {
+            "type": "number",
+            "description": "Top of the price range"
+          },
+          "bottom": {
+            "type": "number",
+            "description": "Bottom of the price range"
           },
           "currency": {
             "type": "string",
