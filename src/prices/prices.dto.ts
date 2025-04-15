@@ -27,6 +27,22 @@ export class CreatePriceDto {
   price: number;
 
   @ApiProperty({
+    description: "Top of the price range",
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber()
+  top: number;
+
+  @ApiProperty({
+    description: "Bottom of the price range",
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber()
+  bottom: number;
+
+  @ApiProperty({
     description: "The currency of the price",
     type: String,
   })
@@ -77,6 +93,22 @@ export class PriceDto {
   })
   @IsNumber()
   price: number;
+
+  @ApiProperty({
+    description: "Top of the price range",
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber()
+  top: number;
+
+  @ApiProperty({
+    description: "Bottom of the price range",
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber()
+  bottom: number;
 
   @ApiProperty({
     description: "The currency of the price",
