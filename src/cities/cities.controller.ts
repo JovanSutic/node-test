@@ -48,21 +48,8 @@ export class CitiesController {
         },
       },
       multiple: {
-        summary: "Multiple created cities",
-        value: [
-          {
-            id: 1,
-            name: "Amsterdam",
-            country: "Netherlands",
-            numbeo_id: 12345,
-          },
-          {
-            id: 2,
-            name: "Belgrade",
-            country: "Serbia",
-            numbeo_id: 12346,
-          },
-        ],
+        summary: "Count",
+        value: { count: 10 },
       },
     },
   })

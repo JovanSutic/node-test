@@ -146,21 +146,10 @@
                     }
                   },
                   "multiple": {
-                    "summary": "Multiple created cities",
-                    "value": [
-                      {
-                        "id": 1,
-                        "name": "Amsterdam",
-                        "country": "Netherlands",
-                        "numbeo_id": 12345
-                      },
-                      {
-                        "id": 2,
-                        "name": "Belgrade",
-                        "country": "Serbia",
-                        "numbeo_id": 12346
-                      }
-                    ]
+                    "summary": "Count",
+                    "value": {
+                      "count": 10
+                    }
                   }
                 }
               }
@@ -434,17 +423,10 @@
                     }
                   },
                   "multiple": {
-                    "summary": "Year DTO array",
-                    "value": [
-                      {
-                        "id": 1,
-                        "year": 2020
-                      },
-                      {
-                        "id": 2,
-                        "year": 2021
-                      }
-                    ]
+                    "summary": "Count",
+                    "value": {
+                      "count": 10
+                    }
                   }
                 }
               }
@@ -553,7 +535,8 @@
                     "name": "men shoes",
                     "categoryId": 5,
                     "unit": "1 pair",
-                    "description": "1 pair of leather men shoes"
+                    "description": "1 pair of leather men shoes",
+                    "type": "HISTORICAL"
                   }
                 },
                 "multiple": {
@@ -562,13 +545,15 @@
                       "name": "men shoes",
                       "categoryId": 5,
                       "unit": "1 pair",
-                      "description": "1 pair of leather men shoes"
+                      "description": "1 pair of leather men shoes",
+                      "type": "HISTORICAL"
                     },
                     {
                       "name": "internet",
                       "categoryId": 6,
                       "unit": "monthly subscription",
-                      "description": "1 month internet subscription"
+                      "description": "1 month internet subscription",
+                      "type": "HISTORICAL"
                     }
                   ]
                 }
@@ -592,27 +577,15 @@
                       "name": "men shoes",
                       "categoryId": 5,
                       "unit": "1 pair",
-                      "description": "1 pair of leather men shoes"
+                      "description": "1 pair of leather men shoes",
+                      "type": "HISTORICAL"
                     }
                   },
                   "multiple": {
-                    "summary": "Product DTO array",
-                    "value": [
-                      {
-                        "id": 1,
-                        "name": "men shoes",
-                        "categoryId": 5,
-                        "unit": "1 pair",
-                        "description": "1 pair of leather men shoes"
-                      },
-                      {
-                        "id": 2,
-                        "name": "internet",
-                        "categoryId": 6,
-                        "unit": "monthly subscription",
-                        "description": "1 month internet subscription"
-                      }
-                    ]
+                    "summary": "Count",
+                    "value": {
+                      "count": 10
+                    }
                   }
                 }
               }
@@ -647,14 +620,16 @@
                         "name": "man shoes",
                         "categoryId": 5,
                         "unit": "1 pair",
-                        "description": "1 pair of leather man shoes"
+                        "description": "1 pair of leather man shoes",
+                        "type": "HISTORICAL"
                       },
                       {
                         "id": 2,
                         "name": "internet",
                         "categoryId": 6,
                         "unit": "monthly subscription",
-                        "description": "1 month internet subscription"
+                        "description": "1 month internet subscription",
+                        "type": "HISTORICAL"
                       }
                     ]
                   }
@@ -686,7 +661,8 @@
                     "name": "men shoes",
                     "categoryId": 5,
                     "unit": "1 pair",
-                    "description": "1 pair of leather men shoes"
+                    "description": "1 pair of leather men shoes",
+                    "type": "HISTORICAL"
                   }
                 },
                 "multiple": {
@@ -696,14 +672,16 @@
                       "name": "men shoes",
                       "categoryId": 5,
                       "unit": "1 pair",
-                      "description": "1 pair of leather men shoes"
+                      "description": "1 pair of leather men shoes",
+                      "type": "HISTORICAL"
                     },
                     {
                       "id": 2,
                       "name": "internet",
                       "categoryId": 6,
                       "unit": "monthly subscription",
-                      "description": "1 month internet subscription"
+                      "description": "1 month internet subscription",
+                      "type": "HISTORICAL"
                     }
                   ]
                 }
@@ -730,7 +708,8 @@
                       "name": "men shoes",
                       "categoryId": 5,
                       "unit": "1 pair",
-                      "description": "1 pair of leather men shoes"
+                      "description": "1 pair of leather men shoes",
+                      "type": "HISTORICAL"
                     }
                   },
                   "multiple": {
@@ -741,14 +720,16 @@
                         "name": "men shoes",
                         "categoryId": 5,
                         "unit": "1 pair",
-                        "description": "1 pair of leather men shoes"
+                        "description": "1 pair of leather men shoes",
+                        "type": "HISTORICAL"
                       },
                       {
                         "id": 2,
                         "name": "internet",
                         "categoryId": 6,
                         "unit": "monthly subscription",
-                        "description": "1 month internet subscription"
+                        "description": "1 month internet subscription",
+                        "type": "HISTORICAL"
                       }
                     ]
                   }
@@ -792,7 +773,8 @@
                       "name": "men shoes",
                       "categoryId": 5,
                       "unit": "1 pair",
-                      "description": "1 pair of leather men shoes"
+                      "description": "1 pair of leather men shoes",
+                      "type": "HISTORICAL"
                     }
                   }
                 }
@@ -833,7 +815,8 @@
                       "name": "men shoes",
                       "categoryId": 1,
                       "unit": "1 pair",
-                      "description": "1 pair of leather men shoes"
+                      "description": "1 pair of leather men shoes",
+                      "type": "HISTORICAL"
                     }
                   }
                 }
@@ -896,17 +879,10 @@
                     }
                   },
                   "multiple": {
-                    "summary": "Category DTO array",
-                    "value": [
-                      {
-                        "id": 1,
-                        "name": "Markets"
-                      },
-                      {
-                        "id": 2,
-                        "name": "Restaurants"
-                      }
-                    ]
+                    "summary": "Count",
+                    "value": {
+                      "count": 10
+                    }
                   }
                 }
               }
@@ -1127,6 +1103,8 @@
                 "single": {
                   "value": {
                     "price": 300,
+                    "top": 500,
+                    "bottom": 200,
                     "currency": "EUR",
                     "cityId": 1,
                     "productId": 1,
@@ -1138,6 +1116,8 @@
                   "value": [
                     {
                       "price": 300,
+                      "top": 500,
+                      "bottom": 200,
                       "currency": "EUR",
                       "cityId": 1,
                       "productId": 1,
@@ -1146,6 +1126,8 @@
                     },
                     {
                       "price": 200,
+                      "top": 500,
+                      "bottom": 200,
                       "currency": "EUR",
                       "cityId": 1,
                       "productId": 1,
@@ -1172,6 +1154,8 @@
                     "value": {
                       "id": 1,
                       "price": 300,
+                      "top": 500,
+                      "bottom": 200,
                       "currency": "EUR",
                       "cityId": 1,
                       "productId": 1,
@@ -1312,6 +1296,8 @@
                         {
                           "id": 1,
                           "price": 300,
+                          "top": 500,
+                          "bottom": 200,
                           "currency": "EUR",
                           "cityId": 1,
                           "productId": 1,
@@ -1323,6 +1309,8 @@
                         {
                           "id": 2,
                           "price": 400,
+                          "top": 500,
+                          "bottom": 200,
                           "currency": "EUR",
                           "cityId": 1,
                           "productId": 1,
@@ -1375,6 +1363,8 @@
                     {
                       "id": 1,
                       "price": 300,
+                      "top": 500,
+                      "bottom": 200,
                       "currency": "EUR",
                       "cityId": 1,
                       "productId": 1,
@@ -1384,6 +1374,8 @@
                     {
                       "id": 2,
                       "price": 300,
+                      "top": 500,
+                      "bottom": 200,
                       "currency": "EUR",
                       "cityId": 1,
                       "productId": 1,
@@ -1413,6 +1405,8 @@
                     "value": {
                       "id": 1,
                       "price": 300,
+                      "top": 500,
+                      "bottom": 200,
                       "currency": "EUR",
                       "cityId": 1,
                       "productId": 1,
@@ -1428,6 +1422,8 @@
                       {
                         "id": 1,
                         "price": 300,
+                        "top": 500,
+                        "bottom": 200,
                         "currency": "EUR",
                         "cityId": 1,
                         "productId": 1,
@@ -1439,6 +1435,8 @@
                       {
                         "id": 2,
                         "price": 400,
+                        "top": 500,
+                        "bottom": 200,
                         "currency": "EUR",
                         "cityId": 1,
                         "productId": 1,
@@ -1487,6 +1485,8 @@
                     "value": {
                       "id": 1,
                       "price": 300,
+                      "top": 500,
+                      "bottom": 200,
                       "currency": "EUR",
                       "cityId": 1,
                       "productId": 1,
@@ -1532,6 +1532,8 @@
                     "value": {
                       "id": 1,
                       "price": 300,
+                      "top": 500,
+                      "bottom": 200,
                       "currency": "EUR",
                       "cityId": 1,
                       "productId": 1,
