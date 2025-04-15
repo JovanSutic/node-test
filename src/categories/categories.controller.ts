@@ -45,17 +45,8 @@ export class CategoriesController {
         },
       },
       multiple: {
-        summary: "Category DTO array",
-        value: [
-          {
-            id: 1,
-            name: "Markets",
-          },
-          {
-            id: 2,
-            name: "Restaurants",
-          },
-        ],
+        summary: "Count",
+        value: { count: 10 },
       },
     },
   })
