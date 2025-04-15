@@ -13,7 +13,11 @@ import {
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { YearsService } from "./years.service";
 import { CreateYearDto, YearDto } from "./years.dto";
-import { ExistenceValidationPipe, UniqueExistenceValidation, ValidationPipe } from "./years.validation.pipe";
+import {
+  ExistenceValidationPipe,
+  UniqueExistenceValidation,
+  ValidationPipe,
+} from "./years.validation.pipe";
 import { AuthGuard } from "../utils/auth.guard";
 
 @Controller("years")
@@ -38,17 +42,8 @@ export class YearsController {
         },
       },
       multiple: {
-        summary: "Year DTO array",
-        value: [
-          {
-            id: 1,
-            year: 2020,
-          },
-          {
-            id: 2,
-            year: 2021,
-          },
-        ],
+        summary: "Count",
+        value: { count: 10 },
       },
     },
   })

@@ -13,6 +13,8 @@ export class PricesService {
         return await this.prisma.prices.createMany({
           data: createPriceDto.map((item) => ({
             price: item.price,
+            top: item.top || undefined,
+            bottom: item.bottom || undefined,
             currency: item.currency,
             cityId: item.cityId,
             productId: item.productId,
@@ -29,13 +31,23 @@ export class PricesService {
         );
       }
     } else {
-      const { price, currency, cityId, productId, yearId, priceType } =
-        createPriceDto;
+      const {
+        price,
+        currency,
+        cityId,
+        productId,
+        yearId,
+        priceType,
+        top,
+        bottom,
+      } = createPriceDto;
 
       try {
         return await this.prisma.prices.create({
           data: {
             price,
+            top: top || undefined,
+            bottom: bottom || undefined,
             currency,
             cityId,
             productId,
@@ -129,6 +141,8 @@ export class PricesService {
             },
             data: {
               price: item.price,
+              top: item.top,
+              bottom: item.bottom,
               currency: item.currency,
               cityId: item.cityId,
               productId: item.productId,
@@ -155,6 +169,8 @@ export class PricesService {
         },
         data: {
           price: data.price,
+          top: data.top,
+          bottom: data.bottom,
           currency: data.currency,
           cityId: data.cityId,
           productId: data.productId,

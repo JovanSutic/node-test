@@ -53,6 +53,8 @@ export class PricesController {
         value: {
           id: 1,
           price: 300,
+          top: 500,
+          bottom: 200,
           currency: "EUR",
           cityId: 1,
           productId: 1,
@@ -75,6 +77,8 @@ export class PricesController {
       single: {
         value: {
           price: 300,
+          top: 500,
+          bottom: 200,
           currency: "EUR",
           cityId: 1,
           productId: 1,
@@ -86,6 +90,8 @@ export class PricesController {
         value: [
           {
             price: 300,
+            top: 500,
+            bottom: 200,
             currency: "EUR",
             cityId: 1,
             productId: 1,
@@ -94,6 +100,8 @@ export class PricesController {
           },
           {
             price: 200,
+            top: 500,
+            bottom: 200,
             currency: "EUR",
             cityId: 1,
             productId: 1,
@@ -132,6 +140,8 @@ export class PricesController {
             {
               id: 1,
               price: 300,
+              top: 500,
+              bottom: 200,
               currency: "EUR",
               cityId: 1,
               productId: 1,
@@ -143,6 +153,8 @@ export class PricesController {
             {
               id: 2,
               price: 400,
+              top: 500,
+              bottom: 200,
               currency: "EUR",
               cityId: 1,
               productId: 1,
@@ -182,6 +194,8 @@ export class PricesController {
         value: {
           id: 1,
           price: 300,
+          top: 500,
+          bottom: 200,
           currency: "EUR",
           cityId: 1,
           productId: 1,
@@ -227,6 +241,8 @@ export class PricesController {
         value: {
           id: 1,
           price: 300,
+          top: 500,
+          bottom: 200,
           currency: "EUR",
           cityId: 1,
           productId: 1,
@@ -242,6 +258,8 @@ export class PricesController {
           {
             id: 1,
             price: 300,
+            top: 500,
+            bottom: 200,
             currency: "EUR",
             cityId: 1,
             productId: 1,
@@ -253,6 +271,8 @@ export class PricesController {
           {
             id: 2,
             price: 400,
+            top: 500,
+            bottom: 200,
             currency: "EUR",
             cityId: 1,
             productId: 1,
@@ -285,6 +305,8 @@ export class PricesController {
           {
             id: 1,
             price: 300,
+            top: 500,
+            bottom: 200,
             currency: "EUR",
             cityId: 1,
             productId: 1,
@@ -294,6 +316,8 @@ export class PricesController {
           {
             id: 2,
             price: 300,
+            top: 500,
+            bottom: 200,
             currency: "EUR",
             cityId: 1,
             productId: 1,
@@ -340,6 +364,8 @@ export class PricesController {
         value: {
           id: 1,
           price: 300,
+          top: 500,
+          bottom: 200,
           currency: "EUR",
           cityId: 1,
           productId: 1,

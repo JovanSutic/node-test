@@ -46,26 +46,12 @@ export class ProductsController {
           categoryId: 5,
           unit: "1 pair",
           description: "1 pair of leather men shoes",
+          type: "HISTORICAL"
         },
       },
       multiple: {
-        summary: "Product DTO array",
-        value: [
-          {
-            id: 1,
-            name: "men shoes",
-            categoryId: 5,
-            unit: "1 pair",
-            description: "1 pair of leather men shoes",
-          },
-          {
-            id: 2,
-            name: "internet",
-            categoryId: 6,
-            unit: "monthly subscription",
-            description: "1 month internet subscription",
-          },
-        ],
+        summary: "Count",
+        value: { count: 10 },
       },
     },
   })
@@ -79,6 +65,7 @@ export class ProductsController {
           categoryId: 5,
           unit: "1 pair",
           description: "1 pair of leather men shoes",
+          type: "HISTORICAL"
         },
       },
       multiple: {
@@ -88,12 +75,14 @@ export class ProductsController {
             categoryId: 5,
             unit: "1 pair",
             description: "1 pair of leather men shoes",
+            type: "HISTORICAL"
           },
           {
             name: "internet",
             categoryId: 6,
             unit: "monthly subscription",
             description: "1 month internet subscription",
+            type: "HISTORICAL"
           },
         ],
       },
@@ -130,6 +119,7 @@ export class ProductsController {
             categoryId: 5,
             unit: "1 pair",
             description: "1 pair of leather man shoes",
+            type: "HISTORICAL"
           },
           {
             id: 2,
@@ -137,6 +127,7 @@ export class ProductsController {
             categoryId: 6,
             unit: "monthly subscription",
             description: "1 month internet subscription",
+            type: "HISTORICAL"
           },
         ],
       },
@@ -168,6 +159,7 @@ export class ProductsController {
           categoryId: 5,
           unit: "1 pair",
           description: "1 pair of leather men shoes",
+          type: "HISTORICAL"
         },
       },
     },
@@ -205,6 +197,7 @@ export class ProductsController {
           categoryId: 5,
           unit: "1 pair",
           description: "1 pair of leather men shoes",
+          type: "HISTORICAL"
         },
       },
       multiple: {
@@ -216,6 +209,7 @@ export class ProductsController {
             categoryId: 5,
             unit: "1 pair",
             description: "1 pair of leather men shoes",
+            type: "HISTORICAL"
           },
           {
             id: 2,
@@ -223,6 +217,7 @@ export class ProductsController {
             categoryId: 6,
             unit: "monthly subscription",
             description: "1 month internet subscription",
+            type: "HISTORICAL"
           },
         ],
       },
@@ -239,6 +234,7 @@ export class ProductsController {
           categoryId: 5,
           unit: "1 pair",
           description: "1 pair of leather men shoes",
+          type: "HISTORICAL"
         },
       },
       multiple: {
@@ -249,6 +245,7 @@ export class ProductsController {
             categoryId: 5,
             unit: "1 pair",
             description: "1 pair of leather men shoes",
+            type: "HISTORICAL"
           },
           {
             id: 2,
@@ -256,6 +253,7 @@ export class ProductsController {
             categoryId: 6,
             unit: "monthly subscription",
             description: "1 month internet subscription",
+            type: "HISTORICAL"
           },
         ],
       },
@@ -310,6 +308,7 @@ export class ProductsController {
           categoryId: 1,
           unit: "1 pair",
           description: "1 pair of leather men shoes",
+          type: "HISTORICAL"
         },
       },
     },

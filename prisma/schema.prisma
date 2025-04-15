@@ -41,6 +41,7 @@ model products {
   categoryId    Int  @map("category_id")
   unit        String
   description String?
+  type        ProductType?
 
   category    categories @relation(fields: [categoryId], references: [id])
   prices prices[]
@@ -48,7 +49,9 @@ model products {
 
 model prices {
   id         Int     @id @default(autoincrement()) 
-  price      Float   
+  price      Float 
+  top        Float?
+  bottom     Float?  
   currency   String  
   cityId     Int    @map("city_id")
   productId  Int    @map("product_id")
@@ -67,4 +70,10 @@ model prices {
 enum PriceType {
   CURRENT    // The current price (most recent one)
   HISTORICAL // A historical price at a specific time
+}
+
+enum ProductType {
+  ALL
+  HISTORICAL
+  CURRENT
 }
