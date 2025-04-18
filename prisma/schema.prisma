@@ -63,8 +63,6 @@ model prices {
   city       cities    @relation(fields: [cityId], references: [id])
   product    products @relation(fields: [productId], references: [id])
   year       years    @relation(fields: [yearId], references: [id])
-
-  @@unique([cityId, productId, yearId])
 }
 
 enum PriceType {
