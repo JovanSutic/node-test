@@ -36,7 +36,7 @@ export class PricesController {
   constructor(private readonly pricesService: PricesService) {}
 
   @Post()
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @UsePipes(
     StaticFieldValidationPipe,
     ForeignKeyValidationPipe,
