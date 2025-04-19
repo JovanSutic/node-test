@@ -16,32 +16,50 @@ export const cities: CreateCityDto[] = [
   {
     name: "Belgrade",
     country: "Serbia",
-    numbeo_id: 12345,
+    search: "Belgrade",
+    lat: 44.12345,
+    lng: 24.1234,
+    seaside: false
   },
   {
     name: "Budapest",
     country: "Hungary",
-    numbeo_id: 12346,
+    search: "Belgrade",
+    lat: 44.12345,
+    lng: 24.1234,
+    seaside: false
   },
   {
     name: "Athens",
     country: "Greece",
-    numbeo_id: 12347,
+    search: "Athens",
+    lat: 44.12345,
+    lng: 24.1234,
+    seaside: true
   },
   {
     name: "Berlin",
     country: "Germany",
-    numbeo_id: 12341,
+    search: "Berlin",
+    lat: 44.12345,
+    lng: 24.1234,
+    seaside: false
   },
   {
     name: "Madrid",
     country: "Spain",
-    numbeo_id: 12342,
+    search: "Madrid",
+    lat: 44.12345,
+    lng: 24.1234,
+    seaside: false
   },
   {
     name: "Rome",
     country: "Italy",
-    numbeo_id: 12343,
+    search: "Rome",
+    lat: 44.12345,
+    lng: 24.1234,
+    seaside: true
   },
 ];
 
