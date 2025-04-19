@@ -13,7 +13,10 @@ export class CitiesService {
           data: createCityDto.map((city) => ({
             name: city.name,
             country: city.country,
-            numbeo_id: city.numbeo_id,
+            search: city.search,
+            lat: city.lat,
+            lng: city.lng,
+            seaside: city.seaside,
           })),
         });
       } catch (error: any) {
@@ -23,14 +26,17 @@ export class CitiesService {
         );
       }
     } else {
-      const { name, country, numbeo_id } = createCityDto;
+      const { name, country, seaside, search, lat, lng } = createCityDto;
 
       try {
         return await this.prisma.cities.create({
           data: {
             name,
             country,
-            numbeo_id,
+            seaside,
+            search,
+            lat,
+            lng,
           },
         });
       } catch (error: any) {
@@ -91,6 +97,10 @@ export class CitiesService {
             data: {
               name: item.name,
               country: item.country,
+              search: item.search,
+              lat: item.lat,
+              lng: item.lng,
+              seaside: item.seaside,
             },
           })
         )
@@ -111,6 +121,10 @@ export class CitiesService {
         data: {
           name: data.name,
           country: data.country,
+          search: data.search,
+          lat: data.lat,
+          lng: data.lng,
+          seaside: data.seaside,
         },
       });
     } catch (error: any) {

@@ -16,6 +16,12 @@ const checkCityValues = (city: CreateCityDto) => {
     );
   }
 
+  if (!city.search || typeof city.search !== "string" || city.search.length < 3) {
+    throw new BadRequestException(
+      "Search must be a string with at least 3 characters"
+    );
+  }
+
   if (
     !city.country ||
     typeof city.country !== "string" ||
@@ -26,9 +32,9 @@ const checkCityValues = (city: CreateCityDto) => {
     );
   }
 
-  if (!city.numbeo_id || !isNumber(city.numbeo_id)) {
+  if (!city.lat || !isNumber(city.lat) || !city.lng || !isNumber(city.lng)) {
     throw new BadRequestException(
-      "Numbeo id must be a number with at least 3 length"
+      "Lat and lng must be a number"
     );
   }
 };

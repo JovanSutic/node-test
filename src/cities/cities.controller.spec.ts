@@ -45,7 +45,10 @@ describe("CitiesController", () => {
     const createCityDto = {
       name: "Belgrade",
       country: "Serbia",
-      numbeo_id: 12345,
+      search: "Belgrade",
+      lat: 44.12345,
+      lng: 24.1234,
+      seaside: false,
     };
 
     jest.spyOn(citiesService, "create").mockResolvedValue({
@@ -63,14 +66,19 @@ describe("CitiesController", () => {
     expect(response.body).toEqual({ id: expect.any(Number), ...createCityDto });
     expect(response.body.name).toBe("Belgrade");
     expect(response.body.country).toBe("Serbia");
-    expect(response.body.numbeo_id).toBe(12345);
+    expect(response.body.lat).toBe(44.12345);
+    expect(response.body.lng).toBe(24.1234);
+    expect(response.body.seaside).toBe(false);
   });
 
   it("should not create duplicate via POST /cities", async () => {
     const createCityDto = {
       name: "Belgrade",
       country: "Serbia",
-      numbeo_id: 12345,
+      search: "Belgrade",
+      lat: 44.12345,
+      lng: 24.1234,
+      seaside: false,
     };
 
     prismaServiceMock.cities.findFirst = jest
@@ -91,8 +99,24 @@ describe("CitiesController", () => {
 
   it("should return an array of cities via GET /cities", async () => {
     const mockCities: CityDto[] = [
-      { id: 1, name: "Belgrade", country: "Serbia", numbeo_id: 12345 },
-      { id: 2, name: "Novi Sad", country: "Serbia", numbeo_id: 12346 },
+      {
+        id: 1,
+        name: "Belgrade",
+        country: "Serbia",
+        search: "Belgrade",
+        lat: 44.12345,
+        lng: 24.1234,
+        seaside: false,
+      },
+      {
+        id: 2,
+        name: "Novi Sad",
+        country: "Serbia",
+        search: "Novi-Sad",
+        lat: 44.12345,
+        lng: 24.1234,
+        seaside: false,
+      },
     ];
     jest.spyOn(citiesService, "getAll").mockResolvedValue(mockCities);
 
@@ -110,7 +134,10 @@ describe("CitiesController", () => {
       id: cityId,
       name: "Belgrade",
       country: "Serbia",
-      numbeo_id: 12345,
+      search: "Belgrade",
+      lat: 44.12345,
+      lng: 24.1234,
+      seaside: false,
     };
 
     prismaServiceMock.cities.findUnique = jest.fn().mockResolvedValue(city);
@@ -122,7 +149,9 @@ describe("CitiesController", () => {
     expect(response.body).toEqual(city);
     expect(response.body.name).toBe("Belgrade");
     expect(response.body.country).toBe("Serbia");
-    expect(response.body.numbeo_id).toBe(12345);
+    expect(response.body.lat).toBe(44.12345);
+    expect(response.body.lng).toBe(24.1234);
+    expect(response.body.seaside).toBe(false);
   });
 
   it("should return 404 if city not found via GET /cities/:id", async () => {
@@ -145,10 +174,21 @@ describe("CitiesController", () => {
       id: cityId,
       name: "Belgrade",
       country: "Serbia",
-      numbeo_id: 12345,
+      search: "Belgrade",
+      lat: 44.12345,
+      lng: 24.1234,
+      seaside: false,
     };
     const mockUpdatedCity = [
-      { id: cityId, name: "Novi Sad", country: "Serbia", numbeo_id: 11111 },
+      {
+        id: cityId,
+        name: "Novi Sad",
+        country: "Serbia",
+        search: "Novi-Sad",
+        lat: 44.12345,
+        lng: 24.1234,
+        seaside: false,
+      },
     ];
 
     jest
@@ -173,10 +213,21 @@ describe("CitiesController", () => {
       id: cityId,
       name: "Belgrade",
       country: "Serbia",
-      numbeo_id: 12345,
+      search: "Belgrade",
+      lat: 44.12345,
+      lng: 24.1234,
+      seaside: false,
     };
     const mockUpdatedCity = [
-      { id: cityId, name: "Novi Sad", country: "Serbia", numbeo_id: 11111 },
+      {
+        id: cityId,
+        name: "Novi Sad",
+        country: "Serbia",
+        search: "Novi-Sad",
+        lat: 44.12345,
+        lng: 24.1234,
+        seaside: false,
+      },
     ];
 
     prismaServiceMock.cities.findUnique = jest.fn().mockResolvedValue(null);
@@ -199,7 +250,10 @@ describe("CitiesController", () => {
       id: cityId,
       name: "Belgrade",
       country: "Serbia",
-      numbeo_id: 12345,
+      search: "Belgrade",
+      lat: 44.12345,
+      lng: 24.1234,
+      seaside: false,
     };
 
     prismaServiceMock.cities.findUnique = jest
