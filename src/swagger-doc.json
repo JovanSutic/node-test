@@ -104,7 +104,10 @@
                   "value": {
                     "name": "Amsterdam",
                     "country": "Netherlands",
-                    "numbeo_id": 12345
+                    "search": "Amsterdam",
+                    "lat": 52.1234,
+                    "lng": 12.1234,
+                    "seaside": true
                   }
                 },
                 "multiple": {
@@ -113,13 +116,19 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
-                      "numbeo_id": 12345
+                      "search": "Amsterdam",
+                      "lat": 52.1234,
+                      "lng": 12.1234,
+                      "seaside": true
                     },
                     {
                       "id": 2,
                       "name": "Belgrade",
                       "country": "Serbia",
-                      "numbeo_id": 12346
+                      "search": "Belgrade",
+                      "lat": 52.1234,
+                      "lng": 12.1234,
+                      "seaside": true
                     }
                   ]
                 }
@@ -142,7 +151,10 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
-                      "numbeo_id": 12345
+                      "search": "Amsterdam",
+                      "lat": 52.1234,
+                      "lng": 12.1234,
+                      "seaside": true
                     }
                   },
                   "multiple": {
@@ -183,13 +195,19 @@
                         "id": 1,
                         "name": "Amsterdam",
                         "country": "Netherlands",
-                        "numbeo_id": 12345
+                        "search": "Amsterdam",
+                        "lat": 52.1234,
+                        "lng": 12.1234,
+                        "seaside": true
                       },
                       {
                         "id": 2,
                         "name": "Belgrade",
                         "country": "Serbia",
-                        "numbeo_id": 123456
+                        "search": "Belgrade",
+                        "lat": 52.1234,
+                        "lng": 12.1234,
+                        "seaside": false
                       }
                     ]
                   }
@@ -220,7 +238,10 @@
                     "id": 1,
                     "name": "Amsterdam",
                     "country": "Netherlands",
-                    "numbeo_id": 12345
+                    "search": "Amsterdam",
+                    "lat": 52.1234,
+                    "lng": 12.1234,
+                    "seaside": true
                   }
                 },
                 "multiple": {
@@ -229,13 +250,19 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
-                      "numbeo_id": 12345
+                      "search": "Amsterdam",
+                      "lat": 52.1234,
+                      "lng": 12.1234,
+                      "seaside": true
                     },
                     {
                       "id": 2,
                       "name": "Belgrade",
                       "country": "Serbia",
-                      "numbeo_id": 12346
+                      "search": "Belgrade",
+                      "lat": 52.1234,
+                      "lng": 12.1234,
+                      "seaside": false
                     }
                   ]
                 }
@@ -261,7 +288,10 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
-                      "numbeo_id": 12345
+                      "search": "Amsterdam",
+                      "lat": 52.1234,
+                      "lng": 12.1234,
+                      "seaside": true
                     }
                   },
                   "multiple": {
@@ -271,13 +301,19 @@
                         "id": 1,
                         "name": "Amsterdam",
                         "country": "Netherlands",
-                        "numbeo_id": 12345
+                        "search": "Amsterdam",
+                        "lat": 52.1234,
+                        "lng": 12.1234,
+                        "seaside": true
                       },
                       {
                         "id": 2,
                         "name": "Belgrade",
                         "country": "Serbia",
-                        "numbeo_id": 12346
+                        "search": "Belgrade",
+                        "lat": 52.1234,
+                        "lng": 12.1234,
+                        "seaside": false
                       }
                     ]
                   }
@@ -320,7 +356,10 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
-                      "numbeo_id": 12345
+                      "search": "Amsterdam",
+                      "lat": 52.1234,
+                      "lng": 12.1234,
+                      "seaside": true
                     }
                   }
                 }
@@ -360,7 +399,10 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
-                      "numbeo_id": 12345
+                      "search": "Amsterdam",
+                      "lat": 52.1234,
+                      "lng": 12.1234,
+                      "seaside": true
                     }
                   }
                 }
@@ -1584,15 +1626,30 @@
             "type": "string",
             "description": "The country where the city is located"
           },
-          "numbeo_id": {
+          "search": {
+            "type": "string",
+            "description": "Name used for numbeo search"
+          },
+          "lat": {
             "type": "number",
-            "description": "The numbeo ID for the city"
+            "description": "Latitude of the city"
+          },
+          "lng": {
+            "type": "number",
+            "description": "Longitude of the city"
+          },
+          "seaside": {
+            "type": "boolean",
+            "description": "Is city on the seaside"
           }
         },
         "required": [
           "name",
           "country",
-          "numbeo_id"
+          "search",
+          "lat",
+          "lng",
+          "seaside"
         ]
       },
       "CityDto": {
@@ -1610,16 +1667,31 @@
             "type": "string",
             "description": "The country where the city is located"
           },
-          "numbeo_id": {
+          "search": {
+            "type": "string",
+            "description": "Name used for numbeo search"
+          },
+          "lat": {
             "type": "number",
-            "description": "The numbeo ID for the city"
+            "description": "Latitude of the city"
+          },
+          "lng": {
+            "type": "number",
+            "description": "Longitude of the city"
+          },
+          "seaside": {
+            "type": "boolean",
+            "description": "Is city on the seaside"
           }
         },
         "required": [
           "id",
           "name",
           "country",
-          "numbeo_id"
+          "search",
+          "lat",
+          "lng",
+          "seaside"
         ]
       },
       "CreateYearDto": {

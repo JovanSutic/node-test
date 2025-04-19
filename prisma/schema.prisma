@@ -16,7 +16,10 @@ model cities {
   id   Int     @id @default(autoincrement())
   name String
   country String
-  numbeo_id Int? @map("numbeo_id")
+  search String?
+  lat Float?
+  lng Float?
+  seaside Boolean?
 
   prices  prices[]
 }
