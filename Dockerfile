@@ -1,5 +1,5 @@
 # Use an official Bun image as the base
-FROM oven/bun:latest AS builder
+FROM oven/bun::1.2.9 AS builder
 
 # Install OpenSSL and libssl for Prisma
 RUN apt-get update && apt-get install -y openssl libssl1.1 || apt-get install -y libssl-dev
