@@ -171,6 +171,21 @@ describe("PricesController", () => {
     expect(response.status).toBe(200);
   });
 
+  it("should return a uniques cityIDs GET /prices/unique-cities", async () => {
+    jest.spyOn(pricesService, "getUniqueCityIds").mockResolvedValue([1, 2]);
+
+    const response = await request(app.getHttpServer())
+      .get("/prices/unique-cities")
+      .expect(200);
+
+    expect(response.body).toEqual({
+      data: [1, 2],
+      count: 2,
+    });
+    expect(response.body.data).toEqual([1, 2]);
+    expect(response.body.count).toBe(2);
+  });
+
   it("should return a price by ID via GET /prices/:id", async () => {
     const price = {
       id: 1,

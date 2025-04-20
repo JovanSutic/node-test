@@ -1500,6 +1500,38 @@
         ]
       }
     },
+    "/prices/unique-cities": {
+      "get": {
+        "operationId": "PricesController_getUniqueCityIds",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of unique cityIds",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "application/json": {
+                    "summary": "List of unique cityIds",
+                    "value": {
+                      "data": [
+                        1,
+                        2,
+                        3
+                      ],
+                      "count": 3
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get unique cityIds optionally filtered by priceType",
+        "tags": [
+          "prices"
+        ]
+      }
+    },
     "/prices/{id}": {
       "get": {
         "operationId": "PricesController_getById",
