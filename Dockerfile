@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package.json bun.lock ./
 
 # Install dependencies inside the container
-RUN timeout 180s bun install --verbose
+RUN timeout 180s bun install
 
 # Copy the Prisma schema (make sure this is done before generating Prisma client)
 COPY prisma ./prisma
