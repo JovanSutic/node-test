@@ -251,3 +251,9 @@ export class PriceQueryDto {
   @IsEnum(SortOrder)
   order?: SortOrder;
 }
+
+export class CityIdQueryDto {
+  @IsOptional()
+  @IsEnum(PriceType)
+  priceType?: PriceType;
+}

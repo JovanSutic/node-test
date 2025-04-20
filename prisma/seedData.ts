@@ -1,16 +1,17 @@
 import { CreateCityDto } from "../src/cities/cities.dto";
 import { CreateProductDto } from "../src/products/products.dto";
 import { CreateYearDto } from "../src/years/years.dto";
-import { CreateCategoryDto } from '../src/categories/categories.dto';
+import { CreateCategoryDto } from "../src/categories/categories.dto";
+import { CreatePriceDto, PriceType } from "../src/prices/prices.dto";
 
 export const categories: CreateCategoryDto[] = [
-  {name: "Restaurants"},
-  {name: "Markets"},
-  {name: "Rent per month"},
-  {name: "Utilities"},
-  {name: "Clothing and shoes"},
-  {name: "Sport and leisure"},
-]
+  { name: "Restaurants" },
+  { name: "Markets" },
+  { name: "Rent per month" },
+  { name: "Utilities" },
+  { name: "Clothing and shoes" },
+  { name: "Sport and leisure" },
+];
 
 export const cities: CreateCityDto[] = [
   {
@@ -19,7 +20,7 @@ export const cities: CreateCityDto[] = [
     search: "Belgrade",
     lat: 44.12345,
     lng: 24.1234,
-    seaside: false
+    seaside: false,
   },
   {
     name: "Budapest",
@@ -27,7 +28,7 @@ export const cities: CreateCityDto[] = [
     search: "Belgrade",
     lat: 44.12345,
     lng: 24.1234,
-    seaside: false
+    seaside: false,
   },
   {
     name: "Athens",
@@ -35,7 +36,7 @@ export const cities: CreateCityDto[] = [
     search: "Athens",
     lat: 44.12345,
     lng: 24.1234,
-    seaside: true
+    seaside: true,
   },
   {
     name: "Berlin",
@@ -43,7 +44,7 @@ export const cities: CreateCityDto[] = [
     search: "Berlin",
     lat: 44.12345,
     lng: 24.1234,
-    seaside: false
+    seaside: false,
   },
   {
     name: "Madrid",
@@ -51,7 +52,7 @@ export const cities: CreateCityDto[] = [
     search: "Madrid",
     lat: 44.12345,
     lng: 24.1234,
-    seaside: false
+    seaside: false,
   },
   {
     name: "Rome",
@@ -59,7 +60,7 @@ export const cities: CreateCityDto[] = [
     search: "Rome",
     lat: 44.12345,
     lng: 24.1234,
-    seaside: true
+    seaside: true,
   },
 ];
 
@@ -86,5 +87,88 @@ export const products: CreateProductDto[] = [
     categoryId: 6,
     unit: "1",
     description: "just text 1",
+  },
+];
+
+export const prices: CreatePriceDto[] = [
+  {
+    price: 1.52,
+    bottom: 1.01,
+    top: 2.44,
+    currency: "EUR",
+    cityId: 1,
+    productId: 1,
+    yearId: 1,
+    priceType: PriceType.HISTORICAL,
+  },
+  {
+    price: 2.52,
+    bottom: 2.01,
+    top: 3.44,
+    currency: "EUR",
+    cityId: 1,
+    productId: 1,
+    yearId: 2,
+    priceType: PriceType.HISTORICAL,
+  },
+  {
+    price: 4.52,
+    bottom: 3.01,
+    top: 5.44,
+    currency: "EUR",
+    cityId: 2,
+    productId: 1,
+    yearId: 1,
+    priceType: PriceType.HISTORICAL,
+  },
+  {
+    price: 14.52,
+    bottom: 13.01,
+    top: 15.44,
+    currency: "EUR",
+    cityId: 2,
+    productId: 1,
+    yearId: 2,
+    priceType: PriceType.HISTORICAL,
+  },
+  {
+    price: 101.52,
+    bottom: 101.01,
+    top: 102.44,
+    currency: "EUR",
+    cityId: 1,
+    productId: 1,
+    yearId: 1,
+    priceType: PriceType.CURRENT,
+  },
+  {
+    price: 102.52,
+    bottom: 102.01,
+    top: 103.44,
+    currency: "EUR",
+    cityId: 1,
+    productId: 1,
+    yearId: 2,
+    priceType: PriceType.CURRENT,
+  },
+  {
+    price: 104.52,
+    bottom: 103.01,
+    top: 105.44,
+    currency: "EUR",
+    cityId: 2,
+    productId: 1,
+    yearId: 1,
+    priceType: PriceType.CURRENT,
+  },
+  {
+    price: 114.52,
+    bottom: 113.01,
+    top: 115.44,
+    currency: "EUR",
+    cityId: 2,
+    productId: 1,
+    yearId: 2,
+    priceType: PriceType.CURRENT,
   },
 ];

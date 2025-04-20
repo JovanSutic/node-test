@@ -15,6 +15,7 @@ import {
   Query,
 } from "@nestjs/common";
 import {
+  CityIdQueryDto,
   CreatePriceDto,
   PriceDto,
   PricePaginationDto,
@@ -177,6 +178,37 @@ export class PricesController {
     } catch (error: any) {
       throw new BadRequestException(
         error.message || "An error occurred while fetching all the prices"
+      );
+    }
+  }
+
+  @Get("unique-cities")
+  @ApiOperation({
+    summary: "Get unique cityIds optionally filtered by priceType",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "List of unique cityIds",
+    examples: {
+      "application/json": {
+        summary: "List of unique cityIds",
+        value: {
+          data: [1, 2, 3],
+          count: 3
+        },
+      },
+    },
+  })
+  async getUniqueCityIds(@Query() query: CityIdQueryDto) {
+    try {
+      const cityIds = await this.pricesService.getUniqueCityIds(query.priceType);
+      return {
+        data: cityIds,
+        count: cityIds.length
+      }
+    } catch (error: any) {
+      throw new BadRequestException(
+        error.message || "An error occurred while fetching unique cityIds"
       );
     }
   }

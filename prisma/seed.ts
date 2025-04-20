@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { cities, years, products, categories } from "./seedData";
+import { cities, years, products, categories, prices } from "./seedData";
 
 const prisma = new PrismaClient();
 
@@ -36,6 +36,14 @@ const prisma = new PrismaClient();
     if (!product) {
       await prisma.products.createMany({
         data: products,
+      });
+    }
+
+    const price = await prisma.prices.findUnique({ where: { id: 1 } });
+
+    if (!price) {
+      await prisma.prices.createMany({
+        data: prices,
       });
     }
 
