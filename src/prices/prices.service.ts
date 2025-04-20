@@ -1,6 +1,11 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { PriceDto, CreatePriceDto, PriceQueryDto } from "./prices.dto";
+import {
+  PriceDto,
+  CreatePriceDto,
+  PriceQueryDto,
+  PriceType,
+} from "./prices.dto";
 
 @Injectable()
 export class PricesService {
@@ -199,5 +204,19 @@ export class PricesService {
         error.message || "An error occurred while deleting price by id."
       );
     }
+  }
+
+  async getUniqueCityIds(priceType?: PriceType): Promise<number[]> {
+    const cityIds = await this.prisma.prices.findMany({
+      where: {
+        ...(priceType && { priceType }),
+      },
+      distinct: ["cityId"],
+      select: {
+        cityId: true,
+      },
+    });
+
+    return cityIds.map((entry) => entry.cityId);
   }
 }
