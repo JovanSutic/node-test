@@ -6,8 +6,9 @@ import { ProductsModule } from "./products/products.module";
 import { CategoriesModule } from "./categories/categories.module";
 import { PricesModule } from "./prices/prices.module";
 import { ConfigModule } from "@nestjs/config";
+import { SocialLifestyleModule } from "./social_lifestyle/social_lifestyle.module";
 
 @Module({
-  imports: [ConfigModule.forRoot(), UsersModule, CitiesModule, YearsModule, ProductsModule, CategoriesModule, PricesModule],
+  imports: [ConfigModule.forRoot(), UsersModule, CitiesModule, YearsModule, ProductsModule, CategoriesModule, PricesModule, SocialLifestyleModule],
 })
 export class AppModule {}
