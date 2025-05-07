@@ -22,6 +22,7 @@ model cities {
   seaside Boolean?
 
   prices  prices[]
+  socialLifestyleReports city_social_lifestyle_report[]
 }
 
 model years {
@@ -29,6 +30,7 @@ model years {
   year  Int    @unique
 
   prices prices[]
+  socialLifestyleReports city_social_lifestyle_report[]
 }
 
 model categories {
@@ -77,4 +79,16 @@ enum ProductType {
   ALL
   HISTORICAL
   CURRENT
+}
+
+model city_social_lifestyle_report {
+  id            Int      @id @default(autoincrement())
+  cityId        Int    @map("city_id")
+  yearId        Int    @map("year_id")
+  avg_price     Float?
+  currency      String?
+  created_at    DateTime @default(now())
+
+  city cities @relation(fields: [cityId], references: [id])
+  year years  @relation(fields: [yearId], references: [id])
 }
