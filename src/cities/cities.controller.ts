@@ -12,6 +12,7 @@ import {
   Put,
   Delete,
   UseGuards,
+  Query,
 } from "@nestjs/common";
 import { CreateCityDto, CityDto } from "./cities.dto";
 import { CitiesService } from "./cities.service";
@@ -108,44 +109,38 @@ export class CitiesController {
   }
 
   @Get()
-  @ApiOperation({ summary: "Return all cities." })
+  @ApiOperation({
+    summary: "Return cities within map bounds (optional limit).",
+  })
   @ApiResponse({
     status: 200,
-    description: "Successfully retrieved cities.",
+    description: "Successfully retrieved cities within bounds.",
     isArray: true,
     type: CityDto,
-    examples: {
-      "application/json": {
-        summary: "City DTO array",
-        value: [
-          {
-            id: 1,
-            name: "Amsterdam",
-            country: "Netherlands",
-            search: "Amsterdam",
-            lat: 52.1234,
-            lng: 12.1234,
-            seaside: true,
-          },
-          {
-            id: 2,
-            name: "Belgrade",
-            country: "Serbia",
-            search: "Belgrade",
-            lat: 52.1234,
-            lng: 12.1234,
-            seaside: false,
-          },
-        ],
-      },
-    },
   })
-  async getAll() {
+  async getAll(
+    @Query("north") north?: string,
+    @Query("south") south?: string,
+    @Query("east") east?: string,
+    @Query("west") west?: string,
+    @Query("take") take?: string
+  ) {
     try {
-      return await this.citiesService.getAll();
+      const parsedTake = Math.min(parseInt(take || "30", 10), 100);
+      if (north && south && east && west) {
+        return await this.citiesService.getCitiesInBounds({
+          north: parseFloat(north),
+          south: parseFloat(south),
+          east: parseFloat(east),
+          west: parseFloat(west),
+          take: parsedTake,
+        });
+      }
+
+      return await this.citiesService.getAll(parsedTake);
     } catch (error: any) {
       throw new BadRequestException(
-        error.message || "An error occurred while fetching all the cities"
+        error.message || "An error occurred while fetching the cities"
       );
     }
   }
