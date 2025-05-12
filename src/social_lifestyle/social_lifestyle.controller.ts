@@ -13,7 +13,6 @@ import {
   Delete,
   UseGuards,
   Query,
-  // Query,
 } from "@nestjs/common";
 import {
   CreateSocialLifestyleDto,
@@ -58,6 +57,7 @@ export class SocialLifestyleController {
           yearId: 1,
           avg_price: 200,
           currency: "EUR",
+          type: "SOLO",
           created_at: "2025-03-26T19:50:30.809Z",
         },
       },
@@ -77,6 +77,7 @@ export class SocialLifestyleController {
           yearId: 1,
           avg_price: 200,
           currency: "EUR",
+          type: "SOLO",
           created_at: "2025-03-26T19:50:30.809Z",
         },
       },
@@ -87,6 +88,7 @@ export class SocialLifestyleController {
             yearId: 1,
             avg_price: 200,
             currency: "EUR",
+            type: "SOLO",
             created_at: "2025-03-26T19:50:30.809Z",
           },
           {
@@ -94,6 +96,7 @@ export class SocialLifestyleController {
             yearId: 1,
             avg_price: 200,
             currency: "EUR",
+            type: "SOLO",
             created_at: "2025-03-26T19:50:30.809Z",
           },
         ],
@@ -126,7 +129,7 @@ export class SocialLifestyleController {
     isArray: true,
     examples: {
       "application/json": {
-        summary: "Price DTO array",
+        summary: "Social lifestyles DTO array",
         value: {
           data: [
             {
@@ -135,6 +138,7 @@ export class SocialLifestyleController {
               yearId: 1,
               avg_price: 200,
               currency: "EUR",
+              type: "SOLO",
               created_at: "2025-03-26T19:50:30.809Z",
             },
             {
@@ -143,6 +147,7 @@ export class SocialLifestyleController {
               yearId: 1,
               avg_price: 200,
               currency: "EUR",
+              type: "SOLO",
               created_at: "2025-03-26T19:50:30.809Z",
             },
           ],
@@ -180,6 +185,7 @@ export class SocialLifestyleController {
           yearId: 1,
           avg_price: 200,
           currency: "EUR",
+          type: "SOLO",
           created_at: "2025-03-26T19:50:30.809Z",
         },
       },
@@ -201,7 +207,7 @@ export class SocialLifestyleController {
   }
 
   @Put()
-  @UseGuards(AuthGuard)
+  @UseGuards()
   @UsePipes(
     StaticFieldValidationPipe,
     ForeignKeyValidationPipe,
@@ -223,6 +229,7 @@ export class SocialLifestyleController {
             yearId: 1,
             avg_price: 200,
             currency: "EUR",
+            type: "SOLO",
             created_at: "2025-03-26T19:50:30.809Z",
           },
           {
@@ -231,6 +238,7 @@ export class SocialLifestyleController {
             yearId: 1,
             avg_price: 200,
             currency: "EUR",
+            type: "SOLO",
             created_at: "2025-03-26T19:50:30.809Z",
           },
         ],
@@ -249,6 +257,7 @@ export class SocialLifestyleController {
             yearId: 1,
             avg_price: 200,
             currency: "EUR",
+            type: "SOLO",
             created_at: "2025-03-26T19:50:30.809Z",
           },
           {
@@ -257,6 +266,7 @@ export class SocialLifestyleController {
             yearId: 1,
             avg_price: 200,
             currency: "EUR",
+            type: "SOLO",
             created_at: "2025-03-26T19:50:30.809Z",
           },
         ],
@@ -300,6 +310,7 @@ export class SocialLifestyleController {
           yearId: 1,
           avg_price: 200,
           currency: "EUR",
+          type: "SOLO",
           created_at: "2025-03-26T19:50:30.809Z",
         },
       },

@@ -1,6 +1,20 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsDateString, IsIn, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator";
+import {
+  IsDateString,
+  IsEnum,
+  IsIn,
+  IsNumber,
+  IsNumberString,
+  IsOptional,
+  IsString,
+} from "class-validator";
+
+export enum SocialType {
+  SOLO = "SOLO",
+  PAIR = "PAIR",
+  FAMILY = "FAMILY",
+}
 
 export class CreateSocialLifestyleDto {
   @ApiProperty({ description: "City ID", required: true, type: Number })
@@ -17,15 +31,6 @@ export class CreateSocialLifestyleDto {
   avg_price?: number;
 
   @ApiProperty({
-    description: "Rank of the city",
-    required: false,
-    type: Number,
-  })
-  @IsOptional()
-  @IsNumber()
-  rank?: number;
-
-  @ApiProperty({
     description: "Currency code (e.g. EUR, USD)",
     required: false,
     type: String,
@@ -33,6 +38,14 @@ export class CreateSocialLifestyleDto {
   @IsOptional()
   @IsString()
   currency?: string;
+
+  @ApiProperty({
+    description: "Type of report",
+    required: false,
+    type: String,
+  })
+  @IsOptional()
+  type?: SocialType;
 }
 
 export class SocialLifestyleDto {
@@ -67,6 +80,14 @@ export class SocialLifestyleDto {
   currency?: string;
 
   @ApiProperty({
+    description: "Type of report",
+    required: false,
+    enum: SocialType,
+  })
+  @IsEnum(SocialType)
+  type?: SocialType;
+
+  @ApiProperty({
     description: "Date when the record was created",
     example: "2025-03-26T12:00:00Z",
     required: false,
@@ -77,6 +98,10 @@ export class SocialLifestyleDto {
 }
 
 export class SocialLifestyleQueryDto {
+  @IsOptional()
+  @IsEnum(SocialType)
+  type?: SocialType;
+  
   @IsOptional()
   @IsNumberString()
   cityId?: number;
@@ -94,10 +119,10 @@ export class SocialLifestyleQueryDto {
   offset?: number = 0;
 
   @IsOptional()
-  @IsIn(['created_at', 'avg_price', 'id'])
-  sortBy?: string = 'created_at';
+  @IsIn(["created_at", "avg_price", "id"])
+  sortBy?: string = "created_at";
 
   @IsOptional()
-  @IsIn(['asc', 'desc'])
-  order?: 'asc' | 'desc' = 'desc';
+  @IsIn(["asc", "desc"])
+  order?: "asc" | "desc" = "desc";
 }

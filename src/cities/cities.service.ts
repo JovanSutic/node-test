@@ -48,9 +48,21 @@ export class CitiesService {
     }
   }
 
-  async getAll() {
+  async getAll(take: number = 100) {
     try {
-      return await this.prisma.cities.findMany({ orderBy: [{ id: "asc" }] });
+      const [data, total] = await Promise.all([
+        this.prisma.cities.findMany({
+          take,
+          orderBy: [{ id: "asc" }],
+        }),
+        this.prisma.cities.count(),
+      ]);
+  
+      return {
+        data,
+        total,
+        limit: take,
+      };
     } catch (error: any) {
       throw new BadRequestException(
         error.message ||
@@ -145,6 +157,47 @@ export class CitiesService {
     } catch (error: any) {
       throw new BadRequestException(
         error.message || "An error occurred while deleting city by id."
+      );
+    }
+  }
+
+  async getCitiesInBounds(bounds: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+    take?: number;
+  }) {
+    const { north, south, east, west, take = 30 } = bounds;
+
+    try {
+      const where = {
+        lat: {
+          gte: south,
+          lte: north,
+        },
+        lng: {
+          gte: west,
+          lte: east,
+        },
+      };
+
+      const [data, total] = await Promise.all([
+        this.prisma.cities.findMany({
+          where,
+          take,
+        }),
+        this.prisma.cities.count({ where }),
+      ]);
+
+      return {
+        data,
+        total,
+        limit: take,
+      };
+    } catch (error: any) {
+      throw new BadRequestException(
+        error.message || "An error occurred while getting cities in bounds."
       );
     }
   }

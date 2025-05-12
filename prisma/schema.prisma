@@ -87,8 +87,15 @@ model city_social_lifestyle_report {
   yearId        Int    @map("year_id")
   avg_price     Float?
   currency      String?
+  type          SocialType?
   created_at    DateTime @default(now())
 
   city cities @relation(fields: [cityId], references: [id])
   year years  @relation(fields: [yearId], references: [id])
+}
+
+enum SocialType {
+  SOLO
+  PAIR
+  FAMILY
 }
