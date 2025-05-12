@@ -175,10 +175,51 @@
       },
       "get": {
         "operationId": "CitiesController_getAll",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "north",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "south",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "east",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "west",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "take",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved cities.",
+            "description": "Successfully retrieved cities within bounds.",
             "content": {
               "application/json": {
                 "schema": {
@@ -186,37 +227,12 @@
                   "items": {
                     "$ref": "#/components/schemas/CityDto"
                   }
-                },
-                "examples": {
-                  "application/json": {
-                    "summary": "City DTO array",
-                    "value": [
-                      {
-                        "id": 1,
-                        "name": "Amsterdam",
-                        "country": "Netherlands",
-                        "search": "Amsterdam",
-                        "lat": 52.1234,
-                        "lng": 12.1234,
-                        "seaside": true
-                      },
-                      {
-                        "id": 2,
-                        "name": "Belgrade",
-                        "country": "Serbia",
-                        "search": "Belgrade",
-                        "lat": 52.1234,
-                        "lng": 12.1234,
-                        "seaside": false
-                      }
-                    ]
-                  }
                 }
               }
             }
           }
         },
-        "summary": "Return all cities.",
+        "summary": "Return cities within map bounds (optional limit).",
         "tags": [
           "cities"
         ]
@@ -1627,6 +1643,309 @@
           "prices"
         ]
       }
+    },
+    "/social_lifestyle": {
+      "post": {
+        "operationId": "SocialLifestyleController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to create new social lifestyle",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSocialLifestyleDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "cityId": 1,
+                    "yearId": 1,
+                    "avg_price": 200,
+                    "currency": "EUR",
+                    "type": "SOLO",
+                    "created_at": "2025-03-26T19:50:30.809Z"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "cityId": 1,
+                      "yearId": 1,
+                      "avg_price": 200,
+                      "currency": "EUR",
+                      "type": "SOLO",
+                      "created_at": "2025-03-26T19:50:30.809Z"
+                    },
+                    {
+                      "cityId": 2,
+                      "yearId": 1,
+                      "avg_price": 200,
+                      "currency": "EUR",
+                      "type": "SOLO",
+                      "created_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a social lifestyle",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialLifestyleDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "SOCIAL_LIFESTYLE DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "yearId": 1,
+                      "avg_price": 200,
+                      "currency": "EUR",
+                      "type": "SOLO",
+                      "created_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Count",
+                    "value": {
+                      "count": 100
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create the new social lifestyle.",
+        "tags": [
+          "social_lifestyle"
+        ]
+      },
+      "get": {
+        "operationId": "SocialLifestyleController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved social lifestyle.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "application/json": {
+                    "summary": "Social lifestyles DTO array",
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "cityId": 1,
+                          "yearId": 1,
+                          "avg_price": 200,
+                          "currency": "EUR",
+                          "type": "SOLO",
+                          "created_at": "2025-03-26T19:50:30.809Z"
+                        },
+                        {
+                          "id": 2,
+                          "cityId": 2,
+                          "yearId": 1,
+                          "avg_price": 200,
+                          "currency": "EUR",
+                          "type": "SOLO",
+                          "created_at": "2025-03-26T19:50:30.809Z"
+                        }
+                      ],
+                      "total": 100,
+                      "limit": 10,
+                      "page": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return all social lifestyles.",
+        "tags": [
+          "social_lifestyle"
+        ]
+      },
+      "put": {
+        "operationId": "SocialLifestyleController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to update social lifestyle",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSocialLifestyleDto"
+              },
+              "examples": {
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "cityId": 1,
+                      "yearId": 1,
+                      "avg_price": 200,
+                      "currency": "EUR",
+                      "type": "SOLO",
+                      "created_at": "2025-03-26T19:50:30.809Z"
+                    },
+                    {
+                      "id": 2,
+                      "cityId": 2,
+                      "yearId": 1,
+                      "avg_price": 200,
+                      "currency": "EUR",
+                      "type": "SOLO",
+                      "created_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated social lifestyle.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SocialLifestyleDto"
+                  }
+                },
+                "examples": {
+                  "multiple": {
+                    "summary": "Multiple updated social lifestyle",
+                    "value": [
+                      {
+                        "id": 1,
+                        "cityId": 1,
+                        "yearId": 1,
+                        "avg_price": 200,
+                        "currency": "EUR",
+                        "type": "SOLO",
+                        "created_at": "2025-03-26T19:50:30.809Z"
+                      },
+                      {
+                        "id": 2,
+                        "cityId": 2,
+                        "yearId": 1,
+                        "avg_price": 200,
+                        "currency": "EUR",
+                        "type": "SOLO",
+                        "created_at": "2025-03-26T19:50:30.809Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update social lifestyle",
+        "tags": [
+          "social_lifestyle"
+        ]
+      }
+    },
+    "/social_lifestyle/{id}": {
+      "get": {
+        "operationId": "SocialLifestyleController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved social lifestyle by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialLifestyleDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Social Lifestyle DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "yearId": 1,
+                      "avg_price": 200,
+                      "currency": "EUR",
+                      "type": "SOLO",
+                      "created_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return social lifestyle by id.",
+        "tags": [
+          "social_lifestyle"
+        ]
+      },
+      "delete": {
+        "operationId": "SocialLifestyleController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted social lifestyle by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialLifestyleDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Social Lifestyle DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "yearId": 1,
+                      "avg_price": 200,
+                      "currency": "EUR",
+                      "type": "SOLO",
+                      "created_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete social lifestyle by id.",
+        "tags": [
+          "social_lifestyle"
+        ]
+      }
     }
   },
   "info": {
@@ -1975,6 +2294,80 @@
           "total",
           "limit",
           "offset"
+        ]
+      },
+      "CreateSocialLifestyleDto": {
+        "type": "object",
+        "properties": {
+          "cityId": {
+            "type": "number",
+            "description": "City ID"
+          },
+          "yearId": {
+            "type": "number",
+            "description": "Year ID"
+          },
+          "avg_price": {
+            "type": "number",
+            "description": "Average price"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code (e.g. EUR, USD)"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of report"
+          }
+        },
+        "required": [
+          "cityId",
+          "yearId"
+        ]
+      },
+      "SocialLifestyleDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the Social lifestyle report"
+          },
+          "cityId": {
+            "type": "number",
+            "description": "City ID"
+          },
+          "yearId": {
+            "type": "number",
+            "description": "Year ID"
+          },
+          "avg_price": {
+            "type": "number",
+            "description": "Average price"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code (e.g. EUR, USD)"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of report",
+            "enum": [
+              "SOLO",
+              "PAIR",
+              "FAMILY"
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when the record was created",
+            "example": "2025-03-26T12:00:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "cityId",
+          "yearId"
         ]
       }
     }

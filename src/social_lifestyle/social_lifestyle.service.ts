@@ -4,6 +4,7 @@ import {
   SocialLifestyleDto,
   CreateSocialLifestyleDto,
   SocialLifestyleQueryDto,
+  SocialType,
 } from "./social_lifestyle.dto";
 
 @Injectable()
@@ -23,6 +24,7 @@ export class SocialLifestyleService {
             cityId: item.cityId,
             yearId: item.yearId,
             avg_price: item.avg_price,
+            type: item.type || SocialType.SOLO,
             currency: "EUR",
             created_at: today,
           })),
@@ -34,7 +36,7 @@ export class SocialLifestyleService {
         );
       }
     } else {
-      const { cityId, yearId, avg_price } = createSocialLifestyleDto;
+      const { cityId, yearId, avg_price, type } = createSocialLifestyleDto;
 
       try {
         return await this.prisma.city_social_lifestyle_report.create({
@@ -43,6 +45,7 @@ export class SocialLifestyleService {
             yearId,
             avg_price,
             currency: "EUR",
+            type: type || SocialType.SOLO,
             created_at: today,
           },
         });
@@ -58,6 +61,7 @@ export class SocialLifestyleService {
   async getAll(query: SocialLifestyleQueryDto) {
     try {
       const {
+        type,
         cityId,
         yearId,
         limit = 10,
@@ -69,6 +73,7 @@ export class SocialLifestyleService {
       const where: any = {};
       if (cityId) where.cityId = Number(cityId);
       if (yearId) where.yearId = Number(yearId);
+      if (type) where.type = type;
 
       const [data, total] = await Promise.all([
         this.prisma.city_social_lifestyle_report.findMany({
@@ -122,6 +127,7 @@ export class SocialLifestyleService {
               yearId: item.yearId,
               avg_price: item.avg_price,
               currency: "EUR",
+              type: item.type || SocialType.SOLO,
               created_at: item.created_at,
             },
           })
