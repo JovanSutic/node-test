@@ -14,7 +14,7 @@ import {
   UseGuards,
   Query,
 } from "@nestjs/common";
-import { CreateCityDto, CityDto } from "./cities.dto";
+import { CreateCityDto, CityDto, CitiesQueryDto } from "./cities.dto";
 import { CitiesService } from "./cities.service";
 import {
   ExistenceValidationPipe,
@@ -48,6 +48,7 @@ export class CitiesController {
           search: "Amsterdam",
           lat: 52.1234,
           lng: 12.1234,
+          size: 100000,
           seaside: true,
         },
       },
@@ -68,6 +69,7 @@ export class CitiesController {
           search: "Amsterdam",
           lat: 52.1234,
           lng: 12.1234,
+          size: 100000,
           seaside: true,
         },
       },
@@ -80,6 +82,7 @@ export class CitiesController {
             search: "Amsterdam",
             lat: 52.1234,
             lng: 12.1234,
+            size: 100000,
             seaside: true,
           },
           {
@@ -89,6 +92,7 @@ export class CitiesController {
             search: "Belgrade",
             lat: 52.1234,
             lng: 12.1234,
+            size: 100000,
             seaside: true,
           },
         ],
@@ -118,13 +122,16 @@ export class CitiesController {
     isArray: true,
     type: CityDto,
   })
-  async getAll(
-    @Query("north") north?: string,
-    @Query("south") south?: string,
-    @Query("east") east?: string,
-    @Query("west") west?: string,
-    @Query("take") take?: string
-  ) {
+  async getAll(@Query() filters: CitiesQueryDto) {
+    const {
+      north,
+      south,
+      east,
+      west,
+      take = "30",
+      sortBy = "name",
+      order = "asc",
+    } = filters;
     try {
       const parsedTake = Math.min(parseInt(take || "30", 10), 100);
       if (north && south && east && west) {
@@ -134,10 +141,12 @@ export class CitiesController {
           east: parseFloat(east),
           west: parseFloat(west),
           take: parsedTake,
+          sortBy,
+          order,
         });
       }
 
-      return await this.citiesService.getAll(parsedTake);
+      return await this.citiesService.getAll(parsedTake, sortBy, order);
     } catch (error: any) {
       throw new BadRequestException(
         error.message || "An error occurred while fetching the cities"
@@ -162,6 +171,7 @@ export class CitiesController {
           search: "Amsterdam",
           lat: 52.1234,
           lng: 12.1234,
+          size: 100000,
           seaside: true,
         },
       },
@@ -201,6 +211,7 @@ export class CitiesController {
           search: "Amsterdam",
           lat: 52.1234,
           lng: 12.1234,
+          size: 100000,
           seaside: true,
         },
       },
@@ -214,6 +225,7 @@ export class CitiesController {
             search: "Amsterdam",
             lat: 52.1234,
             lng: 12.1234,
+            size: 100000,
             seaside: true,
           },
           {
@@ -223,6 +235,7 @@ export class CitiesController {
             search: "Belgrade",
             lat: 52.1234,
             lng: 12.1234,
+            size: 100000,
             seaside: false,
           },
         ],
@@ -241,6 +254,7 @@ export class CitiesController {
           search: "Amsterdam",
           lat: 52.1234,
           lng: 12.1234,
+          size: 100000,
           seaside: true,
         },
       },
@@ -253,6 +267,7 @@ export class CitiesController {
             search: "Amsterdam",
             lat: 52.1234,
             lng: 12.1234,
+            size: 100000,
             seaside: true,
           },
           {
@@ -262,6 +277,7 @@ export class CitiesController {
             search: "Belgrade",
             lat: 52.1234,
             lng: 12.1234,
+            size: 100000,
             seaside: false,
           },
         ],
@@ -308,6 +324,7 @@ export class CitiesController {
           search: "Amsterdam",
           lat: 52.1234,
           lng: 12.1234,
+          size: 100000,
           seaside: true,
         },
       },
