@@ -17,6 +17,7 @@ export class CitiesService {
             lat: city.lat,
             lng: city.lng,
             seaside: city.seaside,
+            size: city.size || 100000,
           })),
         });
       } catch (error: any) {
@@ -26,7 +27,7 @@ export class CitiesService {
         );
       }
     } else {
-      const { name, country, seaside, search, lat, lng } = createCityDto;
+      const { name, country, seaside, search, lat, lng, size } = createCityDto;
 
       try {
         return await this.prisma.cities.create({
@@ -37,6 +38,7 @@ export class CitiesService {
             search,
             lat,
             lng,
+            size: size || 100000,
           },
         });
       } catch (error: any) {
@@ -48,16 +50,18 @@ export class CitiesService {
     }
   }
 
-  async getAll(take: number = 100) {
+  async getAll(take: number = 100, sortBy: string, order: "asc" | "desc") {
     try {
       const [data, total] = await Promise.all([
         this.prisma.cities.findMany({
           take,
-          orderBy: [{ id: "asc" }],
+          orderBy: {
+            [sortBy]: order,
+          },
         }),
         this.prisma.cities.count(),
       ]);
-  
+
       return {
         data,
         total,
@@ -113,6 +117,7 @@ export class CitiesService {
               lat: item.lat,
               lng: item.lng,
               seaside: item.seaside,
+              size: item.size || 100000,
             },
           })
         )
@@ -137,6 +142,7 @@ export class CitiesService {
           lat: data.lat,
           lng: data.lng,
           seaside: data.seaside,
+          size: data.size || 100000,
         },
       });
     } catch (error: any) {
@@ -161,15 +167,23 @@ export class CitiesService {
     }
   }
 
-  async getCitiesInBounds(bounds: {
+  async getCitiesInBounds({
+    north,
+    south,
+    east,
+    west,
+    take,
+    sortBy,
+    order,
+  }: {
     north: number;
     south: number;
     east: number;
     west: number;
-    take?: number;
+    take: number;
+    sortBy: string;
+    order: "asc" | "desc";
   }) {
-    const { north, south, east, west, take = 30 } = bounds;
-
     try {
       const where = {
         lat: {
@@ -186,6 +200,9 @@ export class CitiesService {
         this.prisma.cities.findMany({
           where,
           take,
+          orderBy: {
+            [sortBy]: order,
+          },
         }),
         this.prisma.cities.count({ where }),
       ]);

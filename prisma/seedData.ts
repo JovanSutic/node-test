@@ -21,6 +21,7 @@ export const cities: CreateCityDto[] = [
     search: "Amsterdam",
     lat: 52.377956,
     lng: 4.89707,
+    size: 2000000,
     seaside: true,
   },
   {
@@ -29,6 +30,7 @@ export const cities: CreateCityDto[] = [
     search: "Paris",
     lat: 48.858093,
     lng: 2.294694,
+    size: 6000000,
     seaside: false,
   },
   {
@@ -37,6 +39,7 @@ export const cities: CreateCityDto[] = [
     search: "Rome",
     lat: 41.89193,
     lng: 12.51133,
+    size: 5000000,
     seaside: false,
   },
   {
@@ -45,6 +48,7 @@ export const cities: CreateCityDto[] = [
     search: "Barcelona",
     lat: 41.38879,
     lng: 2.15899,
+    size: 4000000,
     seaside: true,
   },
   {
@@ -53,6 +57,7 @@ export const cities: CreateCityDto[] = [
     search: "Madrid",
     lat: 40.416775,
     lng: -3.70379,
+    size: 5000000,
     seaside: false,
   },
   {
@@ -61,6 +66,7 @@ export const cities: CreateCityDto[] = [
     search: "Berlin",
     lat: 52.5373,
     lng: 13.356085,
+    size: 4000000,
     seaside: false,
   },
   {
@@ -69,6 +75,7 @@ export const cities: CreateCityDto[] = [
     search: "Vienna",
     lat: 48.20849,
     lng: 16.37208,
+    size: 4000000,
     seaside: false,
   },
   {
@@ -77,6 +84,7 @@ export const cities: CreateCityDto[] = [
     search: "Budapest",
     lat: 47.526642,
     lng: 19.046394,
+    size: 3000000,
     seaside: false,
   },
   {
@@ -85,6 +93,7 @@ export const cities: CreateCityDto[] = [
     search: "Belgrade",
     lat: 44.80401,
     lng: 20.46513,
+    size: 2000000,
     seaside: false,
   },
   {
@@ -93,6 +102,7 @@ export const cities: CreateCityDto[] = [
     search: "Athens",
     lat: 37.970833,
     lng: 23.72611,
+    size: 3000000,
     seaside: false,
   },
 ];
