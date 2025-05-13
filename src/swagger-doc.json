@@ -107,6 +107,7 @@
                     "search": "Amsterdam",
                     "lat": 52.1234,
                     "lng": 12.1234,
+                    "size": 100000,
                     "seaside": true
                   }
                 },
@@ -119,6 +120,7 @@
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
+                      "size": 100000,
                       "seaside": true
                     },
                     {
@@ -128,6 +130,7 @@
                       "search": "Belgrade",
                       "lat": 52.1234,
                       "lng": 12.1234,
+                      "size": 100000,
                       "seaside": true
                     }
                   ]
@@ -154,6 +157,7 @@
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
+                      "size": 100000,
                       "seaside": true
                     }
                   },
@@ -175,48 +179,7 @@
       },
       "get": {
         "operationId": "CitiesController_getAll",
-        "parameters": [
-          {
-            "name": "north",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "south",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "east",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "west",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "take",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successfully retrieved cities within bounds.",
@@ -257,6 +220,7 @@
                     "search": "Amsterdam",
                     "lat": 52.1234,
                     "lng": 12.1234,
+                    "size": 100000,
                     "seaside": true
                   }
                 },
@@ -269,6 +233,7 @@
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
+                      "size": 100000,
                       "seaside": true
                     },
                     {
@@ -278,6 +243,7 @@
                       "search": "Belgrade",
                       "lat": 52.1234,
                       "lng": 12.1234,
+                      "size": 100000,
                       "seaside": false
                     }
                   ]
@@ -307,6 +273,7 @@
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
+                      "size": 100000,
                       "seaside": true
                     }
                   },
@@ -320,6 +287,7 @@
                         "search": "Amsterdam",
                         "lat": 52.1234,
                         "lng": 12.1234,
+                        "size": 100000,
                         "seaside": true
                       },
                       {
@@ -329,6 +297,7 @@
                         "search": "Belgrade",
                         "lat": 52.1234,
                         "lng": 12.1234,
+                        "size": 100000,
                         "seaside": false
                       }
                     ]
@@ -375,6 +344,7 @@
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
+                      "size": 100000,
                       "seaside": true
                     }
                   }
@@ -418,6 +388,7 @@
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
+                      "size": 100000,
                       "seaside": true
                     }
                   }
@@ -1992,6 +1963,10 @@
           "seaside": {
             "type": "boolean",
             "description": "Is city on the seaside"
+          },
+          "size": {
+            "type": "number",
+            "description": "The number of inhabitants of the city"
           }
         },
         "required": [
@@ -2033,6 +2008,10 @@
           "seaside": {
             "type": "boolean",
             "description": "Is city on the seaside"
+          },
+          "size": {
+            "type": "number",
+            "description": "The number of inhabitants of the city"
           }
         },
         "required": [

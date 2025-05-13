@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNumber, IsBoolean } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsString, IsNumber, IsBoolean, IsOptional, IsIn, IsNumberString } from "class-validator";
 
 export class CreateCityDto {
   @ApiProperty({
@@ -43,6 +44,15 @@ export class CreateCityDto {
   })
   @IsBoolean()
   seaside: boolean;
+
+  @ApiProperty({
+    description: "The number of inhabitants of the city",
+    required: false,
+    type: Number,
+  })
+  @IsNumber()
+  @IsOptional()
+  size: number;
 }
 
 export class CityDto {
@@ -95,4 +105,44 @@ export class CityDto {
   })
   @IsBoolean()
   seaside: boolean;
+
+  @ApiProperty({
+    description: "The number of inhabitants of the city",
+    required: false,
+    type: Number,
+  })
+  @IsNumber()
+  @IsOptional()
+  size: number;
+}
+
+export class CitiesQueryDto {
+  @IsOptional()
+  @IsNumberString()
+  north?: string;
+
+  @IsOptional()
+  @IsNumberString()
+  south?: string;
+
+  @IsOptional()
+  @IsNumberString()
+  east?: string;
+
+  @IsOptional()
+  @IsNumberString()
+  west?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => Math.min(parseInt(value, 10), 100))
+  @IsNumberString()
+  take?: string;
+
+  @IsOptional()
+  @IsString()
+  sortBy?: string;
+
+  @IsOptional()
+  @IsIn(['asc', 'desc'])
+  order?: 'asc' | 'desc';
 }

@@ -20,6 +20,7 @@ model cities {
   lat Float?
   lng Float?
   seaside Boolean?
+  size    Float?
 
   prices  prices[]
   socialLifestyleReports city_social_lifestyle_report[]
