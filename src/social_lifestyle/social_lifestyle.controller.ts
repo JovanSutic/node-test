@@ -37,7 +37,7 @@ export class SocialLifestyleController {
   ) {}
 
   @Post()
-  @UseGuards()
+  @UseGuards(AuthGuard)
   @UsePipes(
     StaticFieldValidationPipe,
     ForeignKeyValidationPipe,
@@ -207,7 +207,7 @@ export class SocialLifestyleController {
   }
 
   @Put()
-  @UseGuards()
+  @UseGuards(AuthGuard)
   @UsePipes(
     StaticFieldValidationPipe,
     ForeignKeyValidationPipe,
