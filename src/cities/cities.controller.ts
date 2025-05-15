@@ -133,7 +133,7 @@ export class CitiesController {
       order = "asc",
     } = filters;
     try {
-      const parsedTake = Math.min(parseInt(take || "30", 10), 100);
+      const parsedTake = Math.min(parseInt(take || "30", 10), 300);
       if (north && south && east && west) {
         return await this.citiesService.getCitiesInBounds({
           north: parseFloat(north),
