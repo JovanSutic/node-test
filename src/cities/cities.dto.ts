@@ -1,6 +1,15 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsString, IsNumber, IsBoolean, IsOptional, IsIn, IsNumberString } from "class-validator";
+import {
+  IsString,
+  IsNumber,
+  IsBoolean,
+  IsOptional,
+  IsIn,
+  IsNumberString,
+  IsEnum,
+} from "class-validator";
+import { PriceType } from "../prices/prices.dto";
 
 export class CreateCityDto {
   @ApiProperty({
@@ -143,6 +152,26 @@ export class CitiesQueryDto {
   sortBy?: string;
 
   @IsOptional()
-  @IsIn(['asc', 'desc'])
-  order?: 'asc' | 'desc';
+  @IsIn(["asc", "desc"])
+  order?: "asc" | "desc";
+
+  @IsOptional()
+  @IsNumberString()
+  fromId?: string;
+
+  @IsOptional()
+  @IsString()
+  country?: string;
+}
+
+export class CitiesMissingDto {
+  @IsEnum(PriceType)
+  priceType: PriceType;
+
+  @IsNumberString()
+  yearId: string;
+
+  @IsOptional()
+  @IsNumberString()
+  lessThan?: string;
 }

@@ -18,6 +18,8 @@ describe("CitiesController", () => {
   beforeEach(async () => {
     prismaServiceMock = {
       cities: { findUnique: jest.fn(), findFirst: jest.fn() },
+      city_social_lifestyle_report: { findMany: jest.fn() },
+      prices: { groupBy: jest.fn() },
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -124,6 +126,80 @@ describe("CitiesController", () => {
       .get("/cities")
       .expect(200);
 
+    expect(response.body).toEqual(mockCities);
+    expect(response.status).toBe(200);
+  });
+
+  it("should return cities with less than 55 CURRENT prices for yearId 16 via GET /cities/missing-prices", async () => {
+    const mockCities: CityDto[] = [
+      {
+        id: 1,
+        name: "Belgrade",
+        country: "Serbia",
+        search: "Belgrade",
+        lat: 44.12345,
+        lng: 24.1234,
+        seaside: false,
+      },
+      {
+        id: 2,
+        name: "Novi Sad",
+        country: "Serbia",
+        search: "Novi-Sad",
+        lat: 44.12345,
+        lng: 24.1234,
+        seaside: false,
+      },
+    ];
+  
+    jest
+      .spyOn(citiesService, "getCitiesWithMissingPrices")
+      .mockResolvedValue(mockCities);
+  
+    const response = await request(app.getHttpServer())
+      .get("/cities/missing-prices")
+      .query({
+        priceType: "CURRENT",
+        yearId: "16",
+        lessThan: "55",
+      })
+      .expect(200);
+  
+    expect(response.body).toEqual(mockCities);
+    expect(response.status).toBe(200);
+  });
+  
+  it("should return cities missing social report of type SOLO via GET /cities/missing-social-report", async () => {
+    const mockCities: CityDto[] = [
+      {
+        id: 1,
+        name: "Belgrade",
+        country: "Serbia",
+        search: "Belgrade",
+        lat: 44.12345,
+        lng: 24.1234,
+        seaside: false,
+      },
+      {
+        id: 2,
+        name: "Novi Sad",
+        country: "Serbia",
+        search: "Novi-Sad",
+        lat: 44.12345,
+        lng: 24.1234,
+        seaside: false,
+      },
+    ];
+  
+    jest
+      .spyOn(citiesService, "getCitiesWithoutSocialReportType")
+      .mockResolvedValue(mockCities);
+  
+    const response = await request(app.getHttpServer())
+      .get("/cities/missing-social-report")
+      .query({ type: "SOLO" })
+      .expect(200);
+  
     expect(response.body).toEqual(mockCities);
     expect(response.status).toBe(200);
   });
