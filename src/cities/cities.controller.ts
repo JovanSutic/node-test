@@ -14,7 +14,7 @@ import {
   UseGuards,
   Query,
 } from "@nestjs/common";
-import { CreateCityDto, CityDto, CitiesQueryDto } from "./cities.dto";
+import { CreateCityDto, CityDto, CitiesQueryDto, CitiesMissingDto } from "./cities.dto";
 import { CitiesService } from "./cities.service";
 import {
   ExistenceValidationPipe,
@@ -24,6 +24,7 @@ import {
 } from "./cities.validation.pipe";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "../utils/auth.guard";
+import type { SocialType } from "../social_lifestyle/social_lifestyle.dto";
 
 @Controller("cities")
 @ApiTags("cities")
@@ -121,6 +122,37 @@ export class CitiesController {
     description: "Successfully retrieved cities within bounds.",
     isArray: true,
     type: CityDto,
+    examples: {
+      "application/json": {
+        summary: "Array of CityDTO",
+        value: {
+          data: [
+            {
+              id: 1,
+              name: "Amsterdam",
+              country: "Netherlands",
+              search: "Amsterdam",
+              lat: 52.1234,
+              lng: 12.1234,
+              size: 100000,
+              seaside: true,
+            },
+            {
+              id: 2,
+              name: "Rotterdam",
+              country: "Netherlands",
+              search: "Rotterdam",
+              lat: 52.1234,
+              lng: 12.1234,
+              size: 100000,
+              seaside: true,
+            },
+          ],
+          total: 100,
+          limit: 10,
+        },
+      },
+    },
   })
   async getAll(@Query() filters: CitiesQueryDto) {
     const {
@@ -131,6 +163,8 @@ export class CitiesController {
       take = "30",
       sortBy = "name",
       order = "asc",
+      fromId,
+      country,
     } = filters;
     try {
       const parsedTake = Math.min(parseInt(take || "30", 10), 300);
@@ -146,12 +180,128 @@ export class CitiesController {
         });
       }
 
-      return await this.citiesService.getAll(parsedTake, sortBy, order);
+      return await this.citiesService.getAll(
+        parsedTake,
+        sortBy,
+        order,
+        fromId ? parseInt(fromId, 10) : undefined,
+        country
+      );
     } catch (error: any) {
       throw new BadRequestException(
         error.message || "An error occurred while fetching the cities"
       );
     }
+  }
+
+  @Get("missing-social-report")
+  @ApiOperation({
+    summary: "Get cities without a specific social lifestyle report type",
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      "Successfully retrieved cities that are missing social reports.",
+    isArray: true,
+    type: CityDto,
+    examples: {
+      "application/json": {
+        summary: "Array of CityDTO",
+        value: {
+          data: [
+            {
+              id: 1,
+              name: "Amsterdam",
+              country: "Netherlands",
+              search: "Amsterdam",
+              lat: 52.1234,
+              lng: 12.1234,
+              size: 100000,
+              seaside: true,
+            },
+            {
+              id: 2,
+              name: "Rotterdam",
+              country: "Netherlands",
+              search: "Rotterdam",
+              lat: 52.1234,
+              lng: 12.1234,
+              size: 100000,
+              seaside: true,
+            },
+          ],
+          total: 100,
+          limit: 10,
+        },
+      },
+    },
+  })
+  async getCitiesWithoutSocialReport(@Query("type") type: SocialType) {
+    if (!type) {
+      throw new BadRequestException("Missing required parameter: type");
+    }
+
+    return this.citiesService.getCitiesWithoutSocialReportType(type);
+  }
+
+  @Get("missing-prices")
+  @ApiOperation({
+    summary: "Get cities with missing or insufficient price data",
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      "Successfully retrieved cities that are missing prices record.",
+    isArray: true,
+    type: CityDto,
+    examples: {
+      "application/json": {
+        summary: "Array of CityDTO",
+        value: {
+          data: [
+            {
+              id: 1,
+              name: "Amsterdam",
+              country: "Netherlands",
+              search: "Amsterdam",
+              lat: 52.1234,
+              lng: 12.1234,
+              size: 100000,
+              seaside: true,
+            },
+            {
+              id: 2,
+              name: "Rotterdam",
+              country: "Netherlands",
+              search: "Rotterdam",
+              lat: 52.1234,
+              lng: 12.1234,
+              size: 100000,
+              seaside: true,
+            },
+          ],
+          total: 100,
+          limit: 10,
+        },
+      },
+    },
+  })
+  async getCitiesWithMissingPrices(@Query() filters: CitiesMissingDto) {
+
+    const {yearId, lessThan, priceType } = filters;
+    
+    const yearIdStr = parseInt(yearId, 10);
+    const lessThanStr = parseInt(lessThan || "55", 10);
+
+    if (!yearId || !lessThan) {
+      throw new BadRequestException("yearId and lessThan are required");
+    }
+
+    return this.citiesService.getCitiesWithMissingPrices(
+      priceType,
+      yearIdStr,
+      lessThanStr
+    );
   }
 
   @Get(":id")

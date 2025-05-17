@@ -190,6 +190,37 @@
                   "items": {
                     "$ref": "#/components/schemas/CityDto"
                   }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Array of CityDTO",
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "name": "Amsterdam",
+                          "country": "Netherlands",
+                          "search": "Amsterdam",
+                          "lat": 52.1234,
+                          "lng": 12.1234,
+                          "size": 100000,
+                          "seaside": true
+                        },
+                        {
+                          "id": 2,
+                          "name": "Rotterdam",
+                          "country": "Netherlands",
+                          "search": "Rotterdam",
+                          "lat": 52.1234,
+                          "lng": 12.1234,
+                          "size": 100000,
+                          "seaside": true
+                        }
+                      ],
+                      "total": 100,
+                      "limit": 10
+                    }
+                  }
                 }
               }
             }
@@ -308,6 +339,118 @@
           }
         },
         "summary": "Update cities",
+        "tags": [
+          "cities"
+        ]
+      }
+    },
+    "/cities/missing-social-report": {
+      "get": {
+        "operationId": "CitiesController_getCitiesWithoutSocialReport",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved cities that are missing social reports.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CityDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Array of CityDTO",
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "name": "Amsterdam",
+                          "country": "Netherlands",
+                          "search": "Amsterdam",
+                          "lat": 52.1234,
+                          "lng": 12.1234,
+                          "size": 100000,
+                          "seaside": true
+                        },
+                        {
+                          "id": 2,
+                          "name": "Rotterdam",
+                          "country": "Netherlands",
+                          "search": "Rotterdam",
+                          "lat": 52.1234,
+                          "lng": 12.1234,
+                          "size": 100000,
+                          "seaside": true
+                        }
+                      ],
+                      "total": 100,
+                      "limit": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get cities without a specific social lifestyle report type",
+        "tags": [
+          "cities"
+        ]
+      }
+    },
+    "/cities/missing-prices": {
+      "get": {
+        "operationId": "CitiesController_getCitiesWithMissingPrices",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved cities that are missing prices record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CityDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Array of CityDTO",
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "name": "Amsterdam",
+                          "country": "Netherlands",
+                          "search": "Amsterdam",
+                          "lat": 52.1234,
+                          "lng": 12.1234,
+                          "size": 100000,
+                          "seaside": true
+                        },
+                        {
+                          "id": 2,
+                          "name": "Rotterdam",
+                          "country": "Netherlands",
+                          "search": "Rotterdam",
+                          "lat": 52.1234,
+                          "lng": 12.1234,
+                          "size": 100000,
+                          "seaside": true
+                        }
+                      ],
+                      "total": 100,
+                      "limit": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get cities with missing or insufficient price data",
         "tags": [
           "cities"
         ]

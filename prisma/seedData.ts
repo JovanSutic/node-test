@@ -3,7 +3,7 @@ import { CreateProductDto } from "../src/products/products.dto";
 import { CreateYearDto } from "../src/years/years.dto";
 import { CreateCategoryDto } from "../src/categories/categories.dto";
 import { CreatePriceDto, PriceType } from "../src/prices/prices.dto";
-import { CreateSocialLifestyleDto } from "../src/social_lifestyle/social_lifestyle.dto";
+import { CreateSocialLifestyleDto, SocialType } from "../src/social_lifestyle/social_lifestyle.dto";
 
 export const categories: CreateCategoryDto[] = [
   { name: "Restaurants" },
@@ -222,23 +222,27 @@ export const socialLifeStyleReports: CreateSocialLifestyleDto[] = [
     yearId: 1,
     avg_price: 200,
     currency: "EUR",
+    type: SocialType.SOLO,
   },
   {
     cityId: 2,
     yearId: 1,
     avg_price: 200,
     currency: "EUR",
+    type: SocialType.SOLO,
   },
   {
     cityId: 2,
     yearId: 2,
     avg_price: 500,
     currency: "EUR",
+    type: SocialType.SOLO,
   },
   {
     cityId: 2,
     yearId: 3,
     avg_price: 1200,
     currency: "EUR",
+    type: SocialType.SOLO,
   },
 ];
