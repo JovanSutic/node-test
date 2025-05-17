@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CityDto, CreateCityDto } from "./cities.dto";
+import type { SocialType } from "../social_lifestyle/social_lifestyle.dto";
+import type { PriceType } from "../prices/prices.dto";
 
 @Injectable()
 export class CitiesService {
@@ -50,16 +52,32 @@ export class CitiesService {
     }
   }
 
-  async getAll(take: number = 100, sortBy: string, order: "asc" | "desc") {
+  async getAll(
+    take: number = 100,
+    sortBy: string,
+    order: "asc" | "desc",
+    fromId?: number,
+    country?: string
+  ) {
     try {
+      const where: any = {};
+
+      if (fromId !== undefined) {
+        where.id = { gte: fromId };
+      }
+
+      if (country) {
+        where.country = country;
+      }
       const [data, total] = await Promise.all([
         this.prisma.cities.findMany({
+          where,
           take,
           orderBy: {
             [sortBy]: order,
           },
         }),
-        this.prisma.cities.count(),
+        this.prisma.cities.count({ where }),
       ]);
 
       return {
@@ -215,6 +233,79 @@ export class CitiesService {
     } catch (error: any) {
       throw new BadRequestException(
         error.message || "An error occurred while getting cities in bounds."
+      );
+    }
+  }
+
+  async getCitiesWithoutSocialReportType(type: SocialType) {
+    try {
+      const citiesWithType =
+        await this.prisma.city_social_lifestyle_report.findMany({
+          where: {
+            type,
+          },
+          select: {
+            cityId: true,
+          },
+          distinct: ["cityId"],
+        });
+
+      const cityIdsWithType = citiesWithType.map((r) => r.cityId);
+
+      return this.prisma.cities.findMany({
+        where: {
+          id: {
+            notIn: cityIdsWithType,
+          },
+        },
+      });
+    } catch (error: any) {
+      throw new BadRequestException(
+        error.message || "Error fetching cities without social report type"
+      );
+    }
+  }
+
+  async getCitiesWithMissingPrices(
+    priceType: PriceType,
+    yearId: number,
+    lessThan = 55
+  ) {
+    try {
+      const citiesWithEnoughPrices = await this.prisma.prices.groupBy({
+        by: ["cityId"],
+        where: {
+          yearId,
+          priceType,
+        },
+        _count: {
+          id: true,
+        },
+        having: {
+          id: {
+            _count: {
+              gte: lessThan,
+            },
+          },
+        },
+      });
+
+      const cityIdsToExclude = citiesWithEnoughPrices.map(
+        (entry) => entry.cityId
+      );
+
+      const cities = await this.prisma.cities.findMany({
+        where: {
+          id: {
+            notIn: cityIdsToExclude,
+          },
+        },
+      });
+
+      return cities;
+    } catch (error: any) {
+      throw new BadRequestException(
+        error.message || "Error fetching cities with missing prices"
       );
     }
   }
