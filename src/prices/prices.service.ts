@@ -113,7 +113,7 @@ export class PricesService {
       return {
         data,
         total,
-        limit,
+        limit: Number(limit),
         offset,
       };
     } catch (error: any) {
@@ -219,4 +219,53 @@ export class PricesService {
 
     return cityIds.map((entry) => entry.cityId);
   }
+
+  async getAverageCountryPrices(
+    country: string,
+    yearId: number,
+    priceType: PriceType = PriceType.CURRENT
+  ) {
+    const result = await this.prisma.prices.groupBy({
+      by: ['productId'],
+      where: {
+        price: {
+          gt: 0.01,
+        },
+        priceType,
+        yearId,
+        city: {
+          country,
+        },
+      },
+      _avg: {
+        price: true,
+      },
+    });
+  
+    return result.map((item) => ({
+      country,
+      productId: item.productId,
+      average_price: item._avg.price ?? 0,
+      yearId,
+    }));
+  }
+
+  async getUnmarkedPrices(
+    country: string,
+    yearId: number,
+    priceType: PriceType
+  ) {
+    return this.prisma.prices.findMany({
+      where: {
+        price: 0.01,
+        priceType,
+        yearId,
+        city: {
+          country,
+        },
+      },
+    });
+  }
+  
+  
 }
