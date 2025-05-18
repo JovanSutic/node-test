@@ -15,11 +15,14 @@ import {
   Query,
 } from "@nestjs/common";
 import {
+  AverageCountryPriceQueryDto,
   CityIdQueryDto,
   CreatePriceDto,
   PriceDto,
   PricePaginationDto,
   PriceQueryDto,
+  PriceType,
+  UnmarkedPriceQueryDto,
 } from "./prices.dto";
 import { PricesService } from "./prices.service";
 import {
@@ -182,6 +185,100 @@ export class PricesController {
     }
   }
 
+  @Get("unmarked-prices")
+  @ApiOperation({
+    summary:
+      "Get all prices with price = 0.01 for given country, year, and priceType",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "List of unmarked prices",
+    isArray: true,
+    schema: {
+      example: [
+        {
+          id: 123,
+          price: 0.01,
+          priceType: "CURRENT",
+          cityId: 2,
+          productId: 5,
+          yearId: 2024,
+          createdAt: "2025-01-01T00:00:00.000Z",
+          updatedAt: "2025-01-01T00:00:00.000Z",
+        },
+      ],
+    },
+  })
+  async getUnmarkedPrices(@Query() filters: UnmarkedPriceQueryDto) {
+    const { country, yearId, priceType } = filters;
+    if (!country || !yearId || !priceType) {
+      throw new BadRequestException(
+        "country, yearId, and priceType are required"
+      );
+    }
+
+    try {
+      return await this.pricesService.getUnmarkedPrices(
+        country,
+        Number(yearId),
+        priceType
+      );
+    } catch (error: any) {
+      throw new BadRequestException(
+        error.message || "An error occurred while fetching unmarked prices"
+      );
+    }
+  }
+
+  @Get("average-country-prices")
+  @ApiOperation({
+    summary: "Get average prices per product in a specific country",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Average prices for all products in the specified country",
+    isArray: true,
+    type: PricePaginationDto,
+    examples: {
+      "application/json": {
+        summary: "price DTO array",
+        value: [
+          {
+            country: "France",
+            productId: 1,
+            average_price: 15.5,
+            yearId: 15,
+          },
+          {
+            country: "France",
+            productId: 2,
+            average_price: 23.1,
+            yearId: 15,
+          },
+        ],
+      },
+    },
+  })
+  async getAverageCountryPrices(@Query() filters: AverageCountryPriceQueryDto) {
+    const { country, yearId, priceType } = filters;
+    if (!country || !yearId) {
+      throw new BadRequestException("Both country and yearId are required");
+    }
+
+    try {
+      return await this.pricesService.getAverageCountryPrices(
+        country,
+        Number(yearId),
+        priceType
+      );
+    } catch (error: any) {
+      throw new BadRequestException(
+        error.message ||
+          "An error occurred while fetching average country prices"
+      );
+    }
+  }
+
   @Get("unique-cities")
   @ApiOperation({
     summary: "Get unique cityIds optionally filtered by priceType",
@@ -194,18 +291,20 @@ export class PricesController {
         summary: "List of unique cityIds",
         value: {
           data: [1, 2, 3],
-          count: 3
+          count: 3,
         },
       },
     },
   })
   async getUniqueCityIds(@Query() query: CityIdQueryDto) {
     try {
-      const cityIds = await this.pricesService.getUniqueCityIds(query.priceType);
+      const cityIds = await this.pricesService.getUniqueCityIds(
+        query.priceType
+      );
       return {
         data: cityIds,
-        count: cityIds.length
-      }
+        count: cityIds.length,
+      };
     } catch (error: any) {
       throw new BadRequestException(
         error.message || "An error occurred while fetching unique cityIds"

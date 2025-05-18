@@ -186,6 +186,62 @@ describe("PricesController", () => {
     expect(response.body.count).toBe(2);
   });
 
+  it("should return average prices per product for a country via GET /prices/average-country-prices", async () => {
+    const mockAveragePrices = [
+      { productId: 1, average_price: 12.34, country: "France" },
+      { productId: 2, average_price: 56.78, country: "France" },
+    ];
+
+    jest
+      .spyOn(pricesService, "getAverageCountryPrices")
+      .mockResolvedValue(mockAveragePrices);
+
+    const response = await request(app.getHttpServer())
+      .get("/prices/average-country-prices")
+      .query({ country: "France", yearId: 1, priceType: "CURRENT" })
+      .expect(200);
+
+    expect(pricesService.getAverageCountryPrices).toHaveBeenCalledWith(
+      "France",
+      1,
+      "CURRENT"
+    );
+    expect(response.body).toEqual(mockAveragePrices);
+  });
+
+  it("should return unmarked prices via GET /prices/unmarked-prices", async () => {
+    const mockUnmarkedPrices = [
+      {
+        id: 10,
+        price: 0.01,
+        currency: "EUR",
+        cityId: 3,
+        productId: 4,
+        yearId: 1,
+        priceType: "CURRENT",
+        city: { id: 3, name: "Paris", country: "France" },
+        product: { id: 4, name: "Milk" },
+        year: { id: 1, year: 2024 },
+      },
+    ];
+
+    jest
+      .spyOn(pricesService, "getUnmarkedPrices")
+      .mockResolvedValue(mockUnmarkedPrices);
+
+    const response = await request(app.getHttpServer())
+      .get("/prices/unmarked-prices")
+      .query({ country: "France", yearId: 1, priceType: "CURRENT" })
+      .expect(200);
+
+    expect(pricesService.getUnmarkedPrices).toHaveBeenCalledWith(
+      "France",
+      1,
+      "CURRENT"
+    );
+    expect(response.body).toEqual(mockUnmarkedPrices);
+  });
+
   it("should return a price by ID via GET /prices/:id", async () => {
     const price = {
       id: 1,
