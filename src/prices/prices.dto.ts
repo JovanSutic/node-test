@@ -253,7 +253,79 @@ export class PriceQueryDto {
 }
 
 export class CityIdQueryDto {
+  @ApiPropertyOptional({ enum: PriceType, example: "HISTORICAL" })
   @IsOptional()
   @IsEnum(PriceType)
   priceType?: PriceType;
+}
+
+export class AverageCountryPriceDto {
+  @ApiProperty({
+    description: "The country where the city is located",
+    type: String,
+  })
+  @IsString()
+  country: string;
+
+  @ApiProperty({
+    description: "The id of the product",
+    type: Number,
+  })
+  @IsNumber()
+  productId: number;
+
+  @ApiProperty({
+    description: "The average price of the product for the country",
+    type: Number,
+  })
+  @IsNumber()
+  average_price: number;
+
+  @ApiProperty({
+    description: "The id of the year (years table foreign key)",
+    type: Number,
+  })
+  @IsNumber()
+  yearId: number;
+}
+
+export class AverageCountryPriceQueryDto {
+  @ApiProperty({
+    description: "The country where the city is located",
+    type: String,
+  })
+  @IsString()
+  country: string;
+
+  @ApiPropertyOptional({ enum: PriceType, example: "HISTORICAL" })
+  @IsOptional()
+  @IsEnum(PriceType)
+  priceType?: PriceType;
+
+  @ApiProperty({
+    description: "The id of the year (years table foreign key)",
+    type: Number,
+  })
+  @IsNumber()
+  yearId: number;
+}
+
+export class UnmarkedPriceQueryDto {
+  @ApiProperty({
+    description: "The country where the city is located",
+    type: String,
+  })
+  @IsString()
+  country: string;
+
+  @ApiProperty({ enum: PriceType, example: "HISTORICAL" })
+  @IsEnum(PriceType)
+  priceType: PriceType;
+
+  @ApiProperty({
+    description: "The id of the year (years table foreign key)",
+    type: Number,
+  })
+  @IsNumber()
+  yearId: number;
 }

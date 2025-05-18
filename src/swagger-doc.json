@@ -1630,10 +1630,165 @@
         ]
       }
     },
+    "/prices/unmarked-prices": {
+      "get": {
+        "operationId": "PricesController_getUnmarkedPrices",
+        "parameters": [
+          {
+            "name": "country",
+            "required": true,
+            "in": "query",
+            "description": "The country where the city is located",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "priceType",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "example": "HISTORICAL",
+              "type": "string",
+              "enum": [
+                "CURRENT",
+                "HISTORICAL"
+              ]
+            }
+          },
+          {
+            "name": "yearId",
+            "required": true,
+            "in": "query",
+            "description": "The id of the year (years table foreign key)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of unmarked prices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": 123,
+                      "price": 0.01,
+                      "priceType": "CURRENT",
+                      "cityId": 2,
+                      "productId": 5,
+                      "yearId": 2024,
+                      "createdAt": "2025-01-01T00:00:00.000Z",
+                      "updatedAt": "2025-01-01T00:00:00.000Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all prices with price = 0.01 for given country, year, and priceType",
+        "tags": [
+          "prices"
+        ]
+      }
+    },
+    "/prices/average-country-prices": {
+      "get": {
+        "operationId": "PricesController_getAverageCountryPrices",
+        "parameters": [
+          {
+            "name": "country",
+            "required": true,
+            "in": "query",
+            "description": "The country where the city is located",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "priceType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "HISTORICAL",
+              "type": "string",
+              "enum": [
+                "CURRENT",
+                "HISTORICAL"
+              ]
+            }
+          },
+          {
+            "name": "yearId",
+            "required": true,
+            "in": "query",
+            "description": "The id of the year (years table foreign key)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Average prices for all products in the specified country",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PricePaginationDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "price DTO array",
+                    "value": [
+                      {
+                        "country": "France",
+                        "productId": 1,
+                        "average_price": 15.5,
+                        "yearId": 15
+                      },
+                      {
+                        "country": "France",
+                        "productId": 2,
+                        "average_price": 23.1,
+                        "yearId": 15
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get average prices per product in a specific country",
+        "tags": [
+          "prices"
+        ]
+      }
+    },
     "/prices/unique-cities": {
       "get": {
         "operationId": "PricesController_getUniqueCityIds",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "priceType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "HISTORICAL",
+              "type": "string",
+              "enum": [
+                "CURRENT",
+                "HISTORICAL"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "List of unique cityIds",
