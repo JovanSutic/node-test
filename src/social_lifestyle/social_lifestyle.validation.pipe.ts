@@ -90,6 +90,7 @@ const checkLifestyleExistence = async (
         where: {
           yearId: price.yearId,
           cityId: price.cityId,
+          type: price.type,
         },
       });
     }
@@ -100,7 +101,7 @@ const checkLifestyleExistence = async (
       }
     } else {
       if (item) {
-        throw new ConflictException("Social lifestyle with this name already exists");
+        throw new ConflictException("Social lifestyle for this city, year and type already exists");
       }
     }
   } catch (error) {
