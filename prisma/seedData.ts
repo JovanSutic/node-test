@@ -3,7 +3,14 @@ import { CreateProductDto } from "../src/products/products.dto";
 import { CreateYearDto } from "../src/years/years.dto";
 import { CreateCategoryDto } from "../src/categories/categories.dto";
 import { CreatePriceDto, PriceType } from "../src/prices/prices.dto";
-import { CreateSocialLifestyleDto, SocialType } from "../src/social_lifestyle/social_lifestyle.dto";
+import {
+  CreateCrimeAspectDto,
+  CreateCrimeRankDto,
+} from "../src/crimes/crimes.dto";
+import {
+  CreateSocialLifestyleDto,
+  SocialType,
+} from "../src/social_lifestyle/social_lifestyle.dto";
 
 export const categories: CreateCategoryDto[] = [
   { name: "Restaurants" },
@@ -284,5 +291,44 @@ export const socialLifeStyleReports: CreateSocialLifestyleDto[] = [
     avg_price: 1200,
     currency: "EUR",
     type: SocialType.SOLO,
+  },
+];
+
+export const crimeAspects: CreateCrimeAspectDto[] = [
+  {
+    name: "Level of crime",
+  },
+  {
+    name: "Crime increasing in the past 5 years",
+  },
+  {
+    name: "Worries home broken and things stolen",
+  },
+];
+
+export const crimeRanks: CreateCrimeRankDto[] = [
+  {
+    cityId: 1,
+    yearId: 1,
+    crimeAspectId: 1,
+    rank: 38.7,
+  },
+  {
+    cityId: 1,
+    yearId: 1,
+    crimeAspectId: 2,
+    rank: 68.7,
+  },
+  {
+    cityId: 2,
+    yearId: 1,
+    crimeAspectId: 1,
+    rank: 44.7,
+  },
+  {
+    cityId: 2,
+    yearId: 1,
+    crimeAspectId: 2,
+    rank: 5.7,
   },
 ];

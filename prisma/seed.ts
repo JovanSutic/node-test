@@ -1,5 +1,14 @@
 import { PrismaClient } from "@prisma/client";
-import { cities, years, products, categories, prices, socialLifeStyleReports } from "./seedData";
+import {
+  cities,
+  years,
+  products,
+  categories,
+  prices,
+  socialLifeStyleReports,
+  crimeAspects,
+  crimeRanks,
+} from "./seedData";
 
 const prisma = new PrismaClient();
 
@@ -47,11 +56,32 @@ const prisma = new PrismaClient();
       });
     }
 
-    const social_lifestyle = await prisma.city_social_lifestyle_report.findUnique({ where: { id: 1 } });
+    const social_lifestyle =
+      await prisma.city_social_lifestyle_report.findUnique({
+        where: { id: 1 },
+      });
 
     if (!social_lifestyle) {
       await prisma.city_social_lifestyle_report.createMany({
         data: socialLifeStyleReports,
+      });
+    }
+
+    const crimeAspect = await prisma.crime_aspects.findUnique({
+      where: { id: 1 },
+    });
+
+    if (!crimeAspect) {
+      await prisma.crime_aspects.createMany({
+        data: crimeAspects,
+      });
+    }
+
+    const crimeRank = await prisma.crime_ranks.findUnique({ where: { id: 1 } });
+
+    if (!crimeRank) {
+      await prisma.crime_ranks.createMany({
+        data: crimeRanks,
       });
     }
 
