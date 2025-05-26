@@ -7,8 +7,19 @@ import { CategoriesModule } from "./categories/categories.module";
 import { PricesModule } from "./prices/prices.module";
 import { ConfigModule } from "@nestjs/config";
 import { SocialLifestyleModule } from "./social_lifestyle/social_lifestyle.module";
+import { CrimesModule } from "./crimes/crimes.module";
 
 @Module({
-  imports: [ConfigModule.forRoot(), UsersModule, CitiesModule, YearsModule, ProductsModule, CategoriesModule, PricesModule, SocialLifestyleModule],
+  imports: [
+    ConfigModule.forRoot(),
+    UsersModule,
+    CitiesModule,
+    YearsModule,
+    ProductsModule,
+    CategoriesModule,
+    PricesModule,
+    SocialLifestyleModule,
+    CrimesModule,
+  ],
 })
 export class AppModule {}

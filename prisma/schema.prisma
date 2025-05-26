@@ -24,6 +24,7 @@ model cities {
 
   prices  prices[]
   socialLifestyleReports city_social_lifestyle_report[]
+  crimeRanks crime_ranks[]
 }
 
 model years {
@@ -32,6 +33,7 @@ model years {
 
   prices prices[]
   socialLifestyleReports city_social_lifestyle_report[]
+  crimeRanks crime_ranks[]
 }
 
 model categories {
@@ -99,4 +101,28 @@ enum SocialType {
   SOLO
   PAIR
   FAMILY
+}
+
+model crime_aspects {
+  id        Int       @id @default(autoincrement())
+  name      String       @unique
+  created_at DateTime     @default(now())
+
+  crimeRanks crime_ranks[]
+}
+
+model crime_ranks {
+  id              Int            @id @default(autoincrement())
+  cityId          Int            @map("city_id")
+  yearId          Int            @map("year_id")
+  crimeAspectId   Int            @map("crime_aspect_id")
+  rank            Float
+  created_at      DateTime       @default(now())
+
+  // Relations
+  city            cities         @relation(fields: [cityId], references: [id])
+  year            years          @relation(fields: [yearId], references: [id])
+  crime_aspect    crime_aspects  @relation(fields: [crimeAspectId], references: [id])
+
+  @@unique([cityId, yearId, crimeAspectId])
 }
