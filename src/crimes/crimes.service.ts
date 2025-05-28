@@ -231,9 +231,10 @@ export class CrimesService {
         error.message || "Failed to fetch grouped crime rank data."
       );
     }
+    
 
     const cityIdsWithSufficientData = crimeRankCounts
-      .filter((entry) => entry?._count || 0 >= threshold)
+      .filter((entry) => entry?._count?.cityId || 0 >= threshold)
       .map((entry) => entry.cityId);
 
     try {
