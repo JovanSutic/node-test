@@ -12,9 +12,9 @@ import request from "supertest";
 const mockCrimeRanks = [
   {
     id: 1,
-    city_id: 1,
-    year_id: 16,
-    crime_aspect_id: 2,
+    cityId: 1,
+    yearId: 16,
+    crimeAspectId: 2,
     rank: 65.2,
     created_at: new Date().toISOString(),
   },
@@ -137,6 +137,63 @@ describe("CrimesController", () => {
       .expect(200);
 
     expect(response.body).toEqual(mockCrimeRanks);
+  });
+
+  it("should return calculated safety summary - GET /crimes/summary", async () => {
+    const mockSummary = {
+      overallCrimeConcernIndex: 58.7,
+      personalSafetyScore: 43.7,
+      crimeEscalationIndicator: 73.2,
+    };
+
+    const spy = jest
+      .spyOn(crimesService, "getCitySafetySummary")
+      .mockResolvedValue(mockSummary);
+
+    const response = await request(app.getHttpServer())
+      .get("/crimes/summary?cityId=1&yearId=16")
+      .expect(200);
+
+    expect(response.body).toEqual(mockSummary);
+  });
+
+  it("should return average crime rank - GET /crimes/average", async () => {
+    const mockAverage = {
+      aspectId: 14,
+      yearId: 15,
+      country: "Serbia",
+      count: 7,
+      average: 61.34,
+    };
+
+    jest
+      .spyOn(crimesService, "getAverageCrimeRank")
+      .mockResolvedValue(mockAverage);
+
+    const response = await request(app.getHttpServer())
+      .get("/crimes/average")
+      .query({ aspectId: "14", yearId: "15", country: "Serbia" })
+      .expect(200);
+
+    expect(response.body).toEqual(mockAverage);
+  });
+
+  it("should return cities with incomplete crime ranks - GET /crimes/missing-cities", async () => {
+    const mockCities = [
+      { id: 1, name: "CityA", crime_ranks: [{ id: 1 }, { id: 2 }] },
+      { id: 2, name: "CityB", crime_ranks: [{ id: 3 }] },
+    ];
+
+    jest
+      .spyOn(crimesService, "getCitiesMissingCrimeRanks")
+      .mockResolvedValue(mockCities);
+
+    const response = await request(app.getHttpServer())
+      .get("/crimes/missing-cities")
+      .query({ count: "3", yearId: "16" })
+      .expect(200);
+
+    expect(response.body).toEqual(mockCities);
   });
 
   it("should create new crime aspect - POST /crimes/aspects", async () => {

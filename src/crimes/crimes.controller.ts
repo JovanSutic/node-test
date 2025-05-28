@@ -21,6 +21,9 @@ import {
   CreateCrimeRankDto,
   CrimeRankDto,
   CrimeRanksQueryDto,
+  CrimeSafetySummaryDto,
+  CityYearQueryDto,
+  AverageQueryDto,
 } from "./crimes.dto";
 import { CrimesService } from "./crimes.service";
 import {
@@ -203,7 +206,94 @@ export class CrimesController {
     try {
       return await this.crimeService.getAllRanks(filters);
     } catch (error: any) {
-      throw new BadRequestException("Failed to fetch crime ranks.");
+      throw error;
+    }
+  }
+
+  @Get("summary")
+  @ApiOperation({
+    summary: "Get calculated safety summary for a city and year",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Calculated safety summary",
+    type: CrimeSafetySummaryDto,
+    examples: {
+      "application/json": {
+        summary: "Safety Summary",
+        value: {
+          overallCrimeConcernIndex: 58.79,
+          personalSafetyScore: 43.71,
+          crimeEscalationIndicator: 73.2,
+        },
+      },
+    },
+  })
+  async getCitySafetySummary(
+    @Query() filters: CityYearQueryDto
+  ): Promise<CrimeSafetySummaryDto> {
+    const { cityId, yearId } = filters;
+    if (!cityId || !yearId) {
+      throw new BadRequestException("cityId and yearId are required.");
+    }
+
+    const cityIdNum = Number(cityId);
+    const yearIdNum = Number(yearId);
+
+    if (isNaN(cityIdNum) || isNaN(yearIdNum)) {
+      throw new BadRequestException("cityId and yearId must be valid numbers.");
+    }
+
+    try {
+      return this.crimeService.getCitySafetySummary(cityIdNum, yearIdNum);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get("average")
+  @ApiOperation({
+    summary:
+      "Get average rank for specific crime aspect and year, optionally filtered by country",
+  })
+  async getAverageCrimeRank(@Query() filters: AverageQueryDto) {
+    const { aspectId, yearId, country } = filters;
+
+    if (isNaN(Number(aspectId)) || isNaN(Number(yearId))) {
+      throw new BadRequestException("Aspect and yearId must be valid numbers.");
+    }
+
+    try {
+      return this.crimeService.getAverageCrimeRank({
+        aspectId: Number(aspectId),
+        yearId: Number(yearId),
+        country,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get("missing-cities")
+  @ApiOperation({ summary: "Get cities with incomplete crime rank data" })
+  async getMissingCities(
+    @Query("count") countStr: string,
+    @Query("yearId") yearIdStr: string
+  ) {
+    const count = parseInt(countStr, 10);
+    const yearId = parseInt(yearIdStr, 10);
+
+    if (isNaN(count) || count < 1) {
+      throw new BadRequestException("Invalid count parameter");
+    }
+    if (isNaN(yearId)) {
+      throw new BadRequestException("Invalid yearId parameter");
+    }
+
+    try {
+      return this.crimeService.getCitiesMissingCrimeRanks(yearId, count);
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -238,9 +328,7 @@ export class CrimesController {
     try {
       return await this.crimeService.createAspect(data);
     } catch (error: any) {
-      throw new BadRequestException(
-        error.message || "Failed to create crime aspect."
-      );
+      throw error;
     }
   }
 

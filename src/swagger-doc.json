@@ -2215,6 +2215,513 @@
           "social_lifestyle"
         ]
       }
+    },
+    "/crimes": {
+      "post": {
+        "operationId": "CrimesController_createRanks",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Crime rank data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCrimeRankDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "year_id": 16,
+                    "city_id": 1,
+                    "crime_aspect_id": 2,
+                    "rank": 65.2
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "year_id": 16,
+                      "city_id": 1,
+                      "crime_aspect_id": 1,
+                      "rank": 70
+                    },
+                    {
+                      "year_id": 16,
+                      "city_id": 1,
+                      "crime_aspect_id": 2,
+                      "rank": 65
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created crime ranks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrimeRankDto"
+                  }
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single created crime rank",
+                    "value": {
+                      "id": 1,
+                      "year_id": 16,
+                      "city_id": 1,
+                      "crime_aspect_id": 2,
+                      "rank": 65.2
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Count",
+                    "value": {
+                      "count": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create new crime ranks",
+        "tags": [
+          "crimes"
+        ]
+      },
+      "put": {
+        "operationId": "CrimesController_updateRanks",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Updated crime rank data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCrimeRankDto"
+              },
+              "examples": {
+                "single": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "year_id": 16,
+                      "city_id": 1,
+                      "crime_aspect_id": 2,
+                      "rank": 65.2
+                    },
+                    {
+                      "id": 2,
+                      "year_id": 16,
+                      "city_id": 1,
+                      "crime_aspect_id": 3,
+                      "rank": 15.2
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated crime ranks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrimeRankDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "updated crime rank",
+                    "value": [
+                      {
+                        "id": 1,
+                        "year_id": 16,
+                        "city_id": 1,
+                        "crime_aspect_id": 2,
+                        "rank": 65.2,
+                        "created_at": "2025-05-26T18:49:49.442Z"
+                      },
+                      {
+                        "id": 2,
+                        "year_id": 16,
+                        "city_id": 1,
+                        "crime_aspect_id": 3,
+                        "rank": 15.2,
+                        "created_at": "2025-05-26T18:49:49.442Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update existing crime ranks",
+        "tags": [
+          "crimes"
+        ]
+      },
+      "get": {
+        "operationId": "CrimesController_getAllRanks",
+        "parameters": [
+          {
+            "name": "cityId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by city ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "yearId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by year ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "crimeAspectId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by crime aspect ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rankGte",
+            "required": false,
+            "in": "query",
+            "description": "Filter ranks greater than or equal to this value",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rankLte",
+            "required": false,
+            "in": "query",
+            "description": "Filter ranks less than or equal to this value",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All crime ranks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrimeRankDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "updated crime rank",
+                    "value": [
+                      {
+                        "id": 1,
+                        "year_id": 16,
+                        "city_id": 1,
+                        "crime_aspect_id": 2,
+                        "rank": 65.2,
+                        "created_at": "2025-05-26T18:49:49.442Z"
+                      },
+                      {
+                        "id": 2,
+                        "year_id": 16,
+                        "city_id": 1,
+                        "crime_aspect_id": 3,
+                        "rank": 15.2,
+                        "created_at": "2025-05-26T18:49:49.442Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all crime ranks with optional filters",
+        "tags": [
+          "crimes"
+        ]
+      }
+    },
+    "/crimes/summary": {
+      "get": {
+        "operationId": "CrimesController_getCitySafetySummary",
+        "parameters": [
+          {
+            "name": "cityId",
+            "required": true,
+            "in": "query",
+            "description": "City ID to query",
+            "schema": {
+              "example": 199,
+              "type": "number"
+            }
+          },
+          {
+            "name": "yearId",
+            "required": true,
+            "in": "query",
+            "description": "Year ID to query",
+            "schema": {
+              "example": 16,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Calculated safety summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrimeSafetySummaryDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Safety Summary",
+                    "value": {
+                      "overallCrimeConcernIndex": 58.79,
+                      "personalSafetyScore": 43.71,
+                      "crimeEscalationIndicator": 73.2
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get calculated safety summary for a city and year",
+        "tags": [
+          "crimes"
+        ]
+      }
+    },
+    "/crimes/average": {
+      "get": {
+        "operationId": "CrimesController_getAverageCrimeRank",
+        "parameters": [
+          {
+            "name": "aspectId",
+            "required": true,
+            "in": "query",
+            "description": "Crime aspect ID to query",
+            "schema": {
+              "example": 199,
+              "type": "number"
+            }
+          },
+          {
+            "name": "yearId",
+            "required": true,
+            "in": "query",
+            "description": "Year ID to query",
+            "schema": {
+              "example": 16,
+              "type": "number"
+            }
+          },
+          {
+            "name": "country",
+            "required": false,
+            "in": "query",
+            "description": "Country that we need average for.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get average rank for specific crime aspect and year, optionally filtered by country",
+        "tags": [
+          "crimes"
+        ]
+      }
+    },
+    "/crimes/missing-cities": {
+      "get": {
+        "operationId": "CrimesController_getMissingCities",
+        "parameters": [
+          {
+            "name": "count",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "yearId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get cities with incomplete crime rank data",
+        "tags": [
+          "crimes"
+        ]
+      }
+    },
+    "/crimes/aspects": {
+      "post": {
+        "operationId": "CrimesController_createAspect",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Crime aspect to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCrimeAspectDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "name": "Assault"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Crime aspect created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrimeAspectDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "New Crime aspect created",
+                    "value": {
+                      "id": 2,
+                      "name": "Crime increasing in the past 5 years",
+                      "created_at": "2025-05-26T18:49:49.442Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create new crime aspect",
+        "tags": [
+          "crimes"
+        ]
+      },
+      "get": {
+        "operationId": "CrimesController_getAllAspects",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of all crime aspects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CrimeAspectDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Example response",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Robbery",
+                        "created_at": "2025-05-26T18:49:49.442Z"
+                      },
+                      {
+                        "id": 2,
+                        "name": "Assault",
+                        "created_at": "2025-05-26T18:49:49.442Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all crime aspects",
+        "tags": [
+          "crimes"
+        ]
+      }
+    },
+    "/crimes/aspects/{id}": {
+      "delete": {
+        "operationId": "CrimesController_deleteAspect",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Crime aspect deleted",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "application/json": {
+                    "summary": "Deleted Crime aspect",
+                    "value": {
+                      "id": 2,
+                      "name": "Crime increasing in the past 5 years",
+                      "created_at": "2025-05-26T18:49:49.442Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete crime aspect by ID",
+        "tags": [
+          "crimes"
+        ]
+      }
     }
   },
   "info": {
@@ -2645,6 +3152,131 @@
           "id",
           "cityId",
           "yearId"
+        ]
+      },
+      "CreateCrimeRankDto": {
+        "type": "object",
+        "properties": {
+          "cityId": {
+            "type": "number",
+            "description": "The city ID this crime rank belongs to"
+          },
+          "yearId": {
+            "type": "number",
+            "description": "The year ID this crime rank is recorded for"
+          },
+          "crimeAspectId": {
+            "type": "number",
+            "description": "The crime aspect ID"
+          },
+          "rank": {
+            "type": "number",
+            "description": "The crime ranking value"
+          }
+        },
+        "required": [
+          "cityId",
+          "yearId",
+          "crimeAspectId",
+          "rank"
+        ]
+      },
+      "CrimeRankDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of crime rank."
+          },
+          "cityId": {
+            "type": "number",
+            "description": "The city ID"
+          },
+          "yearId": {
+            "type": "number",
+            "description": "The year ID"
+          },
+          "crimeAspectId": {
+            "type": "number",
+            "description": "The crime aspect ID"
+          },
+          "rank": {
+            "type": "number",
+            "description": "The crime rank value"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Date and time when this rank was created",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "cityId",
+          "yearId",
+          "crimeAspectId",
+          "rank",
+          "created_at"
+        ]
+      },
+      "CrimeSafetySummaryDto": {
+        "type": "object",
+        "properties": {
+          "overallCrimeConcernIndex": {
+            "type": "number",
+            "example": 58.79,
+            "description": "Average score of all crime concerns"
+          },
+          "personalSafetyScore": {
+            "type": "number",
+            "example": 43.71,
+            "description": "Weighted score for personal safety (day/night)"
+          },
+          "crimeEscalationIndicator": {
+            "type": "number",
+            "example": 73.2,
+            "description": "Score reflecting perception of rising crime"
+          }
+        },
+        "required": [
+          "overallCrimeConcernIndex",
+          "personalSafetyScore",
+          "crimeEscalationIndicator"
+        ]
+      },
+      "CreateCrimeAspectDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the crime aspect (e.g. 'Assault', 'Theft')"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CrimeAspectDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of crime aspect"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the crime aspect"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The timestamp when the aspect was created",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "created_at"
         ]
       }
     }
