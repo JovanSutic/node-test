@@ -1,5 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNumber, IsString, IsDateString, IsOptional, IsNumberString } from "class-validator";
+import {
+  IsNumber,
+  IsString,
+  IsDateString,
+  IsOptional,
+  IsNumberString,
+} from "class-validator";
 
 export class CreateCrimeAspectDto {
   @ApiProperty({
@@ -34,7 +40,6 @@ export class CrimeAspectDto {
   @IsDateString()
   created_at: string;
 }
-
 
 export class CreateCrimeRankDto {
   @ApiProperty({
@@ -113,28 +118,82 @@ export class CrimeRankDto {
 }
 
 export class CrimeRanksQueryDto {
-    @ApiPropertyOptional({ description: "Filter by city ID" })
-    @IsOptional()
-    @IsNumberString()
-    cityId?: string;
-  
-    @ApiPropertyOptional({ description: "Filter by year ID" })
-    @IsOptional()
-    @IsNumberString()
-    yearId?: string;
-  
-    @ApiPropertyOptional({ description: "Filter by crime aspect ID" })
-    @IsOptional()
-    @IsNumberString()
-    crimeAspectId?: string;
-  
-    @ApiPropertyOptional({ description: "Filter ranks greater than or equal to this value" })
-    @IsOptional()
-    @IsNumberString()
-    rankGte?: string;
-  
-    @ApiPropertyOptional({ description: "Filter ranks less than or equal to this value" })
-    @IsOptional()
-    @IsNumberString()
-    rankLte?: string;
-  }
+  @ApiPropertyOptional({ description: "Filter by city ID" })
+  @IsOptional()
+  @IsNumberString()
+  cityId?: string;
+
+  @ApiPropertyOptional({ description: "Filter by year ID" })
+  @IsOptional()
+  @IsNumberString()
+  yearId?: string;
+
+  @ApiPropertyOptional({ description: "Filter by crime aspect ID" })
+  @IsOptional()
+  @IsNumberString()
+  crimeAspectId?: string;
+
+  @ApiPropertyOptional({
+    description: "Filter ranks greater than or equal to this value",
+  })
+  @IsOptional()
+  @IsNumberString()
+  rankGte?: string;
+
+  @ApiPropertyOptional({
+    description: "Filter ranks less than or equal to this value",
+  })
+  @IsOptional()
+  @IsNumberString()
+  rankLte?: string;
+}
+
+export class CityYearQueryDto {
+  @ApiProperty({ example: 199, description: "City ID to query" })
+  @IsNumberString()
+  cityId: number;
+
+  @ApiProperty({ example: 16, description: "Year ID to query" })
+  @IsNumberString()
+  yearId: number;
+}
+
+export class CrimeSafetySummaryDto {
+  @ApiProperty({
+    example: 58.79,
+    description: "Average score of all crime concerns",
+  })
+  @IsNumber()
+  overallCrimeConcernIndex: number;
+
+  @ApiProperty({
+    example: 43.71,
+    description: "Weighted score for personal safety (day/night)",
+  })
+  @IsNumber()
+  personalSafetyScore: number;
+
+  @ApiProperty({
+    example: 73.2,
+    description: "Score reflecting perception of rising crime",
+  })
+  @IsNumber()
+  crimeEscalationIndicator: number;
+}
+
+export class AverageQueryDto {
+  @ApiProperty({ example: 199, description: "Crime aspect ID to query" })
+  @IsNumberString()
+  aspectId: number;
+
+  @ApiProperty({ example: 16, description: "Year ID to query" })
+  @IsNumberString()
+  yearId: number;
+
+  @ApiPropertyOptional({
+    description: "Country that we need average for.",
+  })
+  @IsOptional()
+  @IsString()
+  country?: string;
+}
