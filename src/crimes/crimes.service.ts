@@ -155,7 +155,7 @@ export class CrimesService {
     country?: string;
   }) {
     let cityFilter: { id: number }[] = [];
-  
+
     if (country) {
       try {
         const cities = await this.prisma.cities.findMany({
@@ -167,11 +167,13 @@ export class CrimesService {
           },
           select: { id: true },
         });
-  
+
         if (!cities.length) {
-          throw new NotFoundException(`No cities found for country: ${country}`);
+          throw new NotFoundException(
+            `No cities found for country: ${country}`
+          );
         }
-  
+
         cityFilter = cities;
       } catch (error: any) {
         throw new BadRequestException(
@@ -179,7 +181,7 @@ export class CrimesService {
         );
       }
     }
-  
+
     let ranks;
     try {
       ranks = await this.prisma.crime_ranks.findMany({
@@ -189,7 +191,7 @@ export class CrimesService {
           ...(country ? { cityId: { in: cityFilter.map((c) => c.id) } } : {}),
         },
       });
-  
+
       if (!ranks.length) {
         throw new NotFoundException("No matching crime rank records found.");
       }
@@ -198,10 +200,10 @@ export class CrimesService {
         error.message || "Failed to fetch crime rank records."
       );
     }
-  
+
     const average =
       ranks.reduce((sum, item) => sum + item.rank, 0) / ranks.length;
-  
+
     return {
       aspectId,
       yearId,
@@ -214,62 +216,41 @@ export class CrimesService {
   async getCitiesMissingCrimeRanks(
     threshold: number,
     yearId: number
-  ): Promise<{ totalCities: number; missingCities: CityDto[] }> {
-    let totalCities = 0;
-    let citiesAboveThreshold = [];
+  ): Promise<{ missingCities: CityDto[] }> {
+    let crimeRankCounts = [];
     let missingCities: CityDto[] = [];
-    try {
-      totalCities = await this.prisma.cities.count();
-    } catch (error: any) {
-      throw new BadRequestException(
-        error.message || "Failed fetch city count."
-      );
-    }
 
     try {
-      citiesAboveThreshold = await this.prisma.crime_ranks.groupBy({
+      crimeRankCounts = await this.prisma.crime_ranks.groupBy({
         by: ["cityId"],
         where: { yearId },
         _count: { cityId: true },
-        having: {
-          cityId: {
-            _count: {
-              gte: threshold,
-            },
-          },
-        },
       });
     } catch (error: any) {
       throw new BadRequestException(
-        error.message || "Failed fetch crime grouped by cityId."
+        error.message || "Failed to fetch grouped crime rank data."
       );
     }
 
-    if (citiesAboveThreshold.length === totalCities) {
-      return { totalCities, missingCities };
-    }
-
-    const cityIdsAboveThreshold = citiesAboveThreshold.map((c) => c.cityId);
-
-    if (cityIdsAboveThreshold.length === totalCities) {
-      return { totalCities, missingCities: [] };
-    }
+    const cityIdsWithSufficientData = crimeRankCounts
+      .filter((entry) => entry?._count || 0 >= threshold)
+      .map((entry) => entry.cityId);
 
     try {
       missingCities = (await this.prisma.cities.findMany({
         where: {
           id: {
-            notIn: cityIdsAboveThreshold.length ? cityIdsAboveThreshold : [0],
+            notIn: cityIdsWithSufficientData,
           },
         },
       })) as CityDto[];
     } catch (error: any) {
       throw new BadRequestException(
-        error.message || "Failed fetch missing cities."
+        error.message || "Failed to fetch missing cities."
       );
     }
 
-    return { totalCities, missingCities: missingCities };
+    return { missingCities };
   }
 
   async createAspect(data: CreateCrimeAspectDto) {
