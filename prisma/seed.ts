@@ -8,6 +8,7 @@ import {
   socialLifeStyleReports,
   crimeAspects,
   crimeRanks,
+  weathers,
 } from "./seedData";
 
 const prisma = new PrismaClient();
@@ -82,6 +83,14 @@ const prisma = new PrismaClient();
     if (!crimeRank) {
       await prisma.crime_ranks.createMany({
         data: crimeRanks,
+      });
+    }
+
+    const weathersUnit = await prisma.weathers.findUnique({ where: { id: 1 } });
+
+    if (!weathersUnit) {
+      await prisma.weathers.createMany({
+        data: weathers,
       });
     }
 

@@ -25,6 +25,7 @@ model cities {
   prices  prices[]
   socialLifestyleReports city_social_lifestyle_report[]
   crimeRanks crime_ranks[]
+  weathers weathers[]
 }
 
 model years {
@@ -125,4 +126,25 @@ model crime_ranks {
   crime_aspect    crime_aspects  @relation(fields: [crimeAspectId], references: [id])
 
   @@unique([cityId, yearId, crimeAspectId])
+}
+
+model weathers {
+  id              Int            @id @default(autoincrement())
+  cityId          Int            @map("city_id")
+  sunshine        Int
+  rain            Int
+  cold            Int
+  heat            Int
+  cold_extremes   Int
+  heat_extremes   Int
+  humidity        Int
+  severe          String
+  lowest          Int
+  highest         Int
+  created_at      DateTime       @default(now())
+
+  // Relations
+  city            cities         @relation(fields: [cityId], references: [id])
+
+  @@unique([cityId])
 }

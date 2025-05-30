@@ -11,6 +11,7 @@ import {
   CreateSocialLifestyleDto,
   SocialType,
 } from "../src/social_lifestyle/social_lifestyle.dto";
+import { CreateWeathersDto, WeathersDto } from "../src/weathers/weathers.dto";
 
 export const categories: CreateCategoryDto[] = [
   { name: "Restaurants" },
@@ -332,3 +333,33 @@ export const crimeRanks: CreateCrimeRankDto[] = [
     rank: 5.7,
   },
 ];
+
+
+export const weathers: CreateWeathersDto[] = [
+  {
+    cityId: 1,
+    sunshine: 250,
+    rain: 100,
+    cold: 60,
+    heat: 90,
+    cold_extremes: 5,
+    heat_extremes: 3,
+    humidity: 75,
+    severe: "Low risk of storms",
+    lowest: -10,
+    highest: 35,
+  },
+  {
+    cityId: 2,
+    sunshine: 250,
+    rain: 120,
+    cold: 60,
+    heat: 90,
+    cold_extremes: 5,
+    heat_extremes: 3,
+    humidity: 75,
+    severe: "Low risk of winds",
+    lowest: -10,
+    highest: 35,
+  },
+]
