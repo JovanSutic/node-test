@@ -8,6 +8,7 @@ import { PricesModule } from "./prices/prices.module";
 import { ConfigModule } from "@nestjs/config";
 import { SocialLifestyleModule } from "./social_lifestyle/social_lifestyle.module";
 import { CrimesModule } from "./crimes/crimes.module";
+import { WeathersModule } from "./weathers/weathers.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CrimesModule } from "./crimes/crimes.module";
     PricesModule,
     SocialLifestyleModule,
     CrimesModule,
+    WeathersModule,
   ],
 })
 export class AppModule {}
