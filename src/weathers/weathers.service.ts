@@ -65,16 +65,14 @@ export class WeathersService {
     }
   }
 
-  async getByCity(cityId: number): Promise<WeathersDto> {
+  async getByCity(cityId: number): Promise<WeathersDto | null> {
     try {
       const weather = await this.prisma.weathers.findUnique({
         where: { cityId },
       });
 
       if (!weather) {
-        throw new NotFoundException(
-          `Weather data for city ID ${cityId} not found.`
-        );
+       null
       }
 
       return weather;

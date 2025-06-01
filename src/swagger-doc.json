@@ -2722,6 +2722,331 @@
           "crimes"
         ]
       }
+    },
+    "/weathers": {
+      "post": {
+        "operationId": "WeathersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWeathersDto"
+              },
+              "examples": {
+                "application/json": {
+                  "summary": "Create weather data for a city",
+                  "value": {
+                    "cityId": 1,
+                    "sunshine": 250,
+                    "rain": 100,
+                    "cold": 60,
+                    "heat": 90,
+                    "cold_extremes": 5,
+                    "heat_extremes": 3,
+                    "humidity": 75,
+                    "severe": "Low risk of storms",
+                    "lowest": -10,
+                    "highest": 35
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Weather record created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeathersDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Created weather record",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "sunshine": 250,
+                      "rain": 100,
+                      "cold": 60,
+                      "heat": 90,
+                      "cold_extremes": 5,
+                      "heat_extremes": 3,
+                      "humidity": 75,
+                      "severe": "Low risk of storms",
+                      "lowest": -10,
+                      "highest": 35,
+                      "created_at": "2025-05-30T12:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a new weather record",
+        "tags": [
+          "weathers"
+        ]
+      },
+      "get": {
+        "operationId": "WeathersController_getAll",
+        "parameters": [
+          {
+            "name": "country",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of weather records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeathersDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "List of WeathersDto",
+                    "value": [
+                      {
+                        "id": 1,
+                        "cityId": 1,
+                        "sunshine": 250,
+                        "rain": 100,
+                        "cold": 60,
+                        "heat": 90,
+                        "cold_extremes": 5,
+                        "heat_extremes": 3,
+                        "humidity": 75,
+                        "severe": "Low risk of storms",
+                        "lowest": -10,
+                        "highest": 35,
+                        "created_at": "2025-05-30T12:00:00.000Z"
+                      },
+                      {
+                        "id": 1,
+                        "cityId": 1,
+                        "sunshine": 250,
+                        "rain": 100,
+                        "cold": 60,
+                        "heat": 90,
+                        "cold_extremes": 5,
+                        "heat_extremes": 3,
+                        "humidity": 75,
+                        "severe": "Low risk of storms",
+                        "lowest": -10,
+                        "highest": 35,
+                        "created_at": "2025-05-30T12:00:00.000Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all weather records",
+        "tags": [
+          "weathers"
+        ]
+      },
+      "put": {
+        "operationId": "WeathersController_updateWeathers",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Array of weather records to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CreateWeathersDto"
+                }
+              },
+              "examples": {
+                "application/json": {
+                  "summary": "Updated weather record",
+                  "value": [
+                    {
+                      "id": 1,
+                      "cityId": 1,
+                      "sunshine": 250,
+                      "rain": 100,
+                      "cold": 60,
+                      "heat": 90,
+                      "cold_extremes": 5,
+                      "heat_extremes": 3,
+                      "humidity": 75,
+                      "severe": "Low risk of storms",
+                      "lowest": -10,
+                      "highest": 35,
+                      "created_at": "2025-05-30T12:00:00.000Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated weather records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeathersDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Updated weather record",
+                    "value": [
+                      {
+                        "id": 1,
+                        "cityId": 1,
+                        "sunshine": 250,
+                        "rain": 100,
+                        "cold": 60,
+                        "heat": 90,
+                        "cold_extremes": 5,
+                        "heat_extremes": 3,
+                        "humidity": 75,
+                        "severe": "Low risk of storms",
+                        "lowest": -10,
+                        "highest": 35,
+                        "created_at": "2025-05-30T12:00:00.000Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update existing weather records",
+        "tags": [
+          "weathers"
+        ]
+      }
+    },
+    "/weathers/city/{cityId}": {
+      "get": {
+        "operationId": "WeathersController_getByCity",
+        "parameters": [
+          {
+            "name": "cityId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Weather records for the specified city",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeathersDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "WeathersDto with query cityId",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "sunshine": 250,
+                      "rain": 100,
+                      "cold": 60,
+                      "heat": 90,
+                      "cold_extremes": 5,
+                      "heat_extremes": 3,
+                      "humidity": 75,
+                      "severe": "Low risk of storms",
+                      "lowest": -10,
+                      "highest": 35,
+                      "created_at": "2025-05-30T12:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get weather records by city ID",
+        "tags": [
+          "weathers"
+        ]
+      }
+    },
+    "/weathers/{id}": {
+      "delete": {
+        "operationId": "WeathersController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted weather record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeathersDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Deleted weather record",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "sunshine": 250,
+                      "rain": 100,
+                      "cold": 60,
+                      "heat": 90,
+                      "cold_extremes": 5,
+                      "heat_extremes": 3,
+                      "humidity": 75,
+                      "severe": "Low risk of storms",
+                      "lowest": -10,
+                      "highest": 35,
+                      "created_at": "2025-05-30T12:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete a weather record by ID",
+        "tags": [
+          "weathers"
+        ]
+      }
     }
   },
   "info": {
@@ -3276,6 +3601,141 @@
         "required": [
           "id",
           "name",
+          "created_at"
+        ]
+      },
+      "CreateWeathersDto": {
+        "type": "object",
+        "properties": {
+          "cityId": {
+            "type": "number",
+            "description": "ID of the city this weather data belongs to"
+          },
+          "sunshine": {
+            "type": "number",
+            "description": "Number of sunshine days per year"
+          },
+          "rain": {
+            "type": "number",
+            "description": "Number of rainy days per year"
+          },
+          "cold": {
+            "type": "number",
+            "description": "Number of cold days per year (<10°C)"
+          },
+          "heat": {
+            "type": "number",
+            "description": "Number of hot days per year (>25°C)"
+          },
+          "cold_extremes": {
+            "type": "number",
+            "description": "Number of extreme cold days per year (<0°C)"
+          },
+          "heat_extremes": {
+            "type": "number",
+            "description": "Number of extreme heat days per year (>35°C)"
+          },
+          "humidity": {
+            "type": "number",
+            "description": "Average annual humidity (%)"
+          },
+          "severe": {
+            "type": "string",
+            "description": "Description of severe weather risk"
+          },
+          "lowest": {
+            "type": "number",
+            "description": "Lowest recorded temperature (°C)"
+          },
+          "highest": {
+            "type": "number",
+            "description": "Highest recorded temperature (°C)"
+          }
+        },
+        "required": [
+          "cityId",
+          "sunshine",
+          "rain",
+          "cold",
+          "heat",
+          "cold_extremes",
+          "heat_extremes",
+          "humidity",
+          "severe",
+          "lowest",
+          "highest"
+        ]
+      },
+      "WeathersDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Unique weather record ID"
+          },
+          "cityId": {
+            "type": "number",
+            "description": "ID of the city this weather data belongs to"
+          },
+          "sunshine": {
+            "type": "number",
+            "description": "Number of sunshine days per year"
+          },
+          "rain": {
+            "type": "number",
+            "description": "Number of rainy days per year"
+          },
+          "cold": {
+            "type": "number",
+            "description": "Number of cold days per year (<10°C)"
+          },
+          "heat": {
+            "type": "number",
+            "description": "Number of hot days per year (>25°C)"
+          },
+          "cold_extremes": {
+            "type": "number",
+            "description": "Number of extreme cold days per year (<0°C)"
+          },
+          "heat_extremes": {
+            "type": "number",
+            "description": "Number of extreme heat days per year (>35°C)"
+          },
+          "humidity": {
+            "type": "number",
+            "description": "Average annual humidity (%)"
+          },
+          "severe": {
+            "type": "string",
+            "description": "Description of severe weather risk"
+          },
+          "lowest": {
+            "type": "number",
+            "description": "Lowest recorded temperature (°C)"
+          },
+          "highest": {
+            "type": "number",
+            "description": "Highest recorded temperature (°C)"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when this record was created"
+          }
+        },
+        "required": [
+          "id",
+          "cityId",
+          "sunshine",
+          "rain",
+          "cold",
+          "heat",
+          "cold_extremes",
+          "heat_extremes",
+          "humidity",
+          "severe",
+          "lowest",
+          "highest",
           "created_at"
         ]
       }
