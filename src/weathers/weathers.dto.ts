@@ -51,8 +51,8 @@ export class WeathersDto {
   highest: number;
 
   @ApiProperty({ description: "Date when this record was created" })
-  @IsDateString()
-  created_at: string;
+  @IsDate()
+  created_at: Date;
 }
 
 export class CreateWeathersDto {

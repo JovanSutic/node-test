@@ -76,7 +76,9 @@ export class WeathersController {
       },
     },
   })
-  async create(@Body() data: CreateWeathersDto): Promise<WeathersDto> {
+  async create(
+    @Body() data: CreateWeathersDto
+  ): Promise<WeathersDto | { count: number }> {
     try {
       return await this.weathersService.create(data);
     } catch (error: any) {
@@ -165,7 +167,9 @@ export class WeathersController {
       },
     },
   })
-  async getByCity(@Param("cityId") cityId: string): Promise<WeathersDto> {
+  async getByCity(
+    @Param("cityId") cityId: string
+  ): Promise<WeathersDto | null> {
     const cityIdNum = Number(cityId);
     if (isNaN(cityIdNum)) {
       throw new BadRequestException("cityId must be a valid number");
