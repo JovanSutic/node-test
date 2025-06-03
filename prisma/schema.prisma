@@ -26,6 +26,9 @@ model cities {
   socialLifestyleReports city_social_lifestyle_report[]
   crimeRanks crime_ranks[]
   weathers weathers[]
+  cityContext city_context[]
+  expatTip expat_tip[]
+  cityFeel city_feel[]
 }
 
 model years {
@@ -145,6 +148,54 @@ model weathers {
 
   // Relations
   city            cities         @relation(fields: [cityId], references: [id])
+
+  @@unique([cityId])
+}
+
+
+model city_context {
+  id                  Int      @id @default(autoincrement())
+  cityId              Int      @map("city_id")
+  climate             String
+  tourismLevel        String   @map("tourism_level")
+  expatCommunity      String   @map("expat_community")
+  natureAccess        String   @map("nature_access")
+  localLifestyle      String   @map("local_lifestyle")
+  seasonality         String
+  cultureHighlights   String   @map("culture_highlights")
+  sportsAndActivities String   @map("sports_and_activities")
+  detailedStory       String   @db.Text @map("detailed_story")
+  created_at           DateTime @default(now())
+  updated_at           DateTime @default(now())
+
+  city                cities     @relation(fields: [cityId], references: [id])
+
+  @@index([cityId])
+  @@unique([cityId])
+}
+
+model expat_tip {
+  id        Int      @id @default(autoincrement())
+  cityId    Int      @map("city_id")
+  tip       String   @db.Text
+  category  String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
+
+  city      cities     @relation(fields: [cityId], references: [id])
+
+  @@index([cityId])
+}
+
+model city_feel {
+  id        Int    @id @default(autoincrement())
+  cityId    Int    @map("city_id")
+  rank      Int    
+  tags      String?
+  budget    Float?
+  created_at   DateTime @default(now())
+
+  city      cities   @relation(fields: [cityId], references: [id])
 
   @@unique([cityId])
 }

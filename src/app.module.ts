@@ -9,6 +9,8 @@ import { ConfigModule } from "@nestjs/config";
 import { SocialLifestyleModule } from "./social_lifestyle/social_lifestyle.module";
 import { CrimesModule } from "./crimes/crimes.module";
 import { WeathersModule } from "./weathers/weathers.module";
+import { CityContextModule } from "./city_context/city_context.module";
+import { CityFeelModule } from "./city_feel/city_feel.module";
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { WeathersModule } from "./weathers/weathers.module";
     SocialLifestyleModule,
     CrimesModule,
     WeathersModule,
+    CityContextModule,
+    CityFeelModule,
   ],
 })
 export class AppModule {}
