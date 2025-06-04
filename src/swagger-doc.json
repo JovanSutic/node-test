@@ -3047,6 +3047,754 @@
           "weathers"
         ]
       }
+    },
+    "/city-context": {
+      "post": {
+        "operationId": "CityContextController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to create new price",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CityContextDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "cityId": 1,
+                    "climate": "string",
+                    "tourismLevel": "string",
+                    "expatCommunity": "string",
+                    "natureAccess": "string",
+                    "localLifestyle": "string",
+                    "seasonality": "string",
+                    "cultureHighlights": "string",
+                    "sportsAndActivities": "string",
+                    "detailedStory": "string"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "cityId": 1,
+                      "climate": "string",
+                      "tourismLevel": "string",
+                      "expatCommunity": "string",
+                      "natureAccess": "string",
+                      "localLifestyle": "string",
+                      "seasonality": "string",
+                      "cultureHighlights": "string",
+                      "sportsAndActivities": "string",
+                      "detailedStory": "string"
+                    },
+                    {
+                      "cityId": 1,
+                      "climate": "string",
+                      "tourismLevel": "string",
+                      "expatCommunity": "string",
+                      "natureAccess": "string",
+                      "localLifestyle": "string",
+                      "seasonality": "string",
+                      "cultureHighlights": "string",
+                      "sportsAndActivities": "string",
+                      "detailedStory": "string"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a city context",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CityContextDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "CityContext DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "climate": "string",
+                      "tourismLevel": "string",
+                      "expatCommunity": "string",
+                      "natureAccess": "string",
+                      "localLifestyle": "string",
+                      "seasonality": "string",
+                      "cultureHighlights": "string",
+                      "sportsAndActivities": "string",
+                      "detailedStory": "string",
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Count",
+                    "value": {
+                      "count": 100
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create one or many city context entries",
+        "tags": [
+          "city-context"
+        ]
+      },
+      "get": {
+        "operationId": "CityContextController_getAll",
+        "parameters": [
+          {
+            "name": "cityId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of CityContextDto",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CityContextDto"
+                },
+                "examples": {
+                  "multiple": {
+                    "summary": "CityContextDto array",
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "cityId": 1,
+                          "climate": "string",
+                          "tourismLevel": "string",
+                          "expatCommunity": "string",
+                          "natureAccess": "string",
+                          "localLifestyle": "string",
+                          "seasonality": "string",
+                          "cultureHighlights": "string",
+                          "sportsAndActivities": "string",
+                          "detailedStory": "string",
+                          "created_at": "2025-03-26T19:50:30.809Z",
+                          "updated_at": "2025-03-26T19:50:30.809Z"
+                        },
+                        {
+                          "id": 2,
+                          "cityId": 2,
+                          "climate": "string",
+                          "tourismLevel": "string",
+                          "expatCommunity": "string",
+                          "natureAccess": "string",
+                          "localLifestyle": "string",
+                          "seasonality": "string",
+                          "cultureHighlights": "string",
+                          "sportsAndActivities": "string",
+                          "detailedStory": "string",
+                          "created_at": "2025-03-26T19:50:30.809Z",
+                          "updated_at": "2025-03-26T19:50:30.809Z"
+                        }
+                      ],
+                      "total": 0,
+                      "limit": 10,
+                      "offset": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all city context entries with optional filters",
+        "tags": [
+          "city-context"
+        ]
+      },
+      "put": {
+        "operationId": "CityContextController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to update new city context",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CityContextDto"
+              },
+              "examples": {
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "cityId": 1,
+                      "climate": "string",
+                      "tourismLevel": "string",
+                      "expatCommunity": "string",
+                      "natureAccess": "string",
+                      "localLifestyle": "string",
+                      "seasonality": "string",
+                      "cultureHighlights": "string",
+                      "sportsAndActivities": "string",
+                      "detailedStory": "string",
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    },
+                    {
+                      "id": 2,
+                      "cityId": 2,
+                      "climate": "string",
+                      "tourismLevel": "string",
+                      "expatCommunity": "string",
+                      "natureAccess": "string",
+                      "localLifestyle": "string",
+                      "seasonality": "string",
+                      "cultureHighlights": "string",
+                      "sportsAndActivities": "string",
+                      "detailedStory": "string",
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated a city context",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CityContextDto"
+                },
+                "examples": {
+                  "multiple": {
+                    "summary": "Update CityContextDto",
+                    "value": [
+                      {
+                        "id": 1,
+                        "cityId": 1,
+                        "climate": "string",
+                        "tourismLevel": "string",
+                        "expatCommunity": "string",
+                        "natureAccess": "string",
+                        "localLifestyle": "string",
+                        "seasonality": "string",
+                        "cultureHighlights": "string",
+                        "sportsAndActivities": "string",
+                        "detailedStory": "string",
+                        "created_at": "2025-03-26T19:50:30.809Z",
+                        "updated_at": "2025-03-26T19:50:30.809Z"
+                      },
+                      {
+                        "id": 2,
+                        "cityId": 2,
+                        "climate": "string",
+                        "tourismLevel": "string",
+                        "expatCommunity": "string",
+                        "natureAccess": "string",
+                        "localLifestyle": "string",
+                        "seasonality": "string",
+                        "cultureHighlights": "string",
+                        "sportsAndActivities": "string",
+                        "detailedStory": "string",
+                        "created_at": "2025-03-26T19:50:30.809Z",
+                        "updated_at": "2025-03-26T19:50:30.809Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update one or many city context entries",
+        "tags": [
+          "city-context"
+        ]
+      }
+    },
+    "/city-context/{id}": {
+      "get": {
+        "operationId": "CityContextController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "City context entry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CityContextDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "CityContextDto object",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "climate": "string",
+                      "tourismLevel": "string",
+                      "expatCommunity": "string",
+                      "natureAccess": "string",
+                      "localLifestyle": "string",
+                      "seasonality": "string",
+                      "cultureHighlights": "string",
+                      "sportsAndActivities": "string",
+                      "detailedStory": "string",
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get city context by ID",
+        "tags": [
+          "city-context"
+        ]
+      },
+      "delete": {
+        "operationId": "CityContextController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "City context delete",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CityContextDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "CityContextDto object",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "climate": "string",
+                      "tourismLevel": "string",
+                      "expatCommunity": "string",
+                      "natureAccess": "string",
+                      "localLifestyle": "string",
+                      "seasonality": "string",
+                      "cultureHighlights": "string",
+                      "sportsAndActivities": "string",
+                      "detailedStory": "string",
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete city context by ID",
+        "tags": [
+          "city-context"
+        ]
+      }
+    },
+    "/city-context/city/{cityId}": {
+      "get": {
+        "operationId": "CityContextController_getByCityId",
+        "parameters": [
+          {
+            "name": "cityId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "City context entry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CityContextDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "CityContextDto object",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "climate": "string",
+                      "tourismLevel": "string",
+                      "expatCommunity": "string",
+                      "natureAccess": "string",
+                      "localLifestyle": "string",
+                      "seasonality": "string",
+                      "cultureHighlights": "string",
+                      "sportsAndActivities": "string",
+                      "detailedStory": "string",
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get city context by ID",
+        "tags": [
+          "city-context"
+        ]
+      }
+    },
+    "/city-feel": {
+      "post": {
+        "operationId": "CityFeelController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "City feel creation payload",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CityFeelDto"
+                }
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "cityId": 1,
+                    "budget": 1880.8,
+                    "rank": 1,
+                    "tags": "tag"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "cityId": 1,
+                      "budget": 1880.8,
+                      "rank": 1,
+                      "tags": "tag"
+                    },
+                    {
+                      "cityId": 2,
+                      "budget": 2880.8,
+                      "rank": 1,
+                      "tags": "tag"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created city feel(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CityFeelDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "CityContext DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "budget": 1880.8,
+                      "rank": 1,
+                      "tags": "tag",
+                      "created_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Count",
+                    "value": {
+                      "count": 100
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create one or many city feel entries",
+        "tags": [
+          "city-feel"
+        ]
+      },
+      "get": {
+        "operationId": "CityFeelController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of CityFeelDto with pagination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CityFeelDto"
+                  }
+                },
+                "examples": {
+                  "multiple": {
+                    "summary": "Count",
+                    "value": [
+                      {
+                        "id": 1,
+                        "cityId": 1,
+                        "budget": 1880.8,
+                        "rank": 1,
+                        "tags": "tag",
+                        "created_at": "2025-03-26T19:50:30.809Z"
+                      },
+                      {
+                        "id": 1,
+                        "cityId": 1,
+                        "budget": 1880.8,
+                        "rank": 1,
+                        "tags": "tag",
+                        "created_at": "2025-03-26T19:50:30.809Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all city feel entries with optional filters",
+        "tags": [
+          "city-feel"
+        ]
+      },
+      "put": {
+        "operationId": "CityFeelController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "City feel update payload",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CityFeelDto"
+                }
+              },
+              "examples": {
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "cityId": 1,
+                      "budget": 1880.8,
+                      "rank": 1,
+                      "tags": "tag",
+                      "created_at": "2025-03-26T19:50:30.809Z"
+                    },
+                    {
+                      "id": 2,
+                      "cityId": 2,
+                      "budget": 1880.8,
+                      "rank": 1,
+                      "tags": "tag",
+                      "created_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated city feel(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CityFeelDto"
+                  }
+                },
+                "examples": {
+                  "multiple": {
+                    "summary": "CityContext DTO",
+                    "value": [
+                      {
+                        "id": 1,
+                        "cityId": 1,
+                        "budget": 1880.8,
+                        "rank": 1,
+                        "tags": "tag",
+                        "created_at": "2025-03-26T19:50:30.809Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update one or many city feel entries",
+        "tags": [
+          "city-feel"
+        ]
+      }
+    },
+    "/city-feel/{cityId}": {
+      "get": {
+        "operationId": "CityFeelController_getByCityId",
+        "parameters": [
+          {
+            "name": "cityId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CityFeelDto object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CityFeelDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "CityContext DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "budget": 1880.8,
+                      "rank": 1,
+                      "tags": "tag",
+                      "created_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get city feel by cityId",
+        "tags": [
+          "city-feel"
+        ]
+      },
+      "delete": {
+        "operationId": "CityFeelController_delete",
+        "parameters": [
+          {
+            "name": "cityId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted city feel entry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CityFeelDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "CityContext DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "budget": 1880.8,
+                      "rank": 1,
+                      "tags": "tag",
+                      "created_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete city feel by cityId",
+        "tags": [
+          "city-feel"
+        ]
+      }
     }
   },
   "info": {
@@ -3737,6 +4485,104 @@
           "lowest",
           "highest",
           "created_at"
+        ]
+      },
+      "CityContextDto": {
+        "type": "object",
+        "properties": {
+          "cityId": {
+            "type": "number",
+            "description": "The city ID this context profile belongs to"
+          },
+          "climate": {
+            "type": "string",
+            "description": "Climate description (e.g. Tropical, Temperate, etc.)"
+          },
+          "tourismLevel": {
+            "type": "string",
+            "description": "Tourism level (e.g. High, Moderate, Low)"
+          },
+          "expatCommunity": {
+            "type": "string",
+            "description": "Expat community size or presence"
+          },
+          "natureAccess": {
+            "type": "string",
+            "description": "Access to nature (e.g. parks, beaches, forests)"
+          },
+          "localLifestyle": {
+            "type": "string",
+            "description": "Description of the local lifestyle"
+          },
+          "seasonality": {
+            "type": "string",
+            "description": "Seasonality pattern (e.g. rainy season, dry season)"
+          },
+          "cultureHighlights": {
+            "type": "string",
+            "description": "Cultural highlights and points of interest"
+          },
+          "sportsAndActivities": {
+            "type": "string",
+            "description": "Available sports and outdoor activities"
+          },
+          "detailedStory": {
+            "type": "string",
+            "description": "Detailed lifestyle story or narrative for the city"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Date and time when this rank was created",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "Date and time when this rank was updated",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "cityId",
+          "climate",
+          "tourismLevel",
+          "expatCommunity",
+          "natureAccess",
+          "localLifestyle",
+          "seasonality",
+          "cultureHighlights",
+          "sportsAndActivities",
+          "detailedStory",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "CityFeelDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "cityId": {
+            "type": "number"
+          },
+          "rank": {
+            "type": "number"
+          },
+          "tags": {
+            "type": "string"
+          },
+          "budget": {
+            "type": "number"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "cityId",
+          "rank"
         ]
       }
     }

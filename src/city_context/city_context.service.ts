@@ -99,6 +99,18 @@ export class CityContextService {
     }
   }
 
+  async getByCityId(cityId: number) {
+    try {
+      return await this.prisma.city_context.findUnique({
+        where: { cityId },
+      });
+    } catch (error: any) {
+      throw new BadRequestException(
+        error.message || `Failed to fetch city context with cityId ${cityId}.`
+      );
+    }
+  }
+
   async updateMany(data: (CityContextDto & { id: number })[]) {
     const now = new Date();
 

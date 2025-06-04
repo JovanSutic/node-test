@@ -80,7 +80,9 @@ describe("CityContextController", () => {
       },
     ];
 
-    prismaServiceMock.cities.findUnique = jest.fn().mockResolvedValue({ id: 1 });
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue({ id: 1 });
 
     jest.spyOn(cityContextService, "create").mockResolvedValue(data);
 
@@ -109,8 +111,12 @@ describe("CityContextController", () => {
       },
     ];
 
-    prismaServiceMock.cities.findUnique = jest.fn().mockResolvedValue({ id: 1 });
-    prismaServiceMock.city_context.findUnique = jest.fn().mockResolvedValue({ id: 1 });
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue({ id: 1 });
+    prismaServiceMock.city_context.findUnique = jest
+      .fn()
+      .mockResolvedValue({ id: 1 });
 
     jest.spyOn(cityContextService, "updateMany").mockResolvedValue(updateData);
 
@@ -154,7 +160,9 @@ describe("CityContextController", () => {
   });
 
   it("should fetch city context by ID - GET /city-context/:id", async () => {
-    jest.spyOn(cityContextService, "getById").mockResolvedValue(mockCityContext[0]);
+    jest
+      .spyOn(cityContextService, "getById")
+      .mockResolvedValue(mockCityContext[0]);
 
     const response = await request(app.getHttpServer())
       .get("/city-context/1")
@@ -163,8 +171,22 @@ describe("CityContextController", () => {
     expect(response.body).toEqual(mockCityContext[0]);
   });
 
+  it("should fetch city context by city ID - GET /city-context/city/:cityId", async () => {
+    jest
+      .spyOn(cityContextService, "getByCityId")
+      .mockResolvedValue(mockCityContext[0]);
+
+    const response = await request(app.getHttpServer())
+      .get("/city-context/city/1")
+      .expect(200);
+
+    expect(response.body).toEqual(mockCityContext[0]);
+  });
+
   it("should delete city context by ID - DELETE /city-context/:id", async () => {
-    jest.spyOn(cityContextService, "delete").mockResolvedValue(mockCityContext[0]);
+    jest
+      .spyOn(cityContextService, "delete")
+      .mockResolvedValue(mockCityContext[0]);
 
     const response = await request(app.getHttpServer())
       .delete("/city-context/1")
