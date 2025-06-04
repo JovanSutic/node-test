@@ -10,6 +10,7 @@ import {
   UseGuards,
   UnprocessableEntityException,
   UsePipes,
+  BadRequestException,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from "@nestjs/swagger";
 import { AuthGuard } from "../utils/auth.guard";
@@ -212,6 +213,45 @@ export class CityContextController {
   async getById(@Param("id") id: string) {
     try {
       return await this.cityContextService.getById(Number(id));
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
+  @Get("city/:cityId")
+  @ApiOperation({ summary: "Get city context by ID" })
+  @ApiResponse({
+    status: 200,
+    description: "City context entry",
+    type: CityContextDto,
+    examples: {
+      single: {
+        summary: "CityContextDto object",
+        value: {
+          id: 1,
+          cityId: 1,
+          climate: "string",
+          tourismLevel: "string",
+          expatCommunity: "string",
+          natureAccess: "string",
+          localLifestyle: "string",
+          seasonality: "string",
+          cultureHighlights: "string",
+          sportsAndActivities: "string",
+          detailedStory: "string",
+          created_at: "2025-03-26T19:50:30.809Z",
+          updated_at: "2025-03-26T19:50:30.809Z",
+        },
+      },
+    },
+  })
+  async getByCityId(@Param("cityId") cityId: string) {
+    const cityIdNum = Number(cityId);
+    if (isNaN(cityIdNum)) {
+      throw new BadRequestException("cityId must be a valid number");
+    }
+    try {
+      return await this.cityContextService.getByCityId(cityIdNum);
     } catch (error: any) {
       throw error;
     }
