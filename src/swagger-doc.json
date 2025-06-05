@@ -4560,23 +4560,31 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "number"
+            "type": "number",
+            "description": "City Feel ID"
           },
           "cityId": {
-            "type": "number"
+            "type": "number",
+            "description": "City Feel city ID"
           },
           "rank": {
-            "type": "number"
+            "type": "number",
+            "description": "City Feel rank"
           },
           "tags": {
-            "type": "string"
+            "type": "string",
+            "description": "City Feel tags",
+            "nullable": true
           },
           "budget": {
-            "type": "number"
+            "type": "number",
+            "description": "City Feel budget",
+            "nullable": true
           },
           "created_at": {
             "format": "date-time",
-            "type": "string"
+            "type": "string",
+            "description": "City Feel date of creation"
           }
         },
         "required": [

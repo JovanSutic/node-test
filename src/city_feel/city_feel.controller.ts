@@ -10,6 +10,7 @@ import {
   UseGuards,
   UsePipes,
   UnprocessableEntityException,
+  BadRequestException,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from "@nestjs/swagger";
 import { AuthGuard } from "../utils/auth.guard";
@@ -133,9 +134,9 @@ export class CityFeelController {
   async getAll(@Query() filters: CityFeelQueryDto) {
     try {
       const {
-        take,
-        sortBy,
-        order,
+        take = 100,
+        sortBy = "id",
+        order = "asc",
         fromId,
         country,
         budget,
@@ -146,18 +147,27 @@ export class CityFeelController {
         west,
       } = filters;
 
+      const parseIfDefined = (value: any, name: string): number | undefined => {
+        if (value === undefined || value === null) return undefined;
+        const parsed = Number(value);
+        if (isNaN(parsed)) {
+          throw new BadRequestException(`${name} must be a valid number.`);
+        }
+        return parsed;
+      };
+
       return await this.cityFeelService.getAll(
-        take,
-        sortBy || "id",
-        order || "asc",
-        fromId,
+        parseIfDefined(take, "take"),
+        sortBy,
+        order,
+        parseIfDefined(fromId, "fromId"),
         country,
-        budget,
-        rank,
-        north,
-        south,
-        east,
-        west
+        parseIfDefined(budget, "budget"),
+        parseIfDefined(rank, "rank"),
+        parseIfDefined(north, "north"),
+        parseIfDefined(south, "south"),
+        parseIfDefined(east, "east"),
+        parseIfDefined(west, "west")
       );
     } catch (error: any) {
       throw error;
