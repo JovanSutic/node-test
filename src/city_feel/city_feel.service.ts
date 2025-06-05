@@ -8,7 +8,7 @@ export class CityFeelService {
 
   async create(
     data: CreateCityFeelDto | CreateCityFeelDto[]
-  ): Promise<CityFeelDto | CityFeelDto[]> {
+  ): Promise<{count: number} | CityFeelDto> {
     const today = new Date();
     if (Array.isArray(data)) {
       try {
@@ -39,7 +39,7 @@ export class CityFeelService {
             tags,
             created_at: today,
           },
-        });
+        }) as CityFeelDto;
       } catch (error: any) {
         throw new BadRequestException(
           error.message ||
@@ -123,7 +123,7 @@ export class CityFeelService {
     }
   }
 
-  async getByCityId(cityId: number): Promise<CityFeelDto> {
+  async getByCityId(cityId: number): Promise<CityFeelDto | null> {
     try {
       const cityFeel = await this.prisma.city_feel.findUnique({
         where: { cityId },
