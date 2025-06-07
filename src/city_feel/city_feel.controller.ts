@@ -170,7 +170,7 @@ export class CityFeelController {
         parseIfDefined(south, "south"),
         parseIfDefined(east, "east"),
         parseIfDefined(west, "west"),
-        seaside === "true" ? true : false,
+        seaside === "true" ? true : undefined,
         parseIfDefined(size, "size")
       );
     } catch (error: any) {
