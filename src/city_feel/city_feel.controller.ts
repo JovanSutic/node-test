@@ -135,7 +135,7 @@ export class CityFeelController {
     try {
       const {
         take = 100,
-        sortBy = "id",
+        sortBy = "rank",
         order = "asc",
         fromId,
         country,
@@ -145,6 +145,8 @@ export class CityFeelController {
         south,
         east,
         west,
+        size,
+        seaside,
       } = filters;
 
       const parseIfDefined = (value: any, name: string): number | undefined => {
@@ -167,7 +169,9 @@ export class CityFeelController {
         parseIfDefined(north, "north"),
         parseIfDefined(south, "south"),
         parseIfDefined(east, "east"),
-        parseIfDefined(west, "west")
+        parseIfDefined(west, "west"),
+        seaside === "true" ? true : false,
+        parseIfDefined(size, "size")
       );
     } catch (error: any) {
       throw error;
