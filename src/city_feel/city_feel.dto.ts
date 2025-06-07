@@ -95,4 +95,12 @@ export class CityFeelQueryDto {
   @IsOptional()
   @IsNumberString()
   west?: number;
+
+  @IsOptional()
+  @IsNumberString()
+  size?: number;
+
+  @IsOptional()
+  @IsString()
+  seaside?: string;
 }

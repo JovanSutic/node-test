@@ -8,7 +8,7 @@ export class CityFeelService {
 
   async create(
     data: CreateCityFeelDto | CreateCityFeelDto[]
-  ): Promise<{count: number} | CityFeelDto> {
+  ): Promise<{ count: number } | CityFeelDto> {
     const today = new Date();
     if (Array.isArray(data)) {
       try {
@@ -31,7 +31,7 @@ export class CityFeelService {
       const { cityId, budget, rank, tags } = data;
 
       try {
-        return await this.prisma.city_feel.create({
+        return (await this.prisma.city_feel.create({
           data: {
             cityId,
             budget,
@@ -39,7 +39,7 @@ export class CityFeelService {
             tags,
             created_at: today,
           },
-        }) as CityFeelDto;
+        })) as CityFeelDto;
       } catch (error: any) {
         throw new BadRequestException(
           error.message ||
@@ -60,7 +60,9 @@ export class CityFeelService {
     north?: number,
     south?: number,
     east?: number,
-    west?: number
+    west?: number,
+    seaside?: boolean,
+    size?: number
   ) {
     try {
       const where: any = {};
@@ -91,6 +93,14 @@ export class CityFeelService {
       ) {
         where.city.lat = { gte: south, lte: north };
         where.city.lng = { gte: west, lte: east };
+      }
+
+      if (seaside !== undefined) {
+        where.city.seaside = seaside;
+      }
+
+      if (size !== undefined) {
+        where.city.size = { gte: size };
       }
 
       if (Object.keys(where.city).length === 0) {
