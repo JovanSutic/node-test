@@ -100,7 +100,7 @@ export class CityFeelService {
       }
 
       if (size !== undefined) {
-        where.city.size = { gte: size };
+        where.city.size = { lte: size };
       }
 
       if (Object.keys(where.city).length === 0) {
