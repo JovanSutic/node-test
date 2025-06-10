@@ -48,6 +48,7 @@ jobs:
             export AWS_COGNITO_APP_SUB=${{ secrets.AWS_COGNITO_APP_SUB }}
             export AWS_COGNITO_RESOURCE_SEVER=${{ secrets.AWS_COGNITO_RESOURCE_SEVER }}
             export AUTH_CHECK_STRING=${{ secrets.AUTH_CHECK_STRING }}
+            export MAILER_LITE_API_TOKEN=${{ secrets.MAILER_LITE_API_TOKEN }}
 
             # Step 1: Ensure Docker is installed on EC2
             if ! command -v docker &> /dev/null; then
