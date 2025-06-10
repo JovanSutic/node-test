@@ -11,6 +11,7 @@ import { CrimesModule } from "./crimes/crimes.module";
 import { WeathersModule } from "./weathers/weathers.module";
 import { CityContextModule } from "./city_context/city_context.module";
 import { CityFeelModule } from "./city_feel/city_feel.module";
+import { SpecialsModule } from "./specials/specials.module";
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CityFeelModule } from "./city_feel/city_feel.module";
     WeathersModule,
     CityContextModule,
     CityFeelModule,
+    SpecialsModule,
   ],
 })
 export class AppModule {}
