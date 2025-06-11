@@ -68,6 +68,7 @@ export class SpecialsService {
       } else {
         const create = await this.mailerLite.subscribers.createOrUpdate({
           email,
+          status: "unconfirmed",
           groups: ["156739726714340409"],
         });
 
@@ -77,8 +78,7 @@ export class SpecialsService {
       return { success: true, id: res };
     } catch (error: any) {
       if (
-        error.response &&
-        error.response.status === 422 ||
+        (error.response && error.response.status === 422) ||
         error.response.data?.errors?.email?.[0]?.includes("unsubscribed")
       ) {
         throw new BadRequestException(
