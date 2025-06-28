@@ -12,6 +12,7 @@ import {
   SocialType,
 } from "../src/social_lifestyle/social_lifestyle.dto";
 import { CreateWeathersDto, WeathersDto } from "../src/weathers/weathers.dto";
+import { CreateCountryDto } from "../src/countries/countries.dto";
 
 export const categories: CreateCategoryDto[] = [
   { name: "Restaurants" },
@@ -22,10 +23,23 @@ export const categories: CreateCategoryDto[] = [
   { name: "Sport and leisure" },
 ];
 
+export const countries: CreateCountryDto[] = [
+  { name: "Italy" },
+  { name: "Spain" },
+  { name: "Netherlands" },
+  { name: "France" },
+  { name: "Germany" },
+  { name: "Austria" },
+  { name: "Hungary" },
+  { name: "Serbia" },
+  { name: "Greece" },
+];
+
 export const cities: CreateCityDto[] = [
   {
     name: "Amsterdam",
     country: "Netherlands",
+    countriesId: 3,
     search: "Amsterdam",
     lat: 52.377956,
     lng: 4.89707,
@@ -35,6 +49,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Paris",
     country: "France",
+    countriesId: 4,
     search: "Paris",
     lat: 48.858093,
     lng: 2.294694,
@@ -44,6 +59,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Rome",
     country: "Italy",
+    countriesId: 1,
     search: "Rome",
     lat: 41.89193,
     lng: 12.51133,
@@ -53,6 +69,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Barcelona",
     country: "Spain",
+    countriesId: 2,
     search: "Barcelona",
     lat: 41.38879,
     lng: 2.15899,
@@ -62,6 +79,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Madrid",
     country: "Spain",
+    countriesId: 2,
     search: "Madrid",
     lat: 40.416775,
     lng: -3.70379,
@@ -71,6 +89,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Berlin",
     country: "Germany",
+    countriesId: 5,
     search: "Berlin",
     lat: 52.5373,
     lng: 13.356085,
@@ -80,6 +99,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Vienna",
     country: "Austria",
+    countriesId: 6,
     search: "Vienna",
     lat: 48.20849,
     lng: 16.37208,
@@ -89,6 +109,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Budapest",
     country: "Hungary",
+    countriesId: 7,
     search: "Budapest",
     lat: 47.526642,
     lng: 19.046394,
@@ -98,6 +119,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Belgrade",
     country: "Serbia",
+    countriesId: 8,
     search: "Belgrade",
     lat: 44.80401,
     lng: 20.46513,
@@ -334,7 +356,6 @@ export const crimeRanks: CreateCrimeRankDto[] = [
   },
 ];
 
-
 export const weathers: CreateWeathersDto[] = [
   {
     cityId: 1,
@@ -362,4 +383,4 @@ export const weathers: CreateWeathersDto[] = [
     lowest: -10,
     highest: 35,
   },
-]
+];

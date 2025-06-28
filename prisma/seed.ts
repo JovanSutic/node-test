@@ -9,6 +9,7 @@ import {
   crimeAspects,
   crimeRanks,
   weathers,
+  countries,
 } from "./seedData";
 
 const prisma = new PrismaClient();
@@ -22,6 +23,14 @@ const prisma = new PrismaClient();
     if (!category) {
       await prisma.categories.createMany({
         data: categories,
+      });
+    }
+
+    const country = await prisma.categories.findUnique({ where: { id: 1 } });
+
+    if (!category) {
+      await prisma.countries.createMany({
+        data: countries,
       });
     }
 

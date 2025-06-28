@@ -15,6 +15,7 @@ export class CitiesService {
           data: createCityDto.map((city) => ({
             name: city.name,
             country: city.country,
+            countriesId: city.countriesId,
             search: city.search,
             lat: city.lat,
             lng: city.lng,
@@ -29,13 +30,14 @@ export class CitiesService {
         );
       }
     } else {
-      const { name, country, seaside, search, lat, lng, size } = createCityDto;
+      const { name, country, seaside, search, lat, lng, size, countriesId } = createCityDto;
 
       try {
         return await this.prisma.cities.create({
           data: {
             name,
             country,
+            countriesId: countriesId!,
             seaside,
             search,
             lat,
@@ -131,6 +133,7 @@ export class CitiesService {
             data: {
               name: item.name,
               country: item.country,
+              countriesId: item.countriesId,
               search: item.search,
               lat: item.lat,
               lng: item.lng,
@@ -156,6 +159,7 @@ export class CitiesService {
         data: {
           name: data.name,
           country: data.country,
+          countriesId: data.countriesId,
           search: data.search,
           lat: data.lat,
           lng: data.lng,
