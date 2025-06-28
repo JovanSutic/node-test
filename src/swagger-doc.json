@@ -104,6 +104,7 @@
                   "value": {
                     "name": "Amsterdam",
                     "country": "Netherlands",
+                    "countriesId": 1,
                     "search": "Amsterdam",
                     "lat": 52.1234,
                     "lng": 12.1234,
@@ -117,6 +118,7 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
+                      "countriesId": 1,
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -127,6 +129,7 @@
                       "id": 2,
                       "name": "Belgrade",
                       "country": "Serbia",
+                      "countriesId": 2,
                       "search": "Belgrade",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -154,6 +157,7 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
+                      "countriesId": 1,
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -200,6 +204,7 @@
                           "id": 1,
                           "name": "Amsterdam",
                           "country": "Netherlands",
+                          "countriesId": 1,
                           "search": "Amsterdam",
                           "lat": 52.1234,
                           "lng": 12.1234,
@@ -210,6 +215,7 @@
                           "id": 2,
                           "name": "Rotterdam",
                           "country": "Netherlands",
+                          "countriesId": 1,
                           "search": "Rotterdam",
                           "lat": 52.1234,
                           "lng": 12.1234,
@@ -248,6 +254,7 @@
                     "id": 1,
                     "name": "Amsterdam",
                     "country": "Netherlands",
+                    "countriesId": 1,
                     "search": "Amsterdam",
                     "lat": 52.1234,
                     "lng": 12.1234,
@@ -261,6 +268,7 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
+                      "countriesId": 1,
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -271,6 +279,7 @@
                       "id": 2,
                       "name": "Belgrade",
                       "country": "Serbia",
+                      "countriesId": 2,
                       "search": "Belgrade",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -301,6 +310,7 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
+                      "countriesId": 1,
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -315,6 +325,7 @@
                         "id": 1,
                         "name": "Amsterdam",
                         "country": "Netherlands",
+                        "countriesId": 1,
                         "search": "Amsterdam",
                         "lat": 52.1234,
                         "lng": 12.1234,
@@ -325,6 +336,7 @@
                         "id": 2,
                         "name": "Belgrade",
                         "country": "Serbia",
+                        "countriesId": 2,
                         "search": "Belgrade",
                         "lat": 52.1234,
                         "lng": 12.1234,
@@ -368,6 +380,7 @@
                           "id": 1,
                           "name": "Amsterdam",
                           "country": "Netherlands",
+                          "countriesId": 1,
                           "search": "Amsterdam",
                           "lat": 52.1234,
                           "lng": 12.1234,
@@ -378,6 +391,7 @@
                           "id": 2,
                           "name": "Rotterdam",
                           "country": "Netherlands",
+                          "countriesId": 1,
                           "search": "Rotterdam",
                           "lat": 52.1234,
                           "lng": 12.1234,
@@ -424,6 +438,7 @@
                           "id": 1,
                           "name": "Amsterdam",
                           "country": "Netherlands",
+                          "countriesId": 1,
                           "search": "Amsterdam",
                           "lat": 52.1234,
                           "lng": 12.1234,
@@ -434,6 +449,7 @@
                           "id": 2,
                           "name": "Rotterdam",
                           "country": "Netherlands",
+                          "countriesId": 1,
                           "search": "Rotterdam",
                           "lat": 52.1234,
                           "lng": 12.1234,
@@ -484,6 +500,7 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
+                      "countriesId": 1,
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -528,6 +545,7 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
+                      "countriesId": 1,
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -3795,6 +3813,277 @@
           "city-feel"
         ]
       }
+    },
+    "/specials/subscriber": {
+      "post": {
+        "operationId": "SpecialsController_createSubscriber",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "specials"
+        ]
+      }
+    },
+    "/countries": {
+      "post": {
+        "operationId": "CountriesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to create new country",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCountryDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "name": "Italy"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "name": "Italy"
+                    },
+                    {
+                      "name": "Spain"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a country",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Country DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Italy"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Count",
+                    "value": {
+                      "count": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create the new country.",
+        "tags": [
+          "countries"
+        ]
+      },
+      "get": {
+        "operationId": "CountriesController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved countries.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CountryDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Country DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Italy"
+                      },
+                      {
+                        "id": 2,
+                        "name": "Spain"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return all countries.",
+        "tags": [
+          "countries"
+        ]
+      },
+      "put": {
+        "operationId": "CountriesController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to update country",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCountryDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "id": 1,
+                    "name": "Italy"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "name": "Italy"
+                    },
+                    {
+                      "id": 2,
+                      "name": "Spain"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated countries.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CountryDto"
+                  }
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single updated country",
+                    "value": {
+                      "id": 1,
+                      "name": "Italy"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Multiple updated countries",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Italy"
+                      },
+                      {
+                        "id": 2,
+                        "name": "Spain"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update countries",
+        "tags": [
+          "countries"
+        ]
+      }
+    },
+    "/countries/{id}": {
+      "get": {
+        "operationId": "CountriesController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved country by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Country DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Italy"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return country by id.",
+        "tags": [
+          "countries"
+        ]
+      },
+      "delete": {
+        "operationId": "CountriesController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted country by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "country DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Italy"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete country by id.",
+        "tags": [
+          "countries"
+        ]
+      }
     }
   },
   "info": {
@@ -3845,6 +4134,10 @@
           "size": {
             "type": "number",
             "description": "The number of inhabitants of the city"
+          },
+          "countriesId": {
+            "type": "number",
+            "description": "The unique identifier of the country"
           }
         },
         "required": [
@@ -3853,7 +4146,8 @@
           "search",
           "lat",
           "lng",
-          "seaside"
+          "seaside",
+          "countriesId"
         ]
       },
       "CityDto": {
@@ -3890,6 +4184,10 @@
           "size": {
             "type": "number",
             "description": "The number of inhabitants of the city"
+          },
+          "countriesId": {
+            "type": "number",
+            "description": "The unique identifier of the country"
           }
         },
         "required": [
@@ -3899,7 +4197,8 @@
           "search",
           "lat",
           "lng",
-          "seaside"
+          "seaside",
+          "countriesId"
         ]
       },
       "CreateYearDto": {
@@ -4591,6 +4890,35 @@
           "id",
           "cityId",
           "rank"
+        ]
+      },
+      "CreateCountryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the country"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CountryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the country"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the country"
+          }
+        },
+        "required": [
+          "id",
+          "name"
         ]
       }
     }

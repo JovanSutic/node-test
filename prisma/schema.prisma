@@ -12,6 +12,13 @@ model users {
   name String?
 }
 
+model countries {
+  id     Int     @id @default(autoincrement())
+  name   String
+  
+  cities cities[]
+}
+
 model cities {
   id   Int     @id @default(autoincrement())
   name String
@@ -21,6 +28,10 @@ model cities {
   lng Float?
   seaside Boolean?
   size    Float?
+
+  countriesId Int?       @map("countries_id")
+
+  countries   countries? @relation(fields: [countriesId], references: [id])
 
   prices  prices[]
   socialLifestyleReports city_social_lifestyle_report[]
