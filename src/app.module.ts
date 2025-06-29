@@ -13,6 +13,7 @@ import { CityContextModule } from "./city_context/city_context.module";
 import { CityFeelModule } from "./city_feel/city_feel.module";
 import { SpecialsModule } from "./specials/specials.module";
 import { CountriesModule } from "./countries/countries.module";
+import { AspectModule } from "./aspect/aspect.module";
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CountriesModule } from "./countries/countries.module";
     CityFeelModule,
     SpecialsModule,
     CountriesModule,
+    AspectModule,
   ],
 })
 export class AppModule {}
