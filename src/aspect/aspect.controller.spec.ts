@@ -141,7 +141,9 @@ describe("AspectController", () => {
       name: "insurance",
       field: "healthcare",
     };
-    const mockUpdatedAspect = [{ id: aspectId, name: "Spain" }];
+    const mockUpdatedAspect = [
+      { id: aspectId, name: "insurance_pricing", field: "healthcare" },
+    ];
 
     jest
       .spyOn(aspectService, "updateMany")
@@ -166,8 +168,9 @@ describe("AspectController", () => {
       name: "insurance",
       field: "healthcare",
     };
-    const mockUpdatedAspect = [{ id: aspectId, name: "insurance_pricing",
-      field: "healthcare",}];
+    const mockUpdatedAspect = [
+      { id: aspectId, name: "insurance_pricing", field: "healthcare" },
+    ];
 
     prismaServiceMock.aspect.findUnique = jest.fn().mockResolvedValue(null);
 

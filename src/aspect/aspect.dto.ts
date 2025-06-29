@@ -20,7 +20,6 @@ export class CreateAspectDto {
 
   @ApiProperty({
     description: "The scope of the aspect",
-    required: true,
     type: String,
   })
   @IsString()
@@ -47,7 +46,6 @@ export class AspectDto {
 
   @ApiProperty({
     description: "The field of the aspect",
-    required: true,
     type: String,
   })
   @IsString()
@@ -55,7 +53,6 @@ export class AspectDto {
 
   @ApiProperty({
     description: "The scope of the aspect",
-    required: true,
     type: String,
   })
   @IsString()

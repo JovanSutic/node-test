@@ -14,6 +14,7 @@ import { CityFeelModule } from "./city_feel/city_feel.module";
 import { SpecialsModule } from "./specials/specials.module";
 import { CountriesModule } from "./countries/countries.module";
 import { AspectModule } from "./aspect/aspect.module";
+import { DefinitionModule } from "./definition/definition.module";
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AspectModule } from "./aspect/aspect.module";
     SpecialsModule,
     CountriesModule,
     AspectModule,
+    DefinitionModule,
   ],
 })
 export class AppModule {}
