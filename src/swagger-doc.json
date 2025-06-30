@@ -4640,6 +4640,437 @@
           "definition"
         ]
       }
+    },
+    "/def_value": {
+      "post": {
+        "operationId": "DefValueController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to create new def value",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDefValueDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "definitionId": 1,
+                    "cityId": null,
+                    "countryId": 1,
+                    "value": "Assigned general practitioner (GP / medico di base)",
+                    "score": null,
+                    "comment": null,
+                    "note": null,
+                    "type": "bullet",
+                    "visible": true,
+                    "created_at": "2025-03-26T19:50:30.809Z",
+                    "updated_at": "2025-03-26T19:50:30.809Z"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Assigned general practitioner (GP / medico di base)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    },
+                    {
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Access to public specialists (with referral)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a def value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefValueDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Def value DTO",
+                    "value": {
+                      "id": 1,
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Assigned general practitioner (GP / medico di base)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Count",
+                    "value": {
+                      "count": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create the new def value.",
+        "tags": [
+          "def_value"
+        ]
+      },
+      "get": {
+        "operationId": "DefValueController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved def values.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DefValueDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Def value DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "definitionId": 1,
+                        "cityId": null,
+                        "countryId": 1,
+                        "value": "Assigned general practitioner (GP / medico di base)",
+                        "score": null,
+                        "comment": null,
+                        "note": null,
+                        "type": "bullet",
+                        "visible": true,
+                        "created_at": "2025-03-26T19:50:30.809Z",
+                        "updated_at": "2025-03-26T19:50:30.809Z"
+                      },
+                      {
+                        "id": 2,
+                        "definitionId": 1,
+                        "cityId": null,
+                        "countryId": 1,
+                        "value": "Access to public specialists (with referral)",
+                        "score": null,
+                        "comment": null,
+                        "note": null,
+                        "type": "bullet",
+                        "visible": true,
+                        "created_at": "2025-03-26T19:50:30.809Z",
+                        "updated_at": "2025-03-26T19:50:30.809Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return all def values.",
+        "tags": [
+          "def_value"
+        ]
+      },
+      "put": {
+        "operationId": "DefValueController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to update def value",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDefValueDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "id": 1,
+                    "definitionId": 1,
+                    "cityId": null,
+                    "countryId": 1,
+                    "value": "Assigned general practitioner (GP / medico di base)",
+                    "score": null,
+                    "comment": null,
+                    "note": null,
+                    "type": "bullet",
+                    "visible": true,
+                    "created_at": "2025-03-26T19:50:30.809Z",
+                    "updated_at": "2025-03-26T19:50:30.809Z"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Assigned general practitioner (GP / medico di base)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    },
+                    {
+                      "id": 2,
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Access to public specialists (with referral)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated def values.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DefValueDto"
+                  }
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single updated def value",
+                    "value": {
+                      "id": 1,
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Assigned general practitioner (GP / medico di base)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Multiple updated def values",
+                    "value": [
+                      {
+                        "id": 1,
+                        "definitionId": 1,
+                        "cityId": null,
+                        "countryId": 1,
+                        "value": "Assigned general practitioner (GP / medico di base)",
+                        "score": null,
+                        "comment": null,
+                        "note": null,
+                        "type": "bullet",
+                        "visible": true,
+                        "created_at": "2025-03-26T19:50:30.809Z",
+                        "updated_at": "2025-03-26T19:50:30.809Z"
+                      },
+                      {
+                        "id": 2,
+                        "definitionId": 1,
+                        "cityId": null,
+                        "countryId": 1,
+                        "value": "Access to public specialists (with referral)",
+                        "score": null,
+                        "comment": null,
+                        "note": null,
+                        "type": "bullet",
+                        "visible": true,
+                        "created_at": "2025-03-26T19:50:30.809Z",
+                        "updated_at": "2025-03-26T19:50:30.809Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update def values",
+        "tags": [
+          "def_value"
+        ]
+      }
+    },
+    "/def_value/by-field": {
+      "get": {
+        "operationId": "DefValueController_getByField",
+        "parameters": [
+          {
+            "name": "field",
+            "required": true,
+            "in": "query",
+            "description": "The field of the aspect",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "countryId",
+            "required": true,
+            "in": "query",
+            "description": "The country id of the def value",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Return def values by field.",
+        "tags": [
+          "def_value"
+        ]
+      }
+    },
+    "/def_value/{id}": {
+      "get": {
+        "operationId": "DefValueController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved def value by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefValueDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Def value DTO",
+                    "value": {
+                      "id": 1,
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Assigned general practitioner (GP / medico di base)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return def value by id.",
+        "tags": [
+          "def_value"
+        ]
+      },
+      "delete": {
+        "operationId": "DefValueController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted def value by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefValueDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "def value DTO",
+                    "value": {
+                      "id": 1,
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Assigned general practitioner (GP / medico di base)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete def value by id.",
+        "tags": [
+          "def_value"
+        ]
+      }
     }
   },
   "info": {
@@ -5573,6 +6004,128 @@
           "label",
           "type",
           "aspectId"
+        ]
+      },
+      "CreateDefValueDto": {
+        "type": "object",
+        "properties": {
+          "definitionId": {
+            "type": "number",
+            "description": "The definition id of the def value"
+          },
+          "cityId": {
+            "type": "number",
+            "description": "The city id of the def value"
+          },
+          "countryId": {
+            "type": "number",
+            "description": "The country id of the def value"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the def value"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value of the def value"
+          },
+          "score": {
+            "type": "number",
+            "description": "The score of the def value"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment of the def value"
+          },
+          "note": {
+            "type": "string",
+            "description": "The note of the def value"
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "The note of the def value"
+          }
+        },
+        "required": [
+          "definitionId",
+          "cityId",
+          "countryId",
+          "type",
+          "value",
+          "score",
+          "comment",
+          "note",
+          "visible"
+        ]
+      },
+      "DefValueDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the definition"
+          },
+          "definitionId": {
+            "type": "number",
+            "description": "The definition id of the def value"
+          },
+          "cityId": {
+            "type": "number",
+            "description": "The city id of the def value"
+          },
+          "countryId": {
+            "type": "number",
+            "description": "The country id of the def value"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the def value"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value of the def value"
+          },
+          "score": {
+            "type": "number",
+            "description": "The score of the def value"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment of the def value"
+          },
+          "note": {
+            "type": "string",
+            "description": "The note of the def value"
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "The note of the def value"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when the record was created",
+            "example": "2025-03-26T12:00:00Z"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when the record was updated",
+            "example": "2025-03-26T12:00:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "definitionId",
+          "cityId",
+          "countryId",
+          "type",
+          "value",
+          "score",
+          "comment",
+          "note",
+          "visible",
+          "created_at"
         ]
       }
     }
