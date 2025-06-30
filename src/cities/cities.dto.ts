@@ -62,6 +62,14 @@ export class CreateCityDto {
   @IsNumber()
   @IsOptional()
   size: number;
+
+  @ApiProperty({
+    description: "The unique identifier of the country",
+    type: Number,
+  })
+  @IsNumber()
+  @IsOptional()
+  countriesId?: number;
 }
 
 export class CityDto {
@@ -123,6 +131,14 @@ export class CityDto {
   @IsNumber()
   @IsOptional()
   size: number;
+
+  @ApiProperty({
+    description: "The unique identifier of the country",
+    type: Number,
+  })
+  @IsNumber()
+  @IsOptional()
+  countriesId?: number;
 }
 
 export class CitiesQueryDto {

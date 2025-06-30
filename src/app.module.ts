@@ -12,6 +12,10 @@ import { WeathersModule } from "./weathers/weathers.module";
 import { CityContextModule } from "./city_context/city_context.module";
 import { CityFeelModule } from "./city_feel/city_feel.module";
 import { SpecialsModule } from "./specials/specials.module";
+import { CountriesModule } from "./countries/countries.module";
+import { AspectModule } from "./aspect/aspect.module";
+import { DefinitionModule } from "./definition/definition.module";
+import { DefValueModule } from "./def_value/def_value.module";
 
 @Module({
   imports: [
@@ -28,6 +32,10 @@ import { SpecialsModule } from "./specials/specials.module";
     CityContextModule,
     CityFeelModule,
     SpecialsModule,
+    CountriesModule,
+    AspectModule,
+    DefinitionModule,
+    DefValueModule,
   ],
 })
 export class AppModule {}

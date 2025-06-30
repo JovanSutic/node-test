@@ -104,6 +104,7 @@
                   "value": {
                     "name": "Amsterdam",
                     "country": "Netherlands",
+                    "countriesId": 1,
                     "search": "Amsterdam",
                     "lat": 52.1234,
                     "lng": 12.1234,
@@ -117,6 +118,7 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
+                      "countriesId": 1,
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -127,6 +129,7 @@
                       "id": 2,
                       "name": "Belgrade",
                       "country": "Serbia",
+                      "countriesId": 2,
                       "search": "Belgrade",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -154,6 +157,7 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
+                      "countriesId": 1,
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -200,6 +204,7 @@
                           "id": 1,
                           "name": "Amsterdam",
                           "country": "Netherlands",
+                          "countriesId": 1,
                           "search": "Amsterdam",
                           "lat": 52.1234,
                           "lng": 12.1234,
@@ -210,6 +215,7 @@
                           "id": 2,
                           "name": "Rotterdam",
                           "country": "Netherlands",
+                          "countriesId": 1,
                           "search": "Rotterdam",
                           "lat": 52.1234,
                           "lng": 12.1234,
@@ -248,6 +254,7 @@
                     "id": 1,
                     "name": "Amsterdam",
                     "country": "Netherlands",
+                    "countriesId": 1,
                     "search": "Amsterdam",
                     "lat": 52.1234,
                     "lng": 12.1234,
@@ -261,6 +268,7 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
+                      "countriesId": 1,
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -271,6 +279,7 @@
                       "id": 2,
                       "name": "Belgrade",
                       "country": "Serbia",
+                      "countriesId": 2,
                       "search": "Belgrade",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -301,6 +310,7 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
+                      "countriesId": 1,
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -315,6 +325,7 @@
                         "id": 1,
                         "name": "Amsterdam",
                         "country": "Netherlands",
+                        "countriesId": 1,
                         "search": "Amsterdam",
                         "lat": 52.1234,
                         "lng": 12.1234,
@@ -325,6 +336,7 @@
                         "id": 2,
                         "name": "Belgrade",
                         "country": "Serbia",
+                        "countriesId": 2,
                         "search": "Belgrade",
                         "lat": 52.1234,
                         "lng": 12.1234,
@@ -368,6 +380,7 @@
                           "id": 1,
                           "name": "Amsterdam",
                           "country": "Netherlands",
+                          "countriesId": 1,
                           "search": "Amsterdam",
                           "lat": 52.1234,
                           "lng": 12.1234,
@@ -378,6 +391,7 @@
                           "id": 2,
                           "name": "Rotterdam",
                           "country": "Netherlands",
+                          "countriesId": 1,
                           "search": "Rotterdam",
                           "lat": 52.1234,
                           "lng": 12.1234,
@@ -424,6 +438,7 @@
                           "id": 1,
                           "name": "Amsterdam",
                           "country": "Netherlands",
+                          "countriesId": 1,
                           "search": "Amsterdam",
                           "lat": 52.1234,
                           "lng": 12.1234,
@@ -434,6 +449,7 @@
                           "id": 2,
                           "name": "Rotterdam",
                           "country": "Netherlands",
+                          "countriesId": 1,
                           "search": "Rotterdam",
                           "lat": 52.1234,
                           "lng": 12.1234,
@@ -484,6 +500,7 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
+                      "countriesId": 1,
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -528,6 +545,7 @@
                       "id": 1,
                       "name": "Amsterdam",
                       "country": "Netherlands",
+                      "countriesId": 1,
                       "search": "Amsterdam",
                       "lat": 52.1234,
                       "lng": 12.1234,
@@ -3795,6 +3813,1264 @@
           "city-feel"
         ]
       }
+    },
+    "/specials/subscriber": {
+      "post": {
+        "operationId": "SpecialsController_createSubscriber",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "specials"
+        ]
+      }
+    },
+    "/countries": {
+      "post": {
+        "operationId": "CountriesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to create new country",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCountryDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "name": "Italy"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "name": "Italy"
+                    },
+                    {
+                      "name": "Spain"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a country",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Country DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Italy"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Count",
+                    "value": {
+                      "count": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create the new country.",
+        "tags": [
+          "countries"
+        ]
+      },
+      "get": {
+        "operationId": "CountriesController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved countries.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CountryDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Country DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Italy"
+                      },
+                      {
+                        "id": 2,
+                        "name": "Spain"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return all countries.",
+        "tags": [
+          "countries"
+        ]
+      },
+      "put": {
+        "operationId": "CountriesController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to update country",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCountryDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "id": 1,
+                    "name": "Italy"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "name": "Italy"
+                    },
+                    {
+                      "id": 2,
+                      "name": "Spain"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated countries.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CountryDto"
+                  }
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single updated country",
+                    "value": {
+                      "id": 1,
+                      "name": "Italy"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Multiple updated countries",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Italy"
+                      },
+                      {
+                        "id": 2,
+                        "name": "Spain"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update countries",
+        "tags": [
+          "countries"
+        ]
+      }
+    },
+    "/countries/{id}": {
+      "get": {
+        "operationId": "CountriesController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved country by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Country DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Italy"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return country by id.",
+        "tags": [
+          "countries"
+        ]
+      },
+      "delete": {
+        "operationId": "CountriesController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted country by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "country DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "Italy"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete country by id.",
+        "tags": [
+          "countries"
+        ]
+      }
+    },
+    "/aspect": {
+      "post": {
+        "operationId": "AspectController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to create new aspect",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAspectDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "name": "insurance",
+                    "field": "healthcare"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "name": "insurance",
+                      "field": "healthcare"
+                    },
+                    {
+                      "name": "insurance_pricing",
+                      "field": "healthcare"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a aspect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AspectDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Aspect DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "insurance",
+                      "field": "healthcare"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Count",
+                    "value": {
+                      "count": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create the new aspect.",
+        "tags": [
+          "aspect"
+        ]
+      },
+      "get": {
+        "operationId": "AspectController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved aspects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AspectDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Aspect DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "insurance",
+                        "field": "healthcare"
+                      },
+                      {
+                        "id": 2,
+                        "name": "insurance_pricing",
+                        "field": "healthcare"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return all aspects.",
+        "tags": [
+          "aspect"
+        ]
+      },
+      "put": {
+        "operationId": "AspectController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to update aspect",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAspectDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "id": 1,
+                    "name": "insurance",
+                    "field": "healthcare"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "name": "insurance",
+                      "field": "healthcare"
+                    },
+                    {
+                      "id": 2,
+                      "name": "insurance_pricing",
+                      "field": "healthcare"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated aspects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AspectDto"
+                  }
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single updated aspect",
+                    "value": {
+                      "id": 1,
+                      "name": "insurance",
+                      "field": "healthcare"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Multiple updated aspects",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "insurance",
+                        "field": "healthcare"
+                      },
+                      {
+                        "id": 2,
+                        "name": "insurance_pricing",
+                        "field": "healthcare"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update aspects",
+        "tags": [
+          "aspect"
+        ]
+      }
+    },
+    "/aspect/{id}": {
+      "get": {
+        "operationId": "AspectController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved aspect by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AspectDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Aspect DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "insurance",
+                      "field": "healthcare"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return aspect by id.",
+        "tags": [
+          "aspect"
+        ]
+      },
+      "delete": {
+        "operationId": "AspectController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted aspect by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AspectDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "aspect DTO",
+                    "value": {
+                      "id": 1,
+                      "name": "insurance",
+                      "field": "healthcare"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete aspect by id.",
+        "tags": [
+          "aspect"
+        ]
+      }
+    },
+    "/definition": {
+      "post": {
+        "operationId": "DefinitionController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to create new definition",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDefinitionDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "label": "Tier 3 – SSN Only",
+                    "type": "text_list",
+                    "aspectId": 1
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "label": "Tier 3 – SSN Only",
+                      "type": "text_list",
+                      "aspectId": 1
+                    },
+                    {
+                      "label": "Tier 2 – SSN + Supplemental Private",
+                      "type": "text_list",
+                      "aspectId": 1
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a definition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefinitionDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Definition DTO",
+                    "value": {
+                      "id": 1,
+                      "label": "Tier 3 – SSN Only",
+                      "type": "text_list",
+                      "aspectId": 1
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Count",
+                    "value": {
+                      "count": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create the new definition.",
+        "tags": [
+          "definition"
+        ]
+      },
+      "get": {
+        "operationId": "DefinitionController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved definitions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DefinitionDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Definition DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "label": "Tier 3 – SSN Only",
+                        "type": "text_list",
+                        "aspectId": 1
+                      },
+                      {
+                        "id": 2,
+                        "label": "Tier 2 – SSN + Supplemental Private",
+                        "type": "text_list",
+                        "aspectId": 1
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return all definitions.",
+        "tags": [
+          "definition"
+        ]
+      },
+      "put": {
+        "operationId": "DefinitionController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to update definition",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDefinitionDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "id": 1,
+                    "label": "Tier 3 – SSN Only",
+                    "type": "text_list",
+                    "aspectId": 1
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "label": "Tier 3 – SSN Only",
+                      "type": "text_list",
+                      "aspectId": 1
+                    },
+                    {
+                      "id": 2,
+                      "label": "Tier 2 – SSN + Supplemental Private",
+                      "type": "text_list",
+                      "aspectId": 1
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated definitions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DefinitionDto"
+                  }
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single updated definition",
+                    "value": {
+                      "id": 1,
+                      "label": "Tier 3 – SSN Only",
+                      "type": "text_list",
+                      "aspectId": 1
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Multiple updated definitions",
+                    "value": [
+                      {
+                        "id": 1,
+                        "label": "Tier 3 – SSN Only",
+                        "type": "text_list",
+                        "aspectId": 1
+                      },
+                      {
+                        "id": 2,
+                        "label": "Tier 2 – SSN + Supplemental Private",
+                        "type": "text_list",
+                        "aspectId": 1
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update definitions",
+        "tags": [
+          "definition"
+        ]
+      }
+    },
+    "/definition/{id}": {
+      "get": {
+        "operationId": "DefinitionController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved definition by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefinitionDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Definition DTO",
+                    "value": {
+                      "id": 1,
+                      "label": "Tier 3 – SSN Only",
+                      "type": "text_list",
+                      "aspectId": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return definition by id.",
+        "tags": [
+          "definition"
+        ]
+      },
+      "delete": {
+        "operationId": "DefinitionController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted definition by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefinitionDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "definition DTO",
+                    "value": {
+                      "id": 1,
+                      "label": "Tier 3 – SSN Only",
+                      "type": "text_list",
+                      "aspectId": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete definition by id.",
+        "tags": [
+          "definition"
+        ]
+      }
+    },
+    "/def_value": {
+      "post": {
+        "operationId": "DefValueController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to create new def value",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDefValueDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "definitionId": 1,
+                    "cityId": null,
+                    "countryId": 1,
+                    "value": "Assigned general practitioner (GP / medico di base)",
+                    "score": null,
+                    "comment": null,
+                    "note": null,
+                    "type": "bullet",
+                    "visible": true,
+                    "created_at": "2025-03-26T19:50:30.809Z",
+                    "updated_at": "2025-03-26T19:50:30.809Z"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Assigned general practitioner (GP / medico di base)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    },
+                    {
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Access to public specialists (with referral)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a def value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefValueDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Def value DTO",
+                    "value": {
+                      "id": 1,
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Assigned general practitioner (GP / medico di base)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Count",
+                    "value": {
+                      "count": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create the new def value.",
+        "tags": [
+          "def_value"
+        ]
+      },
+      "get": {
+        "operationId": "DefValueController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved def values.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DefValueDto"
+                  }
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Def value DTO array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "definitionId": 1,
+                        "cityId": null,
+                        "countryId": 1,
+                        "value": "Assigned general practitioner (GP / medico di base)",
+                        "score": null,
+                        "comment": null,
+                        "note": null,
+                        "type": "bullet",
+                        "visible": true,
+                        "created_at": "2025-03-26T19:50:30.809Z",
+                        "updated_at": "2025-03-26T19:50:30.809Z"
+                      },
+                      {
+                        "id": 2,
+                        "definitionId": 1,
+                        "cityId": null,
+                        "countryId": 1,
+                        "value": "Access to public specialists (with referral)",
+                        "score": null,
+                        "comment": null,
+                        "note": null,
+                        "type": "bullet",
+                        "visible": true,
+                        "created_at": "2025-03-26T19:50:30.809Z",
+                        "updated_at": "2025-03-26T19:50:30.809Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return all def values.",
+        "tags": [
+          "def_value"
+        ]
+      },
+      "put": {
+        "operationId": "DefValueController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to update def value",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDefValueDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "id": 1,
+                    "definitionId": 1,
+                    "cityId": null,
+                    "countryId": 1,
+                    "value": "Assigned general practitioner (GP / medico di base)",
+                    "score": null,
+                    "comment": null,
+                    "note": null,
+                    "type": "bullet",
+                    "visible": true,
+                    "created_at": "2025-03-26T19:50:30.809Z",
+                    "updated_at": "2025-03-26T19:50:30.809Z"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Assigned general practitioner (GP / medico di base)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    },
+                    {
+                      "id": 2,
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Access to public specialists (with referral)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated def values.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DefValueDto"
+                  }
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single updated def value",
+                    "value": {
+                      "id": 1,
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Assigned general practitioner (GP / medico di base)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Multiple updated def values",
+                    "value": [
+                      {
+                        "id": 1,
+                        "definitionId": 1,
+                        "cityId": null,
+                        "countryId": 1,
+                        "value": "Assigned general practitioner (GP / medico di base)",
+                        "score": null,
+                        "comment": null,
+                        "note": null,
+                        "type": "bullet",
+                        "visible": true,
+                        "created_at": "2025-03-26T19:50:30.809Z",
+                        "updated_at": "2025-03-26T19:50:30.809Z"
+                      },
+                      {
+                        "id": 2,
+                        "definitionId": 1,
+                        "cityId": null,
+                        "countryId": 1,
+                        "value": "Access to public specialists (with referral)",
+                        "score": null,
+                        "comment": null,
+                        "note": null,
+                        "type": "bullet",
+                        "visible": true,
+                        "created_at": "2025-03-26T19:50:30.809Z",
+                        "updated_at": "2025-03-26T19:50:30.809Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update def values",
+        "tags": [
+          "def_value"
+        ]
+      }
+    },
+    "/def_value/by-field": {
+      "get": {
+        "operationId": "DefValueController_getByField",
+        "parameters": [
+          {
+            "name": "field",
+            "required": true,
+            "in": "query",
+            "description": "The field of the aspect",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "countryId",
+            "required": true,
+            "in": "query",
+            "description": "The country id of the def value",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Return def values by field.",
+        "tags": [
+          "def_value"
+        ]
+      }
+    },
+    "/def_value/{id}": {
+      "get": {
+        "operationId": "DefValueController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved def value by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefValueDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "Def value DTO",
+                    "value": {
+                      "id": 1,
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Assigned general practitioner (GP / medico di base)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Return def value by id.",
+        "tags": [
+          "def_value"
+        ]
+      },
+      "delete": {
+        "operationId": "DefValueController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted def value by id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefValueDto"
+                },
+                "examples": {
+                  "application/json": {
+                    "summary": "def value DTO",
+                    "value": {
+                      "id": 1,
+                      "definitionId": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "value": "Assigned general practitioner (GP / medico di base)",
+                      "score": null,
+                      "comment": null,
+                      "note": null,
+                      "type": "bullet",
+                      "visible": true,
+                      "created_at": "2025-03-26T19:50:30.809Z",
+                      "updated_at": "2025-03-26T19:50:30.809Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete def value by id.",
+        "tags": [
+          "def_value"
+        ]
+      }
     }
   },
   "info": {
@@ -3845,6 +5121,10 @@
           "size": {
             "type": "number",
             "description": "The number of inhabitants of the city"
+          },
+          "countriesId": {
+            "type": "number",
+            "description": "The unique identifier of the country"
           }
         },
         "required": [
@@ -3853,7 +5133,8 @@
           "search",
           "lat",
           "lng",
-          "seaside"
+          "seaside",
+          "countriesId"
         ]
       },
       "CityDto": {
@@ -3890,6 +5171,10 @@
           "size": {
             "type": "number",
             "description": "The number of inhabitants of the city"
+          },
+          "countriesId": {
+            "type": "number",
+            "description": "The unique identifier of the country"
           }
         },
         "required": [
@@ -3899,7 +5184,8 @@
           "search",
           "lat",
           "lng",
-          "seaside"
+          "seaside",
+          "countriesId"
         ]
       },
       "CreateYearDto": {
@@ -4591,6 +5877,255 @@
           "id",
           "cityId",
           "rank"
+        ]
+      },
+      "CreateCountryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the country"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CountryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the country"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the country"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "CreateAspectDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the aspect"
+          },
+          "field": {
+            "type": "string",
+            "description": "The field of the aspect"
+          },
+          "scope": {
+            "type": "string",
+            "description": "The scope of the aspect"
+          }
+        },
+        "required": [
+          "name",
+          "field",
+          "scope"
+        ]
+      },
+      "AspectDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the aspect"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the aspect"
+          },
+          "field": {
+            "type": "string",
+            "description": "The field of the aspect"
+          },
+          "scope": {
+            "type": "string",
+            "description": "The scope of the aspect"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "field",
+          "scope"
+        ]
+      },
+      "CreateDefinitionDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The label of the definition"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the definition"
+          },
+          "aspectId": {
+            "type": "number",
+            "description": "The id of the aspect of the definition"
+          }
+        },
+        "required": [
+          "label",
+          "type",
+          "aspectId"
+        ]
+      },
+      "DefinitionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the definition"
+          },
+          "label": {
+            "type": "string",
+            "description": "The label of the definition"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the definition"
+          },
+          "aspectId": {
+            "type": "number",
+            "description": "The id of the aspect of the definition"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "type",
+          "aspectId"
+        ]
+      },
+      "CreateDefValueDto": {
+        "type": "object",
+        "properties": {
+          "definitionId": {
+            "type": "number",
+            "description": "The definition id of the def value"
+          },
+          "cityId": {
+            "type": "number",
+            "description": "The city id of the def value"
+          },
+          "countryId": {
+            "type": "number",
+            "description": "The country id of the def value"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the def value"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value of the def value"
+          },
+          "score": {
+            "type": "number",
+            "description": "The score of the def value"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment of the def value"
+          },
+          "note": {
+            "type": "string",
+            "description": "The note of the def value"
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "The note of the def value"
+          }
+        },
+        "required": [
+          "definitionId",
+          "cityId",
+          "countryId",
+          "type",
+          "value",
+          "score",
+          "comment",
+          "note",
+          "visible"
+        ]
+      },
+      "DefValueDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the definition"
+          },
+          "definitionId": {
+            "type": "number",
+            "description": "The definition id of the def value"
+          },
+          "cityId": {
+            "type": "number",
+            "description": "The city id of the def value"
+          },
+          "countryId": {
+            "type": "number",
+            "description": "The country id of the def value"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the def value"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value of the def value"
+          },
+          "score": {
+            "type": "number",
+            "description": "The score of the def value"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment of the def value"
+          },
+          "note": {
+            "type": "string",
+            "description": "The note of the def value"
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "The note of the def value"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when the record was created",
+            "example": "2025-03-26T12:00:00Z"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when the record was updated",
+            "example": "2025-03-26T12:00:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "definitionId",
+          "cityId",
+          "countryId",
+          "type",
+          "value",
+          "score",
+          "comment",
+          "note",
+          "visible",
+          "created_at"
         ]
       }
     }

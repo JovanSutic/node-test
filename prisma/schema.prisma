@@ -12,6 +12,14 @@ model users {
   name String?
 }
 
+model countries {
+  id     Int     @id @default(autoincrement())
+  name   String
+  
+  cities cities[]
+  defValue def_value[]
+}
+
 model cities {
   id   Int     @id @default(autoincrement())
   name String
@@ -22,6 +30,10 @@ model cities {
   seaside Boolean?
   size    Float?
 
+  countriesId Int?       @map("countries_id")
+
+  countries   countries? @relation(fields: [countriesId], references: [id])
+
   prices  prices[]
   socialLifestyleReports city_social_lifestyle_report[]
   crimeRanks crime_ranks[]
@@ -29,6 +41,7 @@ model cities {
   cityContext city_context[]
   expatTip expat_tip[]
   cityFeel city_feel[]
+  defValue def_value[]
 }
 
 model years {
@@ -198,4 +211,44 @@ model city_feel {
   city      cities   @relation(fields: [cityId], references: [id])
 
   @@unique([cityId])
+}
+
+model aspect {
+  id       Int      @id @default(autoincrement())
+  name     String        
+  field    String                 
+  scope    String? 
+
+  definitions definition[]
+}
+
+model definition {
+  id        Int      @id @default(autoincrement())
+  label     String   
+  type      String  
+  aspectId  Int      @map("aspect_id")
+  aspect    aspect   @relation(fields: [aspectId], references: [id])
+
+  values    def_value[]
+}
+
+model def_value {
+  id            Int      @id @default(autoincrement())
+  definitionId  Int     @map("definition_id")
+  cityId        Int?     @map("city_id")
+  countryId     Int?   @map("country_id")
+  value         String?
+  score         Float?   
+  
+  comment       String?
+  note          String?
+  type          String 
+
+  visible       Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now())
+
+  definition    definition @relation(fields: [definitionId], references: [id])
+  city          cities?   @relation(fields: [cityId], references: [id])
+  countries     countries? @relation(fields: [countryId], references: [id])
 }

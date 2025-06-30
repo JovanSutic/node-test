@@ -1,5 +1,5 @@
 import { PrismaService } from "../prisma/prisma.service";
-import { CategoryDto, CreateCategoryDto } from "./categories.dto";
+import { AspectDto, CreateAspectDto } from "./aspect.dto";
 import {
   Injectable,
   type PipeTransform,
@@ -8,11 +8,11 @@ import {
   ConflictException,
 } from "@nestjs/common";
 
-const validateCategory = (category: CreateCategoryDto) => {
+const validateAspect = (aspect: CreateAspectDto) => {
   if (
-    !category.name ||
-    typeof category.name !== "string" ||
-    category.name.length < 3
+    !aspect.name ||
+    typeof aspect.name !== "string" ||
+    aspect.name.length < 3
   ) {
     throw new BadRequestException(
       "Name must be a string with at least 3 characters"
@@ -26,10 +26,10 @@ export class ValidationPipe implements PipeTransform {
     if (value && typeof value === "object") {
       if (Array.isArray(value)) {
         for (const item of value) {
-          validateCategory(item);
+          validateAspect(item);
         }
       } else {
-        validateCategory(value);
+        validateAspect(value);
       }
     }
 
@@ -37,33 +37,33 @@ export class ValidationPipe implements PipeTransform {
   }
 }
 
-const checkCategoryExistence = async (
-  category: CategoryDto | CreateCategoryDto,
+const checkAspectExistence = async (
+  aspect: AspectDto | CreateAspectDto,
   prisma: PrismaService
 ) => {
   try {
     let item = undefined;
-    if ("id" in category) {
-      item = await prisma.categories.findUnique({
-        where: { id: Number(category.id) },
+    if ("id" in aspect) {
+      item = await prisma.aspect.findUnique({
+        where: { id: Number(aspect.id) },
       });
     } else {
-      item = await prisma.categories.findFirst({
+      item = await prisma.aspect.findFirst({
         where: {
-          name: category.name,
+          name: aspect.name,
         },
       });
     }
 
-    if ("id" in category) {
+    if ("id" in aspect) {
       if (!item) {
         throw new NotFoundException(
-          `Category with ID ${category.id} not found`
+          `Aspect with ID ${aspect.id} not found`
         );
       }
     } else {
       if (item) {
-        throw new ConflictException("Category with this name already exists");
+        throw new ConflictException("Aspect with this name already exists");
       }
     }
   } catch (error) {
@@ -80,10 +80,10 @@ export class ExistenceValidationPipe implements PipeTransform {
       try {
         if (Array.isArray(value)) {
           for (const item of value) {
-            await checkCategoryExistence(item, this.prisma);
+            await checkAspectExistence(item, this.prisma);
           }
         } else {
-          await checkCategoryExistence(value, this.prisma);
+          await checkAspectExistence(value, this.prisma);
         }
       } catch (error) {
         throw error;
@@ -99,12 +99,12 @@ export class UniqueExistenceValidation implements PipeTransform {
   async transform(value: any) {
     if (value && typeof value !== "object") {
       try {
-        const category = await this.prisma.categories.findUnique({
+        const aspect = await this.prisma.aspect.findUnique({
           where: { id: Number(value) },
         });
 
-        if (!category) {
-          throw new NotFoundException(`Category with ID ${value} not found`);
+        if (!aspect) {
+          throw new NotFoundException(`Aspect with ID ${value} not found`);
         }
       } catch (error) {
         throw error;

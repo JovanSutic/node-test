@@ -1,5 +1,5 @@
 import { PrismaService } from "../prisma/prisma.service";
-import { CategoryDto, CreateCategoryDto } from "./categories.dto";
+import { CountryDto, CreateCountryDto } from "./countries.dto";
 import {
   Injectable,
   type PipeTransform,
@@ -8,11 +8,11 @@ import {
   ConflictException,
 } from "@nestjs/common";
 
-const validateCategory = (category: CreateCategoryDto) => {
+const validateCountry = (country: CreateCountryDto) => {
   if (
-    !category.name ||
-    typeof category.name !== "string" ||
-    category.name.length < 3
+    !country.name ||
+    typeof country.name !== "string" ||
+    country.name.length < 3
   ) {
     throw new BadRequestException(
       "Name must be a string with at least 3 characters"
@@ -26,10 +26,10 @@ export class ValidationPipe implements PipeTransform {
     if (value && typeof value === "object") {
       if (Array.isArray(value)) {
         for (const item of value) {
-          validateCategory(item);
+          validateCountry(item);
         }
       } else {
-        validateCategory(value);
+        validateCountry(value);
       }
     }
 
@@ -37,33 +37,33 @@ export class ValidationPipe implements PipeTransform {
   }
 }
 
-const checkCategoryExistence = async (
-  category: CategoryDto | CreateCategoryDto,
+const checkCountryExistence = async (
+  country: CountryDto | CreateCountryDto,
   prisma: PrismaService
 ) => {
   try {
     let item = undefined;
-    if ("id" in category) {
-      item = await prisma.categories.findUnique({
-        where: { id: Number(category.id) },
+    if ("id" in country) {
+      item = await prisma.countries.findUnique({
+        where: { id: Number(country.id) },
       });
     } else {
-      item = await prisma.categories.findFirst({
+      item = await prisma.countries.findFirst({
         where: {
-          name: category.name,
+          name: country.name,
         },
       });
     }
 
-    if ("id" in category) {
+    if ("id" in country) {
       if (!item) {
         throw new NotFoundException(
-          `Category with ID ${category.id} not found`
+          `Country with ID ${country.id} not found`
         );
       }
     } else {
       if (item) {
-        throw new ConflictException("Category with this name already exists");
+        throw new ConflictException("Country with this name already exists");
       }
     }
   } catch (error) {
@@ -80,10 +80,10 @@ export class ExistenceValidationPipe implements PipeTransform {
       try {
         if (Array.isArray(value)) {
           for (const item of value) {
-            await checkCategoryExistence(item, this.prisma);
+            await checkCountryExistence(item, this.prisma);
           }
         } else {
-          await checkCategoryExistence(value, this.prisma);
+          await checkCountryExistence(value, this.prisma);
         }
       } catch (error) {
         throw error;
@@ -99,12 +99,12 @@ export class UniqueExistenceValidation implements PipeTransform {
   async transform(value: any) {
     if (value && typeof value !== "object") {
       try {
-        const category = await this.prisma.categories.findUnique({
+        const city = await this.prisma.countries.findUnique({
           where: { id: Number(value) },
         });
 
-        if (!category) {
-          throw new NotFoundException(`Category with ID ${value} not found`);
+        if (!city) {
+          throw new NotFoundException(`Country with ID ${value} not found`);
         }
       } catch (error) {
         throw error;

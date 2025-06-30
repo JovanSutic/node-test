@@ -12,6 +12,10 @@ import {
   SocialType,
 } from "../src/social_lifestyle/social_lifestyle.dto";
 import { CreateWeathersDto, WeathersDto } from "../src/weathers/weathers.dto";
+import { CreateCountryDto } from "../src/countries/countries.dto";
+import { CreateAspectDto } from "../src/aspect/aspect.dto";
+import { CreateDefinitionDto } from "../src/definition/definition.dto";
+import { CreateDefValueDto } from "../src/def_value/def_value.dto";
 
 export const categories: CreateCategoryDto[] = [
   { name: "Restaurants" },
@@ -22,10 +26,23 @@ export const categories: CreateCategoryDto[] = [
   { name: "Sport and leisure" },
 ];
 
+export const countries: CreateCountryDto[] = [
+  { name: "Italy" },
+  { name: "Spain" },
+  { name: "Netherlands" },
+  { name: "France" },
+  { name: "Germany" },
+  { name: "Austria" },
+  { name: "Hungary" },
+  { name: "Serbia" },
+  { name: "Greece" },
+];
+
 export const cities: CreateCityDto[] = [
   {
     name: "Amsterdam",
     country: "Netherlands",
+    countriesId: 3,
     search: "Amsterdam",
     lat: 52.377956,
     lng: 4.89707,
@@ -35,6 +52,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Paris",
     country: "France",
+    countriesId: 4,
     search: "Paris",
     lat: 48.858093,
     lng: 2.294694,
@@ -44,6 +62,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Rome",
     country: "Italy",
+    countriesId: 1,
     search: "Rome",
     lat: 41.89193,
     lng: 12.51133,
@@ -53,6 +72,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Barcelona",
     country: "Spain",
+    countriesId: 2,
     search: "Barcelona",
     lat: 41.38879,
     lng: 2.15899,
@@ -62,6 +82,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Madrid",
     country: "Spain",
+    countriesId: 2,
     search: "Madrid",
     lat: 40.416775,
     lng: -3.70379,
@@ -71,6 +92,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Berlin",
     country: "Germany",
+    countriesId: 5,
     search: "Berlin",
     lat: 52.5373,
     lng: 13.356085,
@@ -80,6 +102,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Vienna",
     country: "Austria",
+    countriesId: 6,
     search: "Vienna",
     lat: 48.20849,
     lng: 16.37208,
@@ -89,6 +112,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Budapest",
     country: "Hungary",
+    countriesId: 7,
     search: "Budapest",
     lat: 47.526642,
     lng: 19.046394,
@@ -98,6 +122,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Belgrade",
     country: "Serbia",
+    countriesId: 8,
     search: "Belgrade",
     lat: 44.80401,
     lng: 20.46513,
@@ -334,7 +359,6 @@ export const crimeRanks: CreateCrimeRankDto[] = [
   },
 ];
 
-
 export const weathers: CreateWeathersDto[] = [
   {
     cityId: 1,
@@ -362,4 +386,92 @@ export const weathers: CreateWeathersDto[] = [
     lowest: -10,
     highest: 35,
   },
-]
+];
+
+export const aspects: CreateAspectDto[] = [
+  {
+    name: "insurance",
+    field: "healthcare",
+  },
+  {
+    name: "insurance_pricing",
+    field: "healthcare",
+  },
+];
+
+export const definitions: CreateDefinitionDto[] = [
+  {
+    label: "Tier 3 – SSN Only",
+    type: "text_list",
+    aspectId: 1,
+  },
+  {
+    label: "Tier 2 – SSN + Supplemental Private",
+    type: "text_list",
+    aspectId: 1,
+  },
+  {
+    label: "Tier 1 – SSN + Full Private",
+    type: "text_list",
+    aspectId: 1,
+  },
+];
+
+export const defValues: CreateDefValueDto[] = [
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Assigned general practitioner (GP / medico di base)",
+    type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Access to public specialists (with referral)",
+    type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Hospitalization and surgeries in public hospitals",
+    type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Emergency care (ambulance, ER)",
+    type: "item",
+    visible: true,
+  },
+   {
+    definitionId: 1,
+    countryId: 1,
+    value: "Partially reimbursed prescriptions",
+    type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Basic maternity, pediatric, and chronic disease coverage",
+    type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Low-income exemptions available via ISEE",
+    type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Include dependent family members",
+    type: "item",
+    visible: true,
+  },
+];
