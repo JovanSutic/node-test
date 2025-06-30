@@ -223,7 +223,7 @@ describe("DefinitionController", () => {
 
   it("should delete a definition by ID via DELETE /definition/:id", async () => {
     const definitionId = 1;
-    const mockDeletedAspect = {
+    const mockDeletedDefinition = {
       id: definitionId,
       label: "Tier 3 – SSN Only",
       type: "list",
@@ -232,7 +232,7 @@ describe("DefinitionController", () => {
 
     jest
       .spyOn(definitionService, "delete")
-      .mockResolvedValue(mockDeletedAspect);
+      .mockResolvedValue(mockDeletedDefinition);
 
     prismaServiceMock.definition.findUnique = jest
       .fn()
@@ -243,8 +243,8 @@ describe("DefinitionController", () => {
     );
 
     expect(response.status).toBe(200);
-    expect(response.body.id).toEqual(mockDeletedAspect.id);
-    expect(response.body.name).toEqual(mockDeletedAspect.name);
+    expect(response.body.id).toEqual(mockDeletedDefinition.id);
+    expect(response.body.name).toEqual(mockDeletedDefinition.name);
   });
 
   it("should register unknown ID via DELETE /definition/:id", async () => {

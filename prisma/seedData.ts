@@ -13,6 +13,9 @@ import {
 } from "../src/social_lifestyle/social_lifestyle.dto";
 import { CreateWeathersDto, WeathersDto } from "../src/weathers/weathers.dto";
 import { CreateCountryDto } from "../src/countries/countries.dto";
+import { CreateAspectDto } from "../src/aspect/aspect.dto";
+import { CreateDefinitionDto } from "../src/definition/definition.dto";
+import { CreateDefValueDto } from "../src/def_value/def_value.dto";
 
 export const categories: CreateCategoryDto[] = [
   { name: "Restaurants" },
@@ -382,5 +385,93 @@ export const weathers: CreateWeathersDto[] = [
     severe: "Low risk of winds",
     lowest: -10,
     highest: 35,
+  },
+];
+
+export const aspects: CreateAspectDto[] = [
+  {
+    name: "insurance",
+    field: "healthcare",
+  },
+  {
+    name: "insurance_pricing",
+    field: "healthcare",
+  },
+];
+
+export const definitions: CreateDefinitionDto[] = [
+  {
+    label: "Tier 3 – SSN Only",
+    type: "text_list",
+    aspectId: 1,
+  },
+  {
+    label: "Tier 2 – SSN + Supplemental Private",
+    type: "text_list",
+    aspectId: 1,
+  },
+  {
+    label: "Tier 1 – SSN + Full Private",
+    type: "text_list",
+    aspectId: 1,
+  },
+];
+
+export const defValues: CreateDefValueDto[] = [
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Assigned general practitioner (GP / medico di base)",
+    type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Access to public specialists (with referral)",
+    type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Hospitalization and surgeries in public hospitals",
+    type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Emergency care (ambulance, ER)",
+    type: "item",
+    visible: true,
+  },
+   {
+    definitionId: 1,
+    countryId: 1,
+    value: "Partially reimbursed prescriptions",
+    type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Basic maternity, pediatric, and chronic disease coverage",
+    type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Low-income exemptions available via ISEE",
+    type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 1,
+    countryId: 1,
+    value: "Include dependent family members",
+    type: "item",
+    visible: true,
   },
 ];

@@ -8,8 +8,10 @@ import {
   socialLifeStyleReports,
   crimeAspects,
   crimeRanks,
-  weathers,
   countries,
+  aspects,
+  definitions,
+  defValues,
 } from "./seedData";
 
 const prisma = new PrismaClient();
@@ -95,11 +97,27 @@ const prisma = new PrismaClient();
       });
     }
 
-    const weathersUnit = await prisma.weathers.findUnique({ where: { id: 1 } });
+    const aspect = await prisma.aspect.findUnique({ where: { id: 1 } });
 
-    if (!weathersUnit) {
-      await prisma.weathers.createMany({
-        data: weathers,
+    if (!aspect) {
+      await prisma.aspect.createMany({
+        data: aspects,
+      });
+    }
+
+    const definition = await prisma.definition.findUnique({ where: { id: 1 } });
+
+    if (!definition) {
+      await prisma.definition.createMany({
+        data: definitions,
+      });
+    }
+
+    const defValue = await prisma.def_value.findUnique({ where: { id: 1 } });
+
+    if (!defValue) {
+      await prisma.def_value.createMany({
+        data: defValues,
       });
     }
 

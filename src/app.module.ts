@@ -15,6 +15,7 @@ import { SpecialsModule } from "./specials/specials.module";
 import { CountriesModule } from "./countries/countries.module";
 import { AspectModule } from "./aspect/aspect.module";
 import { DefinitionModule } from "./definition/definition.module";
+import { DefValueModule } from "./def_value/def_value.module";
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { DefinitionModule } from "./definition/definition.module";
     CountriesModule,
     AspectModule,
     DefinitionModule,
+    DefValueModule,
   ],
 })
 export class AppModule {}
