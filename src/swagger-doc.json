@@ -5071,6 +5071,422 @@
           "def_value"
         ]
       }
+    },
+    "/blogs": {
+      "post": {
+        "operationId": "BlogsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to create new blog",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlogDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "cityId": null,
+                    "countryId": 1,
+                    "slug": "test-test-test",
+                    "field": "tax",
+                    "keywords": "test, tax",
+                    "title": "Testing 123",
+                    "description": "test for the test",
+                    "visible": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created a blog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Blogs DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "slug": "test-test-test",
+                      "field": "tax",
+                      "keywords": "test, tax",
+                      "title": "Testing 123",
+                      "description": "test for the test",
+                      "visible": true,
+                      "created_at": "2025-07-18T13:53:28.705Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a new blog post",
+        "tags": [
+          "blogs"
+        ]
+      },
+      "get": {
+        "operationId": "BlogsController_getAll",
+        "parameters": [
+          {
+            "name": "field",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "countryId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Filtered list of blogs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Blog DTO",
+                    "value": [
+                      {
+                        "id": 1,
+                        "cityId": null,
+                        "countryId": 1,
+                        "slug": "test-test-test",
+                        "field": "tax",
+                        "keywords": "test, tax",
+                        "title": "Testing 123",
+                        "description": "test for the test",
+                        "visible": true,
+                        "created_at": "2025-07-18T13:53:28.705Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all blogs (filtered by field and/or countryId)",
+        "tags": [
+          "blogs"
+        ]
+      },
+      "put": {
+        "operationId": "BlogsController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "The data to update blog",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlogDto"
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "id": 1,
+                    "cityId": null,
+                    "countryId": 1,
+                    "slug": "test-test-test",
+                    "field": "tax",
+                    "keywords": "test, tax",
+                    "title": "Testing 123",
+                    "description": "test for the test",
+                    "visible": true,
+                    "created_at": "2025-07-18T13:53:28.705Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully updated the blog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Blogs DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "slug": "test-test-test",
+                      "field": "tax",
+                      "keywords": "test, tax",
+                      "title": "Testing 123",
+                      "description": "test for the test",
+                      "visible": true,
+                      "created_at": "2025-07-18T13:53:28.705Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update an existing blog post",
+        "tags": [
+          "blogs"
+        ]
+      }
+    },
+    "/blogs/slug/{slug}": {
+      "get": {
+        "operationId": "BlogsController_getBySlug",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Single blog with sections",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Blog DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "slug": "test-test-test",
+                      "field": "tax",
+                      "keywords": "test, tax",
+                      "title": "Testing 123",
+                      "description": "test for the test",
+                      "visible": true,
+                      "created_at": "2025-07-18T13:53:28.705Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get single blog by slug (with sections)",
+        "tags": [
+          "blogs"
+        ]
+      }
+    },
+    "/blogs/{id}": {
+      "delete": {
+        "operationId": "BlogsController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully deleted the blog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Blogs DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": null,
+                      "countryId": 1,
+                      "slug": "test-test-test",
+                      "field": "tax",
+                      "keywords": "test, tax",
+                      "title": "Testing 123",
+                      "description": "test for the test",
+                      "visible": true,
+                      "created_at": "2025-07-18T13:53:28.705Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete blog by ID",
+        "tags": [
+          "blogs"
+        ]
+      }
+    },
+    "/blogs/section": {
+      "post": {
+        "operationId": "BlogsController_createSection",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Blog sections body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlogSectionDto"
+              },
+              "examples": {
+                "multiple": {
+                  "value": [
+                    {
+                      "blogId": 1,
+                      "order": 1,
+                      "type": "text",
+                      "content": "Italy Digital Nomad Visa 2025: Full Tax Breakdown for Freelancers",
+                      "note": null
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created blog sections",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBlogSectionDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "BlogSection DTO",
+                    "value": {
+                      "count": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create one or more blog sections",
+        "tags": [
+          "blogs"
+        ]
+      }
+    },
+    "/blogs/section/{id}": {
+      "get": {
+        "operationId": "BlogsController_getSectionById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Single blog section",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBlogSectionDto"
+                },
+                "example": {
+                  "value": {
+                    "id": 1,
+                    "blogId": 1,
+                    "order": 1,
+                    "type": "text",
+                    "content": "Italy Digital Nomad Visa 2025: Full Tax Breakdown for Freelancers",
+                    "note": null,
+                    "created_at": "2025-07-18T13:54:03.089Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a single blog section by ID",
+        "tags": [
+          "blogs"
+        ]
+      },
+      "delete": {
+        "operationId": "BlogsController_deleteSection",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Section deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBlogSectionDto"
+                },
+                "example": {
+                  "value": {
+                    "id": 1,
+                    "blogId": 1,
+                    "order": 1,
+                    "type": "text",
+                    "content": "Italy Digital Nomad Visa 2025: Full Tax Breakdown for Freelancers",
+                    "note": null,
+                    "created_at": "2025-07-18T13:54:03.089Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete a blog section by ID",
+        "tags": [
+          "blogs"
+        ]
+      }
     }
   },
   "info": {
@@ -6126,6 +6542,140 @@
           "note",
           "visible",
           "created_at"
+        ]
+      },
+      "CreateBlogDto": {
+        "type": "object",
+        "properties": {
+          "cityId": {
+            "type": "number",
+            "description": "City ID"
+          },
+          "countryId": {
+            "type": "number",
+            "description": "Country ID"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Unique slug for the blog"
+          },
+          "field": {
+            "type": "string",
+            "description": "Field or topic of the blog"
+          },
+          "keywords": {
+            "type": "string",
+            "description": "Keywords related to the blog"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the blog"
+          },
+          "description": {
+            "type": "string",
+            "description": "Short description of the blog"
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Visibility status of the blog",
+            "default": true
+          }
+        },
+        "required": [
+          "slug",
+          "field",
+          "keywords",
+          "title",
+          "description",
+          "visible"
+        ]
+      },
+      "BlogDto": {
+        "type": "object",
+        "properties": {
+          "cityId": {
+            "type": "number",
+            "description": "City ID"
+          },
+          "countryId": {
+            "type": "number",
+            "description": "Country ID"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Unique slug for the blog"
+          },
+          "field": {
+            "type": "string",
+            "description": "Field or topic of the blog"
+          },
+          "keywords": {
+            "type": "string",
+            "description": "Keywords related to the blog"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the blog"
+          },
+          "description": {
+            "type": "string",
+            "description": "Short description of the blog"
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Visibility status of the blog",
+            "default": true
+          },
+          "id": {
+            "type": "number",
+            "description": "Blog ID"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date of blog creation"
+          }
+        },
+        "required": [
+          "slug",
+          "field",
+          "keywords",
+          "title",
+          "description",
+          "visible",
+          "id",
+          "created_at"
+        ]
+      },
+      "CreateBlogSectionDto": {
+        "type": "object",
+        "properties": {
+          "blogId": {
+            "type": "number",
+            "description": "ID of the blog this section belongs to"
+          },
+          "order": {
+            "type": "number",
+            "description": "Order of this section in the blog"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the section (text, image, quote, etc.)"
+          },
+          "content": {
+            "type": "string",
+            "description": "Content of the section"
+          },
+          "note": {
+            "type": "string",
+            "description": "Optional note for internal use or annotation"
+          }
+        },
+        "required": [
+          "blogId",
+          "order",
+          "type",
+          "content"
         ]
       }
     }
