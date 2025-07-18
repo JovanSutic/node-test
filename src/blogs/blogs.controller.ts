@@ -16,20 +16,61 @@ import { BlogService } from "./blogs.service";
 import { CreateBlogDto, BlogDto, CreateBlogSectionDto } from "./blogs.dto";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "../utils/auth.guard";
+import {
+  ExistenceValidationPipe,
+  ForeignKeyValidationPipe,
+  UniqueExistenceValidation,
+  ValidationPipe,
+} from "./blogs.validation.pipe";
 
 @Controller("blogs")
 @ApiTags("blogs")
-export class BlogController {
+export class BlogsController {
   constructor(private readonly blogService: BlogService) {}
 
   @Post()
   @UseGuards(AuthGuard)
+  @UsePipes(ExistenceValidationPipe)
   @ApiOperation({ summary: "Create a new blog post" })
-  @ApiBody({ type: CreateBlogDto })
+  @ApiBody({
+    description: "The data to create new blog",
+    type: CreateBlogDto,
+    examples: {
+      single: {
+        value: {
+          cityId: null,
+          countryId: 1,
+          slug: "test-test-test",
+          field: "tax",
+          keywords: "test, tax",
+          title: "Testing 123",
+          description: "test for the test",
+          visible: true,
+        },
+      },
+    },
+  })
   @ApiResponse({
     status: 201,
-    description: "Blog created successfully",
+    description: "Successfully created a blog",
     type: BlogDto,
+    examples: {
+      single: {
+        summary: "Blogs DTO",
+        value: {
+          id: 1,
+          cityId: null,
+          countryId: 1,
+          slug: "test-test-test",
+          field: "tax",
+          keywords: "test, tax",
+          title: "Testing 123",
+          description: "test for the test",
+          visible: true,
+          created_at: "2025-07-18T13:53:28.705Z",
+        },
+      },
+    },
   })
   async create(@Body() dto: CreateBlogDto) {
     try {
@@ -46,9 +87,28 @@ export class BlogController {
     summary: "Get all blogs (filtered by field and/or countryId)",
   })
   @ApiResponse({
-    status: 200,
-    description: "Filtered blogs list",
-    type: [BlogDto],
+    status: 201,
+    description: "Filtered list of blogs",
+    type: BlogDto,
+    examples: {
+      single: {
+        summary: "Blog DTO",
+        value: [
+          {
+            id: 1,
+            cityId: null,
+            countryId: 1,
+            slug: "test-test-test",
+            field: "tax",
+            keywords: "test, tax",
+            title: "Testing 123",
+            description: "test for the test",
+            visible: true,
+            created_at: "2025-07-18T13:53:28.705Z",
+          },
+        ],
+      },
+    },
   })
   async getAll(
     @Query("field") field?: string,
@@ -65,11 +125,29 @@ export class BlogController {
   }
 
   @Get("slug/:slug")
+  @UsePipes(UniqueExistenceValidation)
   @ApiOperation({ summary: "Get single blog by slug (with sections)" })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: "Single blog with sections",
     type: BlogDto,
+    examples: {
+      single: {
+        summary: "Blog DTO",
+        value: {
+          id: 1,
+          cityId: null,
+          countryId: 1,
+          slug: "test-test-test",
+          field: "tax",
+          keywords: "test, tax",
+          title: "Testing 123",
+          description: "test for the test",
+          visible: true,
+          created_at: "2025-07-18T13:53:28.705Z",
+        },
+      },
+    },
   })
   async getBySlug(@Param("slug") slug: string) {
     try {
@@ -89,11 +167,47 @@ export class BlogController {
   @Put()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Update an existing blog post" })
-  @ApiBody({ type: BlogDto })
+  @ApiBody({
+    description: "The data to update blog",
+    type: CreateBlogDto,
+    examples: {
+      single: {
+        value: {
+          id: 1,
+          cityId: null,
+          countryId: 1,
+          slug: "test-test-test",
+          field: "tax",
+          keywords: "test, tax",
+          title: "Testing 123",
+          description: "test for the test",
+          visible: true,
+          created_at: "2025-07-18T13:53:28.705Z",
+        },
+      },
+    },
+  })
   @ApiResponse({
-    status: 200,
-    description: "Blog updated successfully",
+    status: 201,
+    description: "Successfully updated the blog",
     type: BlogDto,
+    examples: {
+      single: {
+        summary: "Blogs DTO",
+        value: {
+          id: 1,
+          cityId: null,
+          countryId: 1,
+          slug: "test-test-test",
+          field: "tax",
+          keywords: "test, tax",
+          title: "Testing 123",
+          description: "test for the test",
+          visible: true,
+          created_at: "2025-07-18T13:53:28.705Z",
+        },
+      },
+    },
   })
   async update(@Body() dto: BlogDto) {
     try {
@@ -105,10 +219,29 @@ export class BlogController {
 
   @Delete(":id")
   @UseGuards(AuthGuard)
+  @UsePipes(UniqueExistenceValidation)
   @ApiOperation({ summary: "Delete blog by ID" })
   @ApiResponse({
-    status: 200,
-    description: "Blog deleted successfully",
+    status: 201,
+    description: "Successfully deleted the blog",
+    type: BlogDto,
+    examples: {
+      single: {
+        summary: "Blogs DTO",
+        value: {
+          id: 1,
+          cityId: null,
+          countryId: 1,
+          slug: "test-test-test",
+          field: "tax",
+          keywords: "test, tax",
+          title: "Testing 123",
+          description: "test for the test",
+          visible: true,
+          created_at: "2025-07-18T13:53:28.705Z",
+        },
+      },
+    },
   })
   async delete(@Param("id") id: string) {
     try {
@@ -122,12 +255,38 @@ export class BlogController {
 
   @Post("section")
   @UseGuards(AuthGuard)
+  @UsePipes(ValidationPipe, ForeignKeyValidationPipe)
   @ApiOperation({ summary: "Create one or more blog sections" })
-  @ApiBody({ type: CreateBlogSectionDto, isArray: true })
+  @ApiBody({
+    description: "Blog sections body",
+    type: CreateBlogSectionDto,
+    examples: {
+      multiple: {
+        value: [
+          {
+            blogId: 1,
+            order: 1,
+            type: "text",
+            content:
+              "Italy Digital Nomad Visa 2025: Full Tax Breakdown for Freelancers",
+            note: null,
+          },
+        ],
+      },
+    },
+  })
   @ApiResponse({
     status: 201,
-    description: "Section(s) created",
+    description: "Successfully created blog sections",
     type: CreateBlogSectionDto,
+    examples: {
+      single: {
+        summary: "BlogSection DTO",
+        value: {
+          count: 1,
+        },
+      },
+    },
   })
   async createSection(
     @Body() dto: CreateBlogSectionDto | CreateBlogSectionDto[]
@@ -147,6 +306,18 @@ export class BlogController {
     status: 200,
     description: "Single blog section",
     type: CreateBlogSectionDto,
+    example: {
+      value: {
+        id: 1,
+        blogId: 1,
+        order: 1,
+        type: "text",
+        content:
+          "Italy Digital Nomad Visa 2025: Full Tax Breakdown for Freelancers",
+        note: null,
+        created_at: "2025-07-18T13:54:03.089Z",
+      },
+    },
   })
   async getSectionById(@Param("id") id: string) {
     try {
@@ -164,6 +335,19 @@ export class BlogController {
   @ApiResponse({
     status: 200,
     description: "Section deleted",
+    type: CreateBlogSectionDto,
+    example: {
+      value: {
+        id: 1,
+        blogId: 1,
+        order: 1,
+        type: "text",
+        content:
+          "Italy Digital Nomad Visa 2025: Full Tax Breakdown for Freelancers",
+        note: null,
+        created_at: "2025-07-18T13:54:03.089Z",
+      },
+    },
   })
   async deleteSection(@Param("id") id: string) {
     try {
