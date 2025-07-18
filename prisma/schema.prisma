@@ -18,6 +18,7 @@ model countries {
   
   cities cities[]
   defValue def_value[]
+  blogs blogs[]
 }
 
 model cities {
@@ -42,6 +43,7 @@ model cities {
   expatTip expat_tip[]
   cityFeel city_feel[]
   defValue def_value[]
+  blogs blogs[]
 }
 
 model years {
@@ -251,4 +253,38 @@ model def_value {
   definition    definition @relation(fields: [definitionId], references: [id])
   city          cities?   @relation(fields: [cityId], references: [id])
   countries     countries? @relation(fields: [countryId], references: [id])
+}
+
+
+model blogs {
+  id            Int      @id @default(autoincrement())
+  cityId        Int?     @map("city_id")
+  countryId     Int?     @map("country_id")
+  slug          String 
+  field         String
+  keywords      String
+  title         String
+  description   String 
+
+  visible       Boolean  @default(true)
+  created_at    DateTime @default(now())
+
+  city          cities?   @relation(fields: [cityId], references: [id])
+  countries     countries? @relation(fields: [countryId], references: [id])
+
+  blog_sections blog_sections[]
+}
+
+model blog_sections {
+  id         Int      @id @default(autoincrement())
+  blogId     Int      @map("blog_id")
+  order      Int      
+  type       String   
+  content    String   
+  note       String?
+  created_at DateTime @default(now())
+
+  blog       blogs    @relation(fields: [blogId], references: [id])
+
+  @@index([blogId])
 }
