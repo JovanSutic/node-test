@@ -12,6 +12,9 @@ import {
   aspects,
   definitions,
   defValues,
+  cityFeels,
+  layerTypes,
+  layers,
 } from "./seedData";
 
 const prisma = new PrismaClient();
@@ -41,6 +44,30 @@ const prisma = new PrismaClient();
     if (!city) {
       await prisma.cities.createMany({
         data: cities,
+      });
+    }
+
+    const cityFeel = await prisma.city_feel.findUnique({ where: { id: 1 } });
+
+    if (!cityFeel) {
+      await prisma.city_feel.createMany({
+        data: cityFeels,
+      });
+    }
+
+    const layer_type = await prisma.layer_type.findUnique({ where: { id: 1 } });
+
+    if (!layer_type) {
+      await prisma.layer_type.createMany({
+        data: layerTypes,
+      });
+    }
+
+    const layer = await prisma.layer.findUnique({ where: { id: 1 } });
+
+    if (!layer) {
+      await prisma.layer.createMany({
+        data: layers,
       });
     }
 

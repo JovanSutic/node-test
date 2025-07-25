@@ -16,6 +16,8 @@ import { CreateCountryDto } from "../src/countries/countries.dto";
 import { CreateAspectDto } from "../src/aspect/aspect.dto";
 import { CreateDefinitionDto } from "../src/definition/definition.dto";
 import { CreateDefValueDto } from "../src/def_value/def_value.dto";
+import { CreateCityFeelDto } from "../src/city_feel/city_feel.dto";
+import { CreateLayerDto, CreateLayerTypeDto } from "../src/layers/layers.dto";
 
 export const categories: CreateCategoryDto[] = [
   { name: "Restaurants" },
@@ -388,6 +390,69 @@ export const weathers: CreateWeathersDto[] = [
   },
 ];
 
+export const cityFeels: CreateCityFeelDto[] = [
+  {
+    cityId: 1,
+    rank: 8,
+    tags: "init/shortIncrease:1.4",
+    budget: 3681.2,
+  },
+  {
+    cityId: 2,
+    rank: 8,
+    tags: "init/shortIncrease:1.4",
+    budget: 2781.2,
+  },
+];
+
+export const layerTypes: CreateLayerTypeDto[] = [
+  {
+    name: "Budget Solo - Medium",
+    type: "money"
+  },
+  {
+    name: "Budget Solo - Low",
+    type: "money"
+  },
+  {
+    name: "Self Employment Taxes",
+    type: "percentage"
+  },
+];
+
+export const layers: CreateLayerDto[] = [
+  {
+    cityId: 1,
+    layerTypeId: 1,
+    value: 3800,
+  },
+  {
+    cityId: 2,
+    layerTypeId: 1,
+    value: 2800,
+  },
+  {
+    cityId: 1,
+    layerTypeId: 2,
+    value: 1800,
+  },
+  {
+    cityId: 2,
+    layerTypeId: 2,
+    value: 800,
+  },
+  {
+    cityId: 1,
+    layerTypeId: 3,
+    value: 15,
+  },
+  {
+    cityId: 2,
+    layerTypeId: 3,
+    value: 8,
+  },
+];
+
 export const aspects: CreateAspectDto[] = [
   {
     name: "insurance",
@@ -446,7 +511,7 @@ export const defValues: CreateDefValueDto[] = [
     type: "item",
     visible: true,
   },
-   {
+  {
     definitionId: 1,
     countryId: 1,
     value: "Partially reimbursed prescriptions",
