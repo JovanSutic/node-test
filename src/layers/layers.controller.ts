@@ -350,7 +350,7 @@ export class LayersController {
 
   @Delete()
   @UseGuards(AuthGuard)
-  @UsePipes()
+  @UsePipes(new ValidationPipe({ transform: true }), LayerDeleteValidationPipe)
   @ApiOperation({
     summary: "Delete layer(s) by id or by cityId and layerTypeId",
   })
@@ -399,20 +399,22 @@ export class LayersController {
       },
     },
   })
-  @UsePipes(LayerDeleteValidationPipe)
   async delete(@Query() query: DeleteLayerQueryDto) {
     const { id, cityId, layerTypeId } = query;
 
-    if (id !== undefined) {
-      // Delete by id
-      return await this.layersService.delete(id);
+    if (id !== undefined && !Number.isNaN(Number(id))) {
+      return await this.layersService.delete(Number(id));
     }
 
-    if (cityId !== undefined && layerTypeId !== undefined) {
-      // Delete by cityId and layerTypeId
+    if (
+      cityId !== undefined &&
+      !Number.isNaN(Number(cityId)) &&
+      layerTypeId !== undefined &&
+      !Number.isNaN(Number(layerTypeId))
+    ) {
       return await this.layersService.deleteByCityIdAndType(
-        cityId,
-        layerTypeId
+        Number(cityId),
+        Number(layerTypeId)
       );
     }
 

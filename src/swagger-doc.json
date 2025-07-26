@@ -5487,6 +5487,521 @@
           "blogs"
         ]
       }
+    },
+    "/layers": {
+      "post": {
+        "operationId": "LayersController_createLayer",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Layer creation payload",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CreateLayerDto"
+                }
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "cityId": 2,
+                    "layerTypeId": 1,
+                    "value": 10.5,
+                    "value_string": "Optional string"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "cityId": 2,
+                      "layerTypeId": 1,
+                      "value": 10.5,
+                      "value_string": "Optional string"
+                    },
+                    {
+                      "cityId": 3,
+                      "layerTypeId": 2,
+                      "value": 7.2,
+                      "value_string": null
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created layer(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single Layer Response",
+                    "value": {
+                      "id": 1,
+                      "cityId": 2,
+                      "layerTypeId": 1,
+                      "value": 10.5,
+                      "value_string": null,
+                      "created_at": "2025-07-25T12:34:56.000Z"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Create Many Response",
+                    "value": {
+                      "count": 2
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create one or many layer entries",
+        "tags": [
+          "layers"
+        ]
+      },
+      "get": {
+        "operationId": "LayersController_getAllLayers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of layers with optional filters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LayerDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all layers with optional filters",
+        "tags": [
+          "layers"
+        ]
+      },
+      "put": {
+        "operationId": "LayersController_update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Layer update payload",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LayerDto"
+                }
+              },
+              "examples": {
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "cityId": 1,
+                      "layerTypeId": 2,
+                      "value": 123.45,
+                      "value_string": "Example string",
+                      "created_at": "2025-07-25T15:30:00.000Z"
+                    },
+                    {
+                      "id": 2,
+                      "cityId": 2,
+                      "layerTypeId": 3,
+                      "value": 678.9,
+                      "value_string": "Another example",
+                      "created_at": "2025-07-25T15:30:00.000Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated layer(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LayerDto"
+                  }
+                },
+                "examples": {
+                  "multiple": {
+                    "summary": "Layer DTO",
+                    "value": [
+                      {
+                        "id": 1,
+                        "cityId": 1,
+                        "layerTypeId": 2,
+                        "value": 123.45,
+                        "value_string": "Example string",
+                        "created_at": "2025-07-25T15:30:00.000Z",
+                        "city": {
+                          "id": 1,
+                          "name": "Sample City",
+                          "country": "Sample Country",
+                          "lat": 12.34,
+                          "lng": 56.78,
+                          "seaside": true,
+                          "size": 100000
+                        },
+                        "layer_type": {
+                          "id": 2,
+                          "name": "Sample Layer Type"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update one or many layer entries",
+        "tags": [
+          "layers"
+        ]
+      },
+      "delete": {
+        "operationId": "LayersController_delete",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Deleted layer entry or entries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LayerDto"
+                  }
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Deleted layer by id",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "layerTypeId": 2,
+                      "value": 123.45,
+                      "value_string": "Example string",
+                      "created_at": "2025-07-25T15:30:00.000Z",
+                      "city": {
+                        "id": 1,
+                        "name": "Sample City",
+                        "country": "Sample Country",
+                        "lat": 12.34,
+                        "lng": 56.78,
+                        "seaside": true,
+                        "size": 100000
+                      },
+                      "layer_type": {
+                        "id": 2,
+                        "name": "Sample Layer Type"
+                      }
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Deleted layers by cityId and layerTypeId",
+                    "value": [
+                      {
+                        "id": 1,
+                        "cityId": 1,
+                        "layerTypeId": 2,
+                        "value": 123,
+                        "value_string": "example",
+                        "created_at": "2025-03-26T19:50:30.809Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete layer(s) by id or by cityId and layerTypeId",
+        "tags": [
+          "layers"
+        ]
+      }
+    },
+    "/layers/types": {
+      "post": {
+        "operationId": "LayersController_createLayerType",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Layer type creation payload",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CreateLayerTypeDto"
+                }
+              },
+              "examples": {
+                "single": {
+                  "value": {
+                    "name": "Walkability"
+                  }
+                },
+                "multiple": {
+                  "value": [
+                    {
+                      "name": "Walkability"
+                    },
+                    {
+                      "name": "Green Space"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created layer type(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerTypeDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Single Layer Response",
+                    "value": {
+                      "id": 1,
+                      "name": "Population Density"
+                    }
+                  },
+                  "multiple": {
+                    "summary": "Single Layer Response",
+                    "value": {
+                      "count": 2
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create one or many layer types",
+        "tags": [
+          "layers"
+        ]
+      }
+    },
+    "/layers/city/{cityId}": {
+      "get": {
+        "operationId": "LayersController_getByCityId",
+        "parameters": [
+          {
+            "name": "cityId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Layer object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Layer DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "layerTypeId": 2,
+                      "value": 123.45,
+                      "value_string": "Example string",
+                      "created_at": "2025-07-25T15:30:00.000Z",
+                      "city": {
+                        "id": 1,
+                        "name": "Sample City",
+                        "country": "Sample Country",
+                        "lat": 12.34,
+                        "lng": 56.78,
+                        "seaside": true,
+                        "size": 100000
+                      },
+                      "layer_type": {
+                        "id": 2,
+                        "name": "Sample Layer Type"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all layers for a specific city",
+        "tags": [
+          "layers"
+        ]
+      }
+    },
+    "/layers/{id}": {
+      "get": {
+        "operationId": "LayersController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Layer object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Layer DTO",
+                    "value": {
+                      "id": 1,
+                      "cityId": 1,
+                      "layerTypeId": 2,
+                      "value": 123.45,
+                      "value_string": "Example string",
+                      "created_at": "2025-07-25T15:30:00.000Z",
+                      "city": {
+                        "id": 1,
+                        "name": "Sample City",
+                        "country": "Sample Country",
+                        "lat": 12.34,
+                        "lng": 56.78,
+                        "seaside": true,
+                        "size": 100000
+                      },
+                      "layer_type": {
+                        "id": 2,
+                        "name": "Sample Layer Type"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all layers for a specific city",
+        "tags": [
+          "layers"
+        ]
+      }
+    },
+    "/layers/types/all": {
+      "get": {
+        "operationId": "LayersController_getAllTypes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of all layer types",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LayerTypeDto"
+                  }
+                },
+                "examples": {
+                  "multiple": {
+                    "summary": "Layer types array",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Type A"
+                      },
+                      {
+                        "id": 2,
+                        "name": "Type B"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all layer types",
+        "tags": [
+          "layers"
+        ]
+      }
+    },
+    "/layers/types/{id}": {
+      "delete": {
+        "operationId": "LayersController_deleteType",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted layer type entry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerTypeDto"
+                },
+                "examples": {
+                  "single": {
+                    "summary": "Deleted layer type",
+                    "value": {
+                      "id": 1,
+                      "name": "Type A"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete a layer type by ID",
+        "tags": [
+          "layers"
+        ]
+      }
     }
   },
   "info": {
@@ -6676,6 +7191,106 @@
           "order",
           "type",
           "content"
+        ]
+      },
+      "CreateLayerDto": {
+        "type": "object",
+        "properties": {
+          "cityId": {
+            "type": "number",
+            "description": "The ID of the city this layer belongs to"
+          },
+          "layerTypeId": {
+            "type": "number",
+            "description": "The ID of the layer type"
+          },
+          "value": {
+            "type": "number",
+            "description": "The numerical value of the layer (if applicable)"
+          },
+          "value_string": {
+            "type": "string",
+            "description": "The string representation of the value (if applicable)"
+          }
+        },
+        "required": [
+          "cityId",
+          "layerTypeId"
+        ]
+      },
+      "LayerDto": {
+        "type": "object",
+        "properties": {
+          "cityId": {
+            "type": "number",
+            "description": "The ID of the city this layer belongs to"
+          },
+          "layerTypeId": {
+            "type": "number",
+            "description": "The ID of the layer type"
+          },
+          "value": {
+            "type": "number",
+            "description": "The numerical value of the layer (if applicable)"
+          },
+          "value_string": {
+            "type": "string",
+            "description": "The string representation of the value (if applicable)"
+          },
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the layer"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The creation date of the layer",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "cityId",
+          "layerTypeId",
+          "id",
+          "created_at"
+        ]
+      },
+      "CreateLayerTypeDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the layer type"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the layer type"
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ]
+      },
+      "LayerTypeDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the layer type"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the layer type"
+          },
+          "id": {
+            "type": "number",
+            "description": "The unique identifier of the layer type"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "id"
         ]
       }
     }

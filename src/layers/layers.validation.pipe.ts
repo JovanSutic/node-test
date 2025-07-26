@@ -113,7 +113,7 @@ interface DeleteLayerQuery {
   layerTypeId?: string;
 }
 
-Injectable();
+@Injectable()
 export class LayerDeleteValidationPipe implements PipeTransform {
   constructor(private readonly prisma: PrismaService) {}
 
@@ -122,7 +122,7 @@ export class LayerDeleteValidationPipe implements PipeTransform {
 
     if (id !== undefined) {
       const exists = await this.prisma.layer.findUnique({
-        where: { id: Number(id) },
+        where: { id },
       });
       if (!exists) {
         throw new NotFoundException(`Layer with id ${id} not found.`);
