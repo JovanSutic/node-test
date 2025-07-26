@@ -199,9 +199,8 @@ describe("BlogsController", () => {
       `/blogs/${blogId}`
     );
 
-    console.log(response.body);
 
-    // expect(response.status).toBe(200);
+    expect(response.status).toBe(200);
     expect(response.body.id).toEqual(mockDeletedAspect.id);
     expect(response.body.name).toEqual(mockDeletedAspect.name);
   });

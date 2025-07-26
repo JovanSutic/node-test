@@ -44,6 +44,7 @@ model cities {
   cityFeel city_feel[]
   defValue def_value[]
   blogs blogs[]
+  layers layer[]
 }
 
 model years {
@@ -210,7 +211,8 @@ model city_feel {
   budget    Float?
   created_at   DateTime @default(now())
 
-  city      cities   @relation(fields: [cityId], references: [id])
+  city  cities @relation(fields: [cityId], references: [id], map: "fk_city_feel_city")
+  layer layer[]  @relation(name: "LayerToCityFeel")
 
   @@unique([cityId])
 }
@@ -287,4 +289,25 @@ model blog_sections {
   blog       blogs    @relation(fields: [blogId], references: [id])
 
   @@index([blogId])
+}
+
+model layer_type {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  type  String
+
+  layers layer[]
+}
+
+model layer {
+  id            Int       @id @default(autoincrement())
+  cityId        Int       @map("city_id")
+  layerTypeId   Int       @map("layer_type_id")
+  value         Float?
+  value_string  String?
+  created_at    DateTime  @default(now())
+
+  city       cities     @relation(fields: [cityId], references: [id])
+  layer_type layer_type @relation(fields: [layerTypeId], references: [id])
+  city_feel  city_feel? @relation(name: "LayerToCityFeel", fields: [cityId], references: [cityId], map: "fk_layer_city_feel")
 }

@@ -17,6 +17,7 @@ import { AspectModule } from "./aspect/aspect.module";
 import { DefinitionModule } from "./definition/definition.module";
 import { DefValueModule } from "./def_value/def_value.module";
 import { BlogsModule } from "./blogs/blogs.module";
+import { LayersModule } from "./layers/layers.module";
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { BlogsModule } from "./blogs/blogs.module";
     DefinitionModule,
     DefValueModule,
     BlogsModule,
+    LayersModule,
   ],
 })
 export class AppModule {}

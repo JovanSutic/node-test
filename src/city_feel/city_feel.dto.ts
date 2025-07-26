@@ -104,3 +104,8 @@ export class CityFeelQueryDto {
   @IsString()
   seaside?: string;
 }
+
+export class LayersQueryDto extends CityFeelQueryDto {
+  @IsNumberString()
+  layerTypeId: number;
+}
