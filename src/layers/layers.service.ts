@@ -105,6 +105,24 @@ export class LayersService {
         where.city.size = { lte: size };
       }
 
+      let orderBy: any;
+
+      if (sortBy === "rank") {
+        orderBy = {
+          city_feel: {
+            rank: order,
+          },
+        };
+      } else if (
+        ["id", "value", "value_string", "created_at"].includes(sortBy)
+      ) {
+        orderBy = {
+          [sortBy]: order,
+        };
+      } else {
+        throw new BadRequestException(`Invalid sortBy field: ${sortBy}`);
+      }
+
       if (Object.keys(where.city).length === 0) {
         delete where.city;
       }
@@ -113,9 +131,7 @@ export class LayersService {
         this.prisma.layer.findMany({
           where,
           take,
-          orderBy: {
-            [sortBy]: order,
-          },
+          orderBy,
           include: {
             city: true,
             layer_type: true,
@@ -287,7 +303,7 @@ export class LayersService {
 
   async deleteType(id: number) {
     try {
-        console.log(id);
+      console.log(id);
       return await this.prisma.layer_type.delete({
         where: { id },
       });
