@@ -208,7 +208,6 @@ export class LayersService {
 
   async deleteByCityIdAndType(cityId: number, layerTypeId: number) {
     try {
-      // Fetch layers matching cityId and layerTypeId to return after deletion
       const layersToDelete = await this.prisma.layer.findMany({
         where: {
           cityId,
@@ -258,11 +257,12 @@ export class LayersService {
         );
       }
     } else {
-      const { name } = createDto;
+      const { name, type } = createDto;
       try {
         return await this.prisma.layer_type.create({
           data: {
             name,
+            type,
           },
         });
       } catch (error: any) {
@@ -287,6 +287,7 @@ export class LayersService {
 
   async deleteType(id: number) {
     try {
+        console.log(id);
       return await this.prisma.layer_type.delete({
         where: { id },
       });
