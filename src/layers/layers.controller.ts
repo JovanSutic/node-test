@@ -446,6 +446,40 @@ export class LayersController {
     return this.layersService.getAllTypes();
   }
 
+  @Put("types")
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: "Update one or many layer types" })
+  @ApiResponse({
+    status: 200,
+    description: "Successfully updated layer type(s)",
+    type: LayerTypeDto,
+    examples: {
+      multiple: {
+        summary: "Multiple Layers Update Response",
+        value: [
+          { id: 1, name: "Updated Walkability", type: "environment" },
+          { id: 2, name: "Updated Green Space", type: "nature" },
+        ],
+      },
+    },
+  })
+  @ApiBody({
+    description: "Layer type update payload (must include `id`)",
+    type: LayerTypeDto,
+    isArray: true,
+    examples: {
+      multiple: {
+        value: [
+          { id: 1, name: "Updated Walkability", type: "environment" },
+          { id: 2, name: "Updated Green Space", type: "nature" },
+        ],
+      },
+    },
+  })
+  async updateLayerType(@Body() body: LayerTypeDto[]) {
+    return await this.layersService.updateType(body);
+  }
+
   @Delete("types/:id")
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Delete a layer type by ID" })
