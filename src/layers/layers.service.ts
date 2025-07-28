@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateLayerDto, CreateLayerTypeDto, LayerDto } from "./layers.dto";
+import { CreateLayerDto, CreateLayerTypeDto, LayerDto, LayerTypeDto } from "./layers.dto";
 
 @Injectable()
 export class LayersService {
@@ -289,6 +289,42 @@ export class LayersService {
     }
   }
 
+  async updateType(updateDto: LayerTypeDto | LayerTypeDto[]) {
+    if (Array.isArray(updateDto)) {
+      try {
+        const updatePromises = updateDto.map((item) =>
+          this.prisma.layer_type.update({
+            where: { id: item.id },
+            data: {
+              name: item.name,
+              type: item.type,
+            },
+          })
+        );
+        return await Promise.all(updatePromises);
+      } catch (error: any) {
+        throw new BadRequestException(
+          error.message || "Error while updating layer types"
+        );
+      }
+    } else {
+      const { id, name, type } = updateDto;
+      try {
+        return await this.prisma.layer_type.update({
+          where: { id },
+          data: {
+            name,
+            type,
+          },
+        });
+      } catch (error: any) {
+        throw new BadRequestException(
+          error.message || "Error while updating layer type"
+        );
+      }
+    }
+  }
+
   async getAllTypes() {
     try {
       return await this.prisma.layer_type.findMany({
@@ -303,7 +339,6 @@ export class LayersService {
 
   async deleteType(id: number) {
     try {
-      console.log(id);
       return await this.prisma.layer_type.delete({
         where: { id },
       });
