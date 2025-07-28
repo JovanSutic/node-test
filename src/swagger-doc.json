@@ -5807,6 +5807,73 @@
         "tags": [
           "layers"
         ]
+      },
+      "put": {
+        "operationId": "LayersController_updateLayerType",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Layer type update payload (must include `id`)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LayerTypeDto"
+                }
+              },
+              "examples": {
+                "multiple": {
+                  "value": [
+                    {
+                      "id": 1,
+                      "name": "Updated Walkability",
+                      "type": "environment"
+                    },
+                    {
+                      "id": 2,
+                      "name": "Updated Green Space",
+                      "type": "nature"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated layer type(s)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayerTypeDto"
+                },
+                "examples": {
+                  "multiple": {
+                    "summary": "Multiple Layers Update Response",
+                    "value": [
+                      {
+                        "id": 1,
+                        "name": "Updated Walkability",
+                        "type": "environment"
+                      },
+                      {
+                        "id": 2,
+                        "name": "Updated Green Space",
+                        "type": "nature"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Update one or many layer types",
+        "tags": [
+          "layers"
+        ]
       }
     },
     "/layers/city/{cityId}": {
