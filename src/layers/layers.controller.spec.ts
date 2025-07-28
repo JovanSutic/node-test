@@ -218,6 +218,21 @@ describe("LayersController", () => {
     expect(response.body).toEqual([type]);
   });
 
+  it("should update layerType records - PUT /layers/types/", async () => {
+    const type = {
+      id: 1,
+      name: "Type 1",
+      type: "money",
+    };
+    jest.spyOn(layersService, "updateType").mockResolvedValue([type]);
+
+    const response = await request(app.getHttpServer())
+      .put("/layers/types/")
+      .expect(200);
+
+    expect(response.body).toEqual([type]);
+  });
+
   it("should delete layerType record by id - DELETE /layers/types/:id", async () => {
     const type = {
       id: 1,
