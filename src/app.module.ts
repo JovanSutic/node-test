@@ -21,7 +21,9 @@ import { LayersModule } from "./layers/layers.module";
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UsersModule,
     CitiesModule,
     YearsModule,
