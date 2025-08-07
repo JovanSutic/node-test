@@ -18,6 +18,7 @@ import { DefinitionModule } from "./definition/definition.module";
 import { DefValueModule } from "./def_value/def_value.module";
 import { BlogsModule } from "./blogs/blogs.module";
 import { LayersModule } from "./layers/layers.module";
+import { ReportsModule } from "./reports/reports.module";
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { LayersModule } from "./layers/layers.module";
     DefValueModule,
     BlogsModule,
     LayersModule,
+    ReportsModule,
   ],
 })
 export class AppModule {}
