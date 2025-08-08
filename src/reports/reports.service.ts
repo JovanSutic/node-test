@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { CitiesService } from "../cities/cities.service";
 import { CurrenciesService } from "../helpers/currency.service";
-import { getCurrencyRate, roundToTwoDecimals } from "../utils/numbers";
+import { roundToTwoDecimals } from "../utils/numbers";
 import {
   calculateBudget,
   convertUserData,
@@ -12,8 +12,13 @@ import {
 import { PricesService } from "../prices/prices.service";
 import { PriceDto, PriceType } from "../prices/prices.dto";
 import { PrismaService } from "../prisma/prisma.service";
-import type { CreateReportDto, CreateReportItemDto, ReportUserDataDto } from "./reports.dto";
+import type {
+  CreateReportDto,
+  CreateReportItemDto,
+  ReportUserDataDto,
+} from "./reports.dto";
 import { SocialType } from "../social_lifestyle/social_lifestyle.dto";
+import type { ExchangeRate } from "../types/flow.types";
 
 interface ReportBudgets {
   comfortBudget: number;
@@ -42,19 +47,10 @@ export class ReportsService {
 
   async getReportItems(
     reportUserData: ReportUserDataDto,
-    isPublic: boolean
+    isPublic: boolean,
+    rates: ExchangeRate
   ): Promise<any> {
-    const currencies = await this.safeExecute(
-      () => this.currenciesService.fetchCurrencies(),
-      "Failed to fetch currencies"
-    );
-
-    if (!currencies?.eur) {
-      throw new InternalServerErrorException("Currencies are empty");
-    }
-
-    const eurInUsd = getCurrencyRate(currencies.eur, "usd", "eur");
-    const normalizedData = convertUserData(reportUserData, currencies.eur);
+    const normalizedData = convertUserData(reportUserData, rates);
 
     const city = await this.safeExecute(
       () => this.citiesService.getById(Number(reportUserData.cityId)),
@@ -74,7 +70,7 @@ export class ReportsService {
       );
     }
 
-    return calculationFunction(normalizedData, eurInUsd, isPublic);
+    return calculationFunction(normalizedData, rates.usd, isPublic);
   }
 
   async getBudgets(
@@ -116,10 +112,16 @@ export class ReportsService {
   }
 
   async generatePublicReport(reportUserData: ReportUserDataDto) {
+    const rates = await this.safeExecute(
+      () => this.currenciesService.fetchRate(),
+      "Failed to fetch currencies"
+    );
+
     try {
       const tax: CreateReportItemDto[] = await this.getReportItems(
         reportUserData,
-        true
+        true,
+        rates
       );
       const net: number = tax.reduce((prev, next) => next.amount + prev, 0);
       const budget = await this.getBudgets(reportUserData, true);
@@ -187,10 +189,10 @@ export class ReportsService {
     }
   }
 
-  async getById(id: number) {
+  async getById(id: number, userUuid: string) {
     try {
       return await this.prisma.report.findUnique({
-        where: { id },
+        where: { id, userUuid },
         include: {
           costItems: true,
         },
@@ -214,8 +216,13 @@ export class ReportsService {
         ? SocialType.PAIR
         : SocialType.SOLO;
 
+    const rates = await this.safeExecute(
+      () => this.currenciesService.fetchRate(),
+      "Failed to fetch currencies"
+    );
+
     const reportItems = await this.safeExecute<CreateReportItemDto[]>(
-      () => this.getReportItems(reportUserData, false),
+      () => this.getReportItems(reportUserData, false, rates),
       "Failed to generate report items"
     );
 
@@ -236,7 +243,7 @@ export class ReportsService {
       expensesLow: budgets.lowBudget || 0,
       expensesComfort: budgets.comfortBudget,
       type: socialType,
-      userData: reportUserData,
+      userData: { ...reportUserData, rates },
     };
 
     const report = await this.safeExecute(
@@ -250,7 +257,7 @@ export class ReportsService {
     );
 
     return await this.safeExecute(
-      () => this.getById(report.id),
+      () => this.getById(report.id, userUuid),
       "Failed to retrieve final report"
     );
   }

@@ -1,5 +1,11 @@
 export type currencyString = "usd" | "eur" | "gbp";
 
+export interface ExchangeRate {
+  eur: number;
+  usd: number;
+  gbp: number;
+}
+
 export interface PersonalIncomes {
   isUSCitizen: boolean;
   currency: currencyString;

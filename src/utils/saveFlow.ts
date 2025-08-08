@@ -1,6 +1,7 @@
 import type { PriceDto } from "../prices/prices.dto";
 import type { ReportUserDataDto } from "../reports/reports.dto";
 import type {
+  ExchangeRate,
   PersonalIncomes,
   TaxAnalytic,
   TaxResult,
@@ -15,20 +16,19 @@ import {
   SOLO_BUDGET_LOW,
   type BudgetItem,
 } from "./budgetData";
-import { getCurrencyRate, roundToTwoDecimals } from "./numbers";
+import { roundToTwoDecimals } from "./numbers";
 import { spanishTaxBrackets } from "./taxData";
 import { calculateSpainTax } from "./taxes/spain";
 
 export function convertUserData(
   userData: ReportUserDataDto,
-  currencyMap: Record<string, number>
+  rates: ExchangeRate
 ) {
   return {
     ...userData,
     incomes: userData.incomes.map((item) => {
       if (item.currency !== "eur") {
-        const rate = getCurrencyRate(currencyMap, item.currency, "eur");
-        return { ...item, income: item.income * rate };
+        return { ...item, income: item.income * rates[item.currency] };
       } else {
         return { ...item };
       }
