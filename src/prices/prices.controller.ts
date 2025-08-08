@@ -21,7 +21,6 @@ import {
   PriceDto,
   PricePaginationDto,
   PriceQueryDto,
-  PriceType,
   UnmarkedPriceQueryDto,
 } from "./prices.dto";
 import { PricesService } from "./prices.service";

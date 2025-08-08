@@ -45,6 +45,7 @@ model cities {
   defValue def_value[]
   blogs blogs[]
   layers layer[]
+  reports report[]
 }
 
 model years {
@@ -310,4 +311,35 @@ model layer {
   city       cities     @relation(fields: [cityId], references: [id])
   layer_type layer_type @relation(fields: [layerTypeId], references: [id])
   city_feel  city_feel? @relation(name: "LayerToCityFeel", fields: [cityId], references: [cityId], map: "fk_layer_city_feel")
+}
+
+model report {
+  id                     Int                @id @default(autoincrement())
+  userUuid               String             @map("user_uuid") // Cognito UUID stored as String
+  cityId                 Int                @map("city_id")
+  net                    Float
+  save                   Float
+  expensesLow            Float              @map("expenses_low")
+  expensesComfort        Float              @map("expenses_comfort")
+  type                   SocialType
+  userData               Json               @map("user_data")
+  createdAt              DateTime           @default(now()) @map("created_at")
+
+  costItems  report_items[] @relation("report_items")
+  city       cities     @relation(fields: [cityId], references: [id])
+}
+
+model report_items {
+  id          Int       @id @default(autoincrement())
+  reportId    Int       @map("report_id")
+  incomeMaker Int       @map("income_maker")
+  label       String
+  type        String
+  amount      Float
+  note        String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  report      report    @relation("report_items", fields: [reportId], references: [id])
+
+  @@index([reportId, incomeMaker])
 }
