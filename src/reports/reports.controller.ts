@@ -13,7 +13,6 @@ import {
 
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { CognitoAuthGuard } from "../utils/auth.cognito.guard";
-import type { ReportUserData } from "../types/flow.types";
 import { ReportsService } from "./reports.service";
 import { JwtService } from "@nestjs/jwt";
 import { ValidateCityIdPipe, ValidateReportStructurePipe } from "./reports.validation.pipe";
@@ -67,8 +66,25 @@ export class ReportsController {
   }
 
   @Get(":id")
-  @ApiOperation({ summary: "Get all layers for a specific city" })
-  async getById(@Param("id", ParseIntPipe) id: number) {
-    return this.reportsService.getById(id);
+  @UseGuards(CognitoAuthGuard)
+  @ApiOperation({ summary: "Get report by id" })
+  async getById(@Param("id", ParseIntPipe) id: number, @Req() req: any) {
+    const authHeader = req.headers.authorization || "";
+    const token = authHeader.replace("Bearer ", "");
+
+    let userUuid = "";
+
+    try {
+      const decoded = this.jwtService.decode(token) as any;
+      userUuid = decoded?.sub;
+    } catch (error) {
+      throw new BadRequestException("Invalid token");
+    }
+
+    if(!userUuid) {
+      throw new BadRequestException("No sub in the token");
+    }
+
+    return this.reportsService.getById(id, userUuid);
   }
 }

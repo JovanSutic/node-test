@@ -282,7 +282,6 @@ export const KID_BUDGET: BudgetItem[] = [
   { productId: 1, quantity: 5 }, // Inexpensive restaurant meals (fewer outings)
   { productId: 2, quantity: 1 }, // Mid-range 3-course meals (rarely)
   { productId: 3, quantity: 2 }, // McMeal (occasional)
-  { productId: 8, quantity: 0 }, // Cappuccino (not consumed)
 
   { productId: 9, quantity: 10 }, // Milk (more than adults)
   { productId: 10, quantity: 7 }, // Bread
@@ -301,11 +300,10 @@ export const KID_BUDGET: BudgetItem[] = [
   { productId: 22, quantity: 1 }, // Cheese
 
   { productId: 36, quantity: 1 }, // Monthly pass (same, if commuting to school)
-  { productId: 49, quantity: 0 }, // Taxi start (rare)
-  { productId: 50, quantity: 0 }, // Taxi km (rare)
+  { productId: 54, quantity: 0.5 }, // Preschool
+  { productId: 55, quantity: 0.04 }, // School
 
   { productId: 44, quantity: 0.1 }, // Jeans
   { productId: 45, quantity: 0.1 }, // Summer dress
   { productId: 46, quantity: 0.1 }, // Running shoes
-  { productId: 47, quantity: 0.05 }, // Leather shoes
 ];
