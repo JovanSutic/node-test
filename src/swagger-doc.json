@@ -6069,6 +6069,60 @@
           "layers"
         ]
       }
+    },
+    "/reports": {
+      "post": {
+        "operationId": "ReportsController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create the new report.",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/reports/public": {
+      "post": {
+        "operationId": "ReportsController_createShort",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Generate short public report",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/reports/{id}": {
+      "get": {
+        "operationId": "ReportsController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get report by id",
+        "tags": [
+          "reports"
+        ]
+      }
     }
   },
   "info": {

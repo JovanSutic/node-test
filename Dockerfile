@@ -10,6 +10,9 @@ WORKDIR /app
 # Copy only the package files (not the whole app) to leverage Docker cache
 COPY package.json bun.lock ./
 
+# Set npm registry explicitly to avoid Bun install issues
+RUN bun config set registry https://registry.npmjs.org
+
 # Install dependencies inside the container
 RUN timeout 180s bun install
 
