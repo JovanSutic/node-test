@@ -1,32 +1,37 @@
-# Use an official Bun image as the base
-FROM oven/bun:1.2.9 AS builder
+# Use official Node.js image as the base
+FROM node:20
 
-# Install OpenSSL and libssl for Prisma
-RUN apt-get update && apt-get install -y openssl libssl1.1 || apt-get install -y libssl-dev
+# Install Bun globally
+RUN curl -fsSL https://bun.sh/install | bash && \
+    mv /root/.bun/bin/bun /usr/local/bin/bun
 
-# Set the working directory inside the container
+# Install OpenSSL and libssl (for Prisma compatibility)
+RUN apt-get update && \
+    apt-get install -y openssl libssl-dev
+
+# Set working directory
 WORKDIR /app
 
-# Copy only the package files (not the whole app) to leverage Docker cache
-COPY package.json bun.lock ./
+# Copy lock files and package.json for efficient Docker caching
+COPY package.json package-lock.json* bun.lock ./
 
-# Set npm registry explicitly to avoid Bun install issues
-RUN bun config set registry https://registry.npmjs.org
+# Install dependencies using npm
+RUN npm install
 
-# Install dependencies inside the container
-RUN timeout 180s bun install
+# Optional: Dry-run bun install to validate bun.lockb (optional)
+RUN bun install --dry-run || true
 
-# Copy the Prisma schema (make sure this is done before generating Prisma client)
+# Copy Prisma schema first for client generation
 COPY prisma ./prisma
 
-# Generate Prisma client (run this before copying the rest of the application files)
-RUN bun prisma generate
+# Generate Prisma client
+RUN bun x prisma generate
 
-# Copy the rest of the application files
+# Copy the rest of your application
 COPY . .
 
-# Expose the port the app will run on
+# Expose the port your app runs on
 EXPOSE 3000
 
-# Command to run the application (use the compiled main.js in the dist folder)
+# Start the application using Bun
 CMD ["bun", "run", "start"]
