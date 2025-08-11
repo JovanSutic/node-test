@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { UsersModule } from "./users/users.module";
 import { CitiesModule } from "./cities/cities.module";
 import { YearsModule } from "./years/years.module";
 import { ProductsModule } from "./products/products.module";
@@ -25,7 +24,6 @@ import { ReportsModule } from "./reports/reports.module";
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    UsersModule,
     CitiesModule,
     YearsModule,
     ProductsModule,

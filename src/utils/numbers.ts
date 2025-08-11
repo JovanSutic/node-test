@@ -19,3 +19,8 @@ export function getCurrencyRate(
     return 1 / currencyMap[from];
   }
 }
+
+export function getMiddle(start: number, end: number) {
+  const addition = (end - start) / 2;
+  return start + addition;
+}
