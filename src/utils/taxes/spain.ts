@@ -1,4 +1,7 @@
-import type { CreateReportItemDto, ReportUserDataDto } from "../../reports/reports.dto";
+import type {
+  CreateReportItemDto,
+  ReportUserDataDto,
+} from "../../reports/reports.dto";
 import type {
   Allowance,
   Dependents,
@@ -27,6 +30,9 @@ export function calculateAllowance(data: Dependents[], isWorkingMom: boolean) {
         result.push({ type: "kid", amount: amount[index] });
         if ((item.age || 4) < 3) {
           result.push({ type: "kid-extra", amount: 3600 });
+          if (isWorkingMom) {
+            result.push({ type: "maternity", amount: 1200 });
+          }
         }
       }
     });
@@ -36,14 +42,6 @@ export function calculateAllowance(data: Dependents[], isWorkingMom: boolean) {
     .forEach((item) => {
       if (item.isDependent) {
         result.push({ type: "spouse", amount: 3400 });
-      } else {
-        result
-          .filter((item) => item.type === "kid-extra")
-          .forEach(() => {
-            if (isWorkingMom) {
-              result.push({ type: "maternity", amount: 1200 });
-            }
-          });
       }
     });
 
@@ -106,7 +104,10 @@ export const calculateSpainTax = (
 
   let federalTax: null | TaxResult[] = null;
 
-  const additionalAllowance = calculateAllowance(reportUserData.dependents, reportUserData.isWorkingMom);
+  const additionalAllowance = calculateAllowance(
+    reportUserData.dependents,
+    reportUserData.isWorkingMom
+  );
   const allowances = distributeAllowance(
     reportUserData.incomes,
     additionalAllowance
