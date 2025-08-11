@@ -2,49 +2,32 @@ import {
   BadRequestException,
   Injectable,
 } from "@nestjs/common";
-import { PrismaService } from "../prisma/prisma.service";
-import { CreateUserDto } from "./users.dto";
+import  { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly jwtService: JwtService) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const { name } = createUserDto;
+  extractUserUuidFromRequest(req: any): string {
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.replace('Bearer ', '');
 
-    try {
-      return await this.prisma.users.create({
-        data: {
-          name,
-        },
-      });
-    } catch (error: any) {
-      throw new BadRequestException(
-        error.message ||
-          "An error occurred while creating the user in the database"
-      );
+    if (!token) {
+      throw new BadRequestException('Missing authorization token');
     }
-  }
 
-  async getAll() {
+    let userUuid = '';
     try {
-      return await this.prisma.users.findMany();
-    } catch (error: any) {
-      throw new BadRequestException(
-        error.message ||
-          "An error occurred while fetching all users from the database"
-      );
+      const decoded = this.jwtService.decode(token) as any;
+      userUuid = decoded?.sub;
+    } catch (error) {
+      throw new BadRequestException('Invalid token');
     }
-  }
 
-  async getById(id: number) {
-    try {
-      return await this.prisma.users.findUnique({ where: { id } });
-    } catch (error: any) {
-      throw new BadRequestException(
-        error.message ||
-          `An error occurred while fetching user with the id: ${id}`
-      );
+    if (!userUuid) {
+      throw new BadRequestException('No sub in the token');
     }
+
+    return userUuid;
   }
 }
