@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { CitiesService } from "../cities/cities.service";
 import { CurrenciesService } from "../helpers/currency.service";
-import { roundToTwoDecimals } from "../utils/numbers";
+import { getMiddle, roundToTwoDecimals } from "../utils/numbers";
 import {
   calculateBudget,
   convertUserData,
@@ -22,7 +22,7 @@ import type { ExchangeRate } from "../types/flow.types";
 
 interface ReportBudgets {
   comfortBudget: number;
-  lowBudget: number | null;
+  lowBudget: number;
 }
 
 @Injectable()
@@ -73,10 +73,7 @@ export class ReportsService {
     return calculationFunction(normalizedData, rates.usd, isPublic);
   }
 
-  async getBudgets(
-    reportUserData: ReportUserDataDto,
-    isPublic: boolean
-  ): Promise<ReportBudgets> {
+  async getBudgets(reportUserData: ReportUserDataDto): Promise<ReportBudgets> {
     let prices = null;
     try {
       prices = await this.pricesService.getAll({
@@ -101,9 +98,8 @@ export class ReportsService {
 
     const comfortBudget =
       calculateBudget(comfortStructure, prices.data as PriceDto[]) * 12;
-    const lowBudget = isPublic
-      ? null
-      : calculateBudget(lowStructure, prices.data as PriceDto[]) * 12;
+    const lowBudget =
+      calculateBudget(lowStructure, prices.data as PriceDto[]) * 12;
 
     return {
       comfortBudget,
@@ -124,10 +120,11 @@ export class ReportsService {
         rates
       );
       const net: number = tax.reduce((prev, next) => next.amount + prev, 0);
-      const budget = await this.getBudgets(reportUserData, true);
+      const budget = await this.getBudgets(reportUserData);
+      const save = net - getMiddle(budget.lowBudget, budget.comfortBudget);
       return {
         net: roundToTwoDecimals(net),
-        save: roundToTwoDecimals(net - budget.comfortBudget),
+        save: roundToTwoDecimals(save),
       };
     } catch (error: any) {
       throw error;
@@ -191,16 +188,38 @@ export class ReportsService {
 
   async getById(id: number, userUuid: string) {
     try {
-      return await this.prisma.report.findUnique({
+      const report = await this.prisma.report.findUnique({
         where: { id, userUuid },
         include: {
           costItems: true,
         },
       });
+      return report || {};
     } catch (error: any) {
       throw new InternalServerErrorException(
         error.message || `Error while fetching report with id: ${id}`
       );
+    }
+  }
+
+  async getAllByUser(userUuid: string) {
+    try {
+      return await this.prisma.report.findMany({
+        where: { userUuid },
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          createdAt: true,
+          cityId: true,
+          userData: true,
+          net: true,
+          city: {
+            select: { name: true },
+          },
+        },
+      });
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -227,7 +246,7 @@ export class ReportsService {
     );
 
     const budgets = await this.safeExecute(
-      () => this.getBudgets(reportUserData, false),
+      () => this.getBudgets(reportUserData),
       "Failed to calculate budget data"
     );
 

@@ -6,9 +6,10 @@ import { CitiesModule } from "../cities/cities.module";
 import { CurrenciesModule } from "../helpers/currency.module";
 import { PricesModule } from "../prices/prices.module";
 import { ReportsService } from "./reports.service";
+import { UsersModule } from "../users/users.module";
 
 @Module({
-  imports: [CitiesModule, CurrenciesModule, PricesModule],
+  imports: [CitiesModule, CurrenciesModule, PricesModule, UsersModule],
   controllers: [ReportsController],
   providers: [ReportsService, PrismaService, JwtService],
 })
