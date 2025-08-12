@@ -192,6 +192,13 @@ export class ReportsService {
         where: { id, userUuid },
         include: {
           costItems: true,
+          city: {
+            select: {
+              name: true,
+              country: true,
+              countriesId: true,
+            },
+          },
         },
       });
       return report || {};
@@ -214,7 +221,7 @@ export class ReportsService {
           userData: true,
           net: true,
           city: {
-            select: { name: true },
+            select: { name: true, country: true },
           },
         },
       });
