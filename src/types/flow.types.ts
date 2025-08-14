@@ -10,6 +10,8 @@ export interface PersonalIncomes {
   isUSCitizen: boolean;
   currency: currencyString;
   income: number;
+  expenses: number;
+  accounting: number;
 }
 
 export interface Dependents {
@@ -37,6 +39,12 @@ export type TaxBracket = {
   rate: number;
 };
 
+export type SocialBracket = {
+  from: number;
+  to: number;
+  fee: number;
+};
+
 export interface TaxAnalytic {
   income: number;
   totalTax: number;
@@ -48,3 +56,5 @@ export type TaxResult = {
   amount: number;
   comment: string;
 };
+
+export type SpainOption = "1st" | "2nd" | "3rd";

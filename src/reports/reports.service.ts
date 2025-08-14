@@ -47,7 +47,6 @@ export class ReportsService {
 
   async getReportItems(
     reportUserData: ReportUserDataDto,
-    isPublic: boolean,
     rates: ExchangeRate
   ): Promise<any> {
     const normalizedData = convertUserData(reportUserData, rates);
@@ -70,7 +69,7 @@ export class ReportsService {
       );
     }
 
-    return calculationFunction(normalizedData, rates.usd, isPublic);
+    return calculationFunction(normalizedData, rates.usd);
   }
 
   async getBudgets(reportUserData: ReportUserDataDto): Promise<ReportBudgets> {
@@ -116,7 +115,6 @@ export class ReportsService {
     try {
       const tax: CreateReportItemDto[] = await this.getReportItems(
         reportUserData,
-        true,
         rates
       );
       const net: number = tax.reduce((prev, next) => next.amount + prev, 0);
@@ -248,7 +246,7 @@ export class ReportsService {
     );
 
     const reportItems = await this.safeExecute<CreateReportItemDto[]>(
-      () => this.getReportItems(reportUserData, false, rates),
+      () => this.getReportItems(reportUserData, rates),
       "Failed to generate report items"
     );
 
