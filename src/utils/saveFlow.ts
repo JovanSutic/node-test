@@ -1,9 +1,13 @@
 import type { PriceDto } from "../prices/prices.dto";
-import type { ReportUserDataDto } from "../reports/reports.dto";
+import type {
+  PersonalIncomesDto,
+  ReportUserDataDto,
+} from "../reports/reports.dto";
 import type {
   ExchangeRate,
   PersonalIncomes,
   TaxAnalytic,
+  TaxBracket,
   TaxResult,
 } from "../types/flow.types";
 import {
@@ -36,20 +40,12 @@ export function convertUserData(
   };
 }
 
-function getBrackets(country: string) {
-  if (country === "Spain") {
-    return spanishTaxBrackets;
-  }
-  return [];
-}
-
-export function getProgressiveTax(income: number, country: string) {
-  let remaining = income;
+export function getProgressiveTax(taxBase: number, brackets: TaxBracket[]) {
+  let remaining = taxBase;
   let totalTax = 0;
-  const brackets = getBrackets(country);
 
   for (const bracket of brackets) {
-    if (income > bracket.from) {
+    if (taxBase > bracket.from) {
       const taxable = Math.min(remaining, bracket.to - bracket.from + 1);
       totalTax += taxable * (bracket.rate / 100);
       remaining -= taxable;
@@ -57,10 +53,10 @@ export function getProgressiveTax(income: number, country: string) {
     if (remaining <= 0) break;
   }
 
-  const effectiveRate = (totalTax / income) * 100;
+  const effectiveRate = (totalTax / taxBase) * 100;
 
   return {
-    income,
+    taxBase,
     totalTax: Math.round(totalTax * 100) / 100,
     effectiveRate: Math.round(effectiveRate * 100) / 100,
   };
@@ -134,7 +130,7 @@ export function calculateFederalIncomeTax({
 }
 
 export const calculateUSTax = (
-  incomes: PersonalIncomes[],
+  incomes: PersonalIncomesDto[],
   interimIncomes: TaxAnalytic[],
   rate: number
 ) => {

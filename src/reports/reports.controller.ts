@@ -29,7 +29,7 @@ export class ReportsController {
   ) {}
 
   @Post()
-  @UseGuards(CognitoAuthGuard)
+  // @UseGuards(CognitoAuthGuard)
   @UsePipes(ValidateReportStructurePipe, ValidateCityIdPipe)
   @ApiOperation({ summary: "Create the new report." })
   async create(@Body() reportUserData: ReportUserDataDto, @Req() req: any) {

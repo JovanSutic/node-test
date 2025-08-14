@@ -1,92 +1,6 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/users": {
-      "post": {
-        "operationId": "UsersController_create",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successfully created a user.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Create a user.",
-        "tags": [
-          "users"
-        ]
-      },
-      "get": {
-        "operationId": "UsersController_getAll",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved all users.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserDto"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Return all users.",
-        "tags": [
-          "users"
-        ]
-      }
-    },
-    "/users/{id}": {
-      "get": {
-        "operationId": "UsersController_getById",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved user by id.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Return user by id.",
-        "tags": [
-          "users"
-        ]
-      }
-    },
     "/cities": {
       "post": {
         "operationId": "CitiesController_create",
@@ -6083,6 +5997,19 @@
         "tags": [
           "reports"
         ]
+      },
+      "get": {
+        "operationId": "ReportsController_getAllByUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get all reports for the authenticated user",
+        "tags": [
+          "reports"
+        ]
       }
     },
     "/reports/public": {
@@ -6135,14 +6062,6 @@
   "servers": [],
   "components": {
     "schemas": {
-      "CreateUserDto": {
-        "type": "object",
-        "properties": {}
-      },
-      "UserDto": {
-        "type": "object",
-        "properties": {}
-      },
       "CreateCityDto": {
         "type": "object",
         "properties": {

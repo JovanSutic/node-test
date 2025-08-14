@@ -119,6 +119,12 @@ export class PersonalIncomesDto {
 
   @IsNumber()
   income: number;
+
+  @IsNumber()
+  accountantCost: number;
+
+  @IsNumber()
+  expensesCost: number;
 }
 
 export class DependentsDto {

@@ -1,24 +1,31 @@
 import type {
   CreateReportItemDto,
+  PersonalIncomesDto,
   ReportUserDataDto,
 } from "../../reports/reports.dto";
 import type {
   Allowance,
   Dependents,
-  PersonalIncomes,
-  TaxAnalytic,
-  TaxResult,
+  SpainOption,
 } from "../../types/flow.types";
-import { calculateUSTax, getProgressiveTax } from "../saveFlow";
+import { calculateFederalIncomeTax, getProgressiveTax } from "../saveFlow";
+import {
+  regionalTaxBrackets,
+  regionsSpain,
+  socialBrackets,
+  spanishTaxBrackets,
+} from "../taxData";
 
-const allowanceLabelMap = {
-  spouse: "Allowance for dependent spouse",
-  kid: "Allowance for dependent kid",
-  "kid-extra": "Additional allowance for kid under 3",
-  maternity: "Allowance for maternity",
-};
+export function getSpainRegionalBracket(cityId: number) {
+  const region = regionsSpain[cityId.toString()];
+  if (!region) {
+    throw new Error("Provided city does not have the proper region");
+  }
 
-export function calculateAllowance(data: Dependents[], isWorkingMom: boolean) {
+  return regionalTaxBrackets[region.region];
+}
+
+export function calculateAllowance(data: Dependents[], addition: number) {
   const result: Allowance[] = [];
 
   data
@@ -28,11 +35,8 @@ export function calculateAllowance(data: Dependents[], isWorkingMom: boolean) {
         const amount = [2400, 2700, 4000, 4500, 4500, 4500, 4500, 4500];
         const index = result.filter((item) => item.type === "kid").length;
         result.push({ type: "kid", amount: amount[index] });
-        if ((item.age || 4) < 3) {
-          result.push({ type: "kid-extra", amount: 3600 });
-          if (isWorkingMom) {
-            result.push({ type: "maternity", amount: 1200 });
-          }
+        if ((item.age || 4) + addition < 3) {
+          result.push({ type: "kid-extra", amount: 2800 });
         }
       }
     });
@@ -49,7 +53,7 @@ export function calculateAllowance(data: Dependents[], isWorkingMom: boolean) {
 }
 
 export function distributeAllowance(
-  incomes: PersonalIncomes[],
+  incomes: PersonalIncomesDto[],
   allowances: Allowance[]
 ) {
   if (incomes.length === 1) {
@@ -75,152 +79,141 @@ export function distributeAllowance(
   }
 }
 
-export const calculateSocials = (incomes: PersonalIncomes[]) => {
+export const calculateSocials = (incomes: PersonalIncomesDto[]) => {
   const result = [];
 
   for (let index = 0; index < incomes.length; index++) {
-    const element = incomes[index];
-    if (element.income > 20000) {
-      result.push(3850);
-      continue;
-    }
-    if (element.income > 25000) {
-      result.push(4200);
-      continue;
-    }
+    const base =
+      ((incomes[index].income -
+        (incomes[index].expensesCost + incomes[index].accountantCost)) *
+        0.93) /
+      12;
+    const bracket = socialBrackets.find((item) => {
+      if (base > item.from && base < item.to) {
+        return item;
+      }
+    });
 
-    result.push(3000);
+    result.push((bracket?.fee || 1) * 12);
   }
 
   return result;
 };
 
-export const calculateSpainTax = (
+function getMaternityCredit(
+  reportUserData: ReportUserDataDto,
+  addition: number
+) {
+  const isBaby = reportUserData.dependents.find(
+    (item) => (item.age || 4) + addition < 3 && item.type === "kid"
+  );
+  if (isBaby && reportUserData.isWorkingMom) {
+    return 1200;
+  }
+
+  return 0;
+}
+
+export const calculateSpainTaxSingle = (
   reportUserData: ReportUserDataDto,
   eurRate: number,
-  isPublic: boolean
+  scenario: SpainOption = "1st"
 ) => {
   const reportItems: CreateReportItemDto[] = [];
-
-  let federalTax: null | TaxResult[] = null;
+  const personalAllowance = 5550;
+  const newReduction = scenario === "3rd" ? 0 : 0.2;
+  const tarrifaPlana = 980;
+  const kidAddition: Record<SpainOption, number> = {
+    "1st": 0,
+    "2nd": 1,
+    "3rd": 2,
+  };
 
   const additionalAllowance = calculateAllowance(
     reportUserData.dependents,
-    reportUserData.isWorkingMom
+    kidAddition[scenario]
   );
+  let maternityCheck = false;
+
   const allowances = distributeAllowance(
     reportUserData.incomes,
     additionalAllowance
   );
-  const socials = calculateSocials(reportUserData.incomes);
 
-  const interimIncomes: TaxAnalytic[] = [];
-  const accountingCost = 1600;
-  reportUserData.incomes.forEach((item, index) => {
-    if (!isPublic) {
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Personal allowance",
-        type: "allowance",
-        amount: 5500,
-      });
-    }
+  const maternityCredit = getMaternityCredit(
+    reportUserData,
+    kidAddition[scenario]
+  );
 
-    allowances
-      .filter((item) => item.incomeIndex === index)
-      .forEach((item) => {
-        if (!isPublic) {
-          reportItems.push({
-            reportId: 0,
-            incomeMaker: index,
-            label:
-              allowanceLabelMap[item.type as keyof typeof allowanceLabelMap],
-            type: "allowance",
-            amount: item.amount,
-          });
-        }
-      });
-    const personalAllowance =
-      5500 +
+  const socials =
+    scenario === "1st"
+      ? [tarrifaPlana, tarrifaPlana]
+      : calculateSocials(reportUserData.incomes);
+
+  for (let index = 0; index < reportUserData.incomes.length; index++) {
+    const income = reportUserData.incomes[index];
+
+    const fullExpenses = income.accountantCost + income.expensesCost;
+    const net = income.income - fullExpenses - socials[index];
+
+    const reduction = net * newReduction;
+    const reductionNet = net - reduction;
+
+    const totalAllowance =
+      personalAllowance +
       allowances
         .filter((item) => item.incomeIndex === index)
         .reduce((prev, next) => prev + next.amount, 0);
 
-    const analysis = getProgressiveTax(
-      item.income - personalAllowance - accountingCost,
-      "Spain"
-    );
-    interimIncomes.push(analysis);
+    const taxableIncome = reductionNet - totalAllowance;
 
-    if (!isPublic) {
+    const soleRegions = ["Navarre", "Basque Country"];
+
+    const region = regionsSpain[reportUserData.cityId.toString()]?.name;
+
+    const regionalBracket = getSpainRegionalBracket(reportUserData.cityId);
+
+    const stateTax = soleRegions.includes(region)
+      ? { totalTax: 0 }
+      : getProgressiveTax(taxableIncome, spanishTaxBrackets);
+    const regionalTax = getProgressiveTax(taxableIncome, regionalBracket);
+
+    const taxCredit = !maternityCheck ? maternityCredit : 0;
+
+    const netIncome =
+      net - stateTax.totalTax - regionalTax.totalTax + taxCredit;
+
+    const federalTax = calculateFederalIncomeTax({
+      income: income.income,
+      taxPaidAbroad: stateTax.totalTax + regionalTax.totalTax - taxCredit,
+      eurRate,
+    });
+
+    if (scenario === "1st") {
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
+        label: "Full business expenses",
+        type: "expenses",
+        amount: fullExpenses,
+      });
+
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
+        label: "New self-employed reduction",
+        type: "reduction",
+        amount: reduction,
+      });
+
       reportItems.push({
         reportId: 0,
         incomeMaker: index,
         label: "Full allowance",
         type: "allowance",
-        amount: personalAllowance,
+        amount: totalAllowance,
       });
-    }
-  });
 
-  if (reportUserData.incomes[0].isUSCitizen) {
-    federalTax = calculateUSTax(
-      reportUserData.incomes,
-      interimIncomes,
-      eurRate
-    );
-  }
-
-  for (let index = 0; index < interimIncomes.length; index++) {
-    const cost =
-      interimIncomes[index].totalTax +
-      accountingCost +
-      (federalTax && federalTax[index] ? federalTax[index].amount : 0) +
-      socials[index];
-    if (!isPublic) {
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Accounting cost",
-        type: "accounting",
-        amount: accountingCost,
-      });
-    }
-
-    if (federalTax && federalTax[index] && !isPublic) {
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "US Federal income tax",
-        type: "us_income_tax",
-        amount: federalTax[index].amount,
-        note: federalTax[index].comment,
-      });
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "US self employed tax",
-        type: "us_self_tax",
-        amount: 0,
-        note: "You don’t need to pay U.S. self-employment tax if you’re already paying social security contributions in Spain, thanks to the U.S.–Spain Totalization Agreement.",
-      });
-    }
-    if (!isPublic) {
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Taxable income",
-        type: "taxable_income",
-        amount: interimIncomes[index].income,
-      });
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Total income tax",
-        type: "income_tax",
-        amount: interimIncomes[index].totalTax,
-      });
       reportItems.push({
         reportId: 0,
         incomeMaker: index,
@@ -228,31 +221,114 @@ export const calculateSpainTax = (
         type: "social_contributions",
         amount: socials[index],
       });
+
       reportItems.push({
         reportId: 0,
         incomeMaker: index,
-        label: "Total cost of business",
-        type: "business_cost",
-        amount: cost,
+        label: "Taxable income",
+        type: "taxable_income",
+        amount: taxableIncome,
       });
+
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
+        label: "State income tax",
+        type: "income_tax",
+        amount: stateTax.totalTax,
+      });
+
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
+        label: "Regional income tax",
+        type: "income_tax",
+        amount: regionalTax.totalTax,
+      });
+
+      if (taxCredit > 0) {
+        reportItems.push({
+          reportId: 0,
+          incomeMaker: index,
+          label: "Maternity tax credit",
+          type: "tax_credit",
+          amount: taxCredit,
+        });
+
+        maternityCheck = true;
+      }
+
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
+        label: "Total income tax",
+        type: "income_tax",
+        amount: regionalTax.totalTax + stateTax.totalTax - taxCredit,
+      });
+
       reportItems.push({
         reportId: 0,
         incomeMaker: index,
         label: "Effective tax",
         type: "effective_tax",
         amount:
-          ((cost - accountingCost) / reportUserData.incomes[index].income) *
+          (regionalTax.totalTax +
+            socials[index] +
+            stateTax.totalTax -
+            taxCredit / reportUserData.incomes[index].income) *
           100,
       });
+
+      if (income.isUSCitizen) {
+        reportItems.push({
+          reportId: 0,
+          incomeMaker: index,
+          label: "US Federal income tax",
+          type: "us_income_tax",
+          amount: federalTax.amount,
+          note: federalTax.comment,
+        });
+      }
+
+      if (income.isUSCitizen && socials[index]) {
+        reportItems.push({
+          reportId: 0,
+          incomeMaker: index,
+          label: "US self employed tax",
+          type: "us_self_tax",
+          amount: 0,
+          note: "You don’t need to pay U.S. self-employment tax if you’re already paying social security contributions in Spain, thanks to the U.S.–Spain Totalization Agreement.",
+        });
+      }
+
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
+        label: "Total net income",
+        type: "net",
+        amount: netIncome,
+      });
+    } else {
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
+        label: "Total net income",
+        type: "additional",
+        amount: netIncome,
+      });
     }
-    reportItems.push({
-      reportId: 0,
-      incomeMaker: index,
-      label: "Total net income",
-      type: "net",
-      amount: reportUserData.incomes[index].income - cost,
-    });
   }
 
   return reportItems;
+};
+
+export const calculateSpainTax = (
+  reportUserData: ReportUserDataDto,
+  eurRate: number
+) => {
+  const first = calculateSpainTaxSingle(reportUserData, eurRate);
+  const second = calculateSpainTaxSingle(reportUserData, eurRate, "2nd");
+  const third = calculateSpainTaxSingle(reportUserData, eurRate, "3rd");
+
+  return [...first, ...second, ...third];
 };
