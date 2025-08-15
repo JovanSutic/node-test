@@ -1,10 +1,10 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { CitiesService } from "../cities/cities.service";
 import { CurrenciesService } from "../helpers/currency.service";
-import { getMiddle, roundToTwoDecimals } from "../utils/numbers";
 import {
   calculateBudget,
   convertUserData,
+  decorateItems,
   getTaxCalculationFunction,
   getUserStructure,
   getValidPriceStructure,
@@ -15,6 +15,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import type {
   CreateReportDto,
   CreateReportItemDto,
+  PublicReportDto,
   ReportUserDataDto,
 } from "./reports.dto";
 import { SocialType } from "../social_lifestyle/social_lifestyle.dto";
@@ -47,7 +48,6 @@ export class ReportsService {
 
   async getReportItems(
     reportUserData: ReportUserDataDto,
-    isPublic: boolean,
     rates: ExchangeRate
   ): Promise<any> {
     const normalizedData = convertUserData(reportUserData, rates);
@@ -70,7 +70,7 @@ export class ReportsService {
       );
     }
 
-    return calculationFunction(normalizedData, rates.usd, isPublic);
+    return calculationFunction(normalizedData, rates.usd);
   }
 
   async getBudgets(reportUserData: ReportUserDataDto): Promise<ReportBudgets> {
@@ -105,30 +105,6 @@ export class ReportsService {
       comfortBudget,
       lowBudget,
     };
-  }
-
-  async generatePublicReport(reportUserData: ReportUserDataDto) {
-    const rates = await this.safeExecute(
-      () => this.currenciesService.fetchRate(),
-      "Failed to fetch currencies"
-    );
-
-    try {
-      const tax: CreateReportItemDto[] = await this.getReportItems(
-        reportUserData,
-        true,
-        rates
-      );
-      const net: number = tax.reduce((prev, next) => next.amount + prev, 0);
-      const budget = await this.getBudgets(reportUserData);
-      const save = net - getMiddle(budget.lowBudget, budget.comfortBudget);
-      return {
-        net: roundToTwoDecimals(net),
-        save: roundToTwoDecimals(save),
-      };
-    } catch (error: any) {
-      throw error;
-    }
   }
 
   async create(createReportCto: CreateReportDto) {
@@ -230,6 +206,48 @@ export class ReportsService {
     }
   }
 
+  async generatePublicReport(reportUserData: ReportUserDataDto) {
+   const { kidsNum, adultNum } = getUserStructure(reportUserData);
+    const socialType =
+      kidsNum > 0
+        ? SocialType.FAMILY
+        : adultNum === 2
+        ? SocialType.PAIR
+        : SocialType.SOLO;
+
+    const rates = await this.safeExecute(
+      () => this.currenciesService.fetchRate(),
+      "Failed to fetch currencies"
+    );
+
+    const reportItems = await this.safeExecute<CreateReportItemDto[]>(
+      () => this.getReportItems(reportUserData, rates),
+      "Failed to generate report items"
+    );
+
+    const budgets = await this.safeExecute(
+      () => this.getBudgets(reportUserData),
+      "Failed to calculate budget data"
+    );
+
+    const netAmount =
+      reportItems
+        .filter((item) => item.type === "net")
+        ?.reduce((prev, next) => prev + next.amount, 0) || 0;
+    const createReportDto: PublicReportDto = {
+      cityId: reportUserData.cityId,
+      net: netAmount,
+      save: netAmount - budgets.comfortBudget,
+      expensesLow: budgets.lowBudget || 0,
+      expensesComfort: budgets.comfortBudget,
+      type: socialType,
+      userData: { ...reportUserData, rates },
+      costItems: decorateItems(reportItems)
+    };
+
+    return createReportDto;
+  }
+
   async generatePrivateReport(
     reportUserData: ReportUserDataDto,
     userUuid: string
@@ -248,7 +266,7 @@ export class ReportsService {
     );
 
     const reportItems = await this.safeExecute<CreateReportItemDto[]>(
-      () => this.getReportItems(reportUserData, false, rates),
+      () => this.getReportItems(reportUserData, rates),
       "Failed to generate report items"
     );
 

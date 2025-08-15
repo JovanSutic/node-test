@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, OmitType } from "@nestjs/swagger";
 import {
   IsNumber,
   IsString,
@@ -10,7 +10,7 @@ import {
   IsIn,
   ValidateNested,
 } from "class-validator";
-import { Type } from 'class-transformer';
+import { Type } from "class-transformer";
 import { SocialType } from "../social_lifestyle/social_lifestyle.dto";
 import type { currencyString } from "../types/flow.types";
 
@@ -109,21 +109,35 @@ export class ReportCostItemDto extends CreateReportItemDto {
   createdAt: string;
 }
 
+export class PublicReportDto extends OmitType(CreateReportDto, [
+  "userUuid",
+] as const) {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ReportCostItemDto)
+  costItems: ReportCostItemDto[];
+}
 
 export class PersonalIncomesDto {
   @IsBoolean()
   isUSCitizen: boolean;
 
-  @IsIn(['usd', 'eur', 'gbp'])
+  @IsIn(["usd", "eur", "gbp"])
   currency: currencyString;
 
   @IsNumber()
   income: number;
+
+  @IsNumber()
+  accountantCost: number;
+
+  @IsNumber()
+  expensesCost: number;
 }
 
 export class DependentsDto {
-  @IsIn(['spouse', 'kid'])
-  type: 'spouse' | 'kid';
+  @IsIn(["spouse", "kid"])
+  type: "spouse" | "kid";
 
   @IsBoolean()
   isDependent: boolean;
@@ -150,4 +164,3 @@ export class ReportUserDataDto {
   @Type(() => PersonalIncomesDto)
   incomes: PersonalIncomesDto[];
 }
-
