@@ -262,7 +262,7 @@ export const calculateSpainTaxSingle = (
         reportId: 0,
         incomeMaker: index,
         label: "Total income tax",
-        type: "income_tax",
+        type: "total_tax",
         amount: regionalTax.totalTax + stateTax.totalTax - taxCredit,
       });
 
@@ -275,8 +275,7 @@ export const calculateSpainTaxSingle = (
           (regionalTax.totalTax +
             socials[index] +
             stateTax.totalTax -
-            taxCredit / reportUserData.incomes[index].income) *
-          100,
+            taxCredit) / reportUserData.incomes[index].income,
       });
 
       if (income.isUSCitizen) {
