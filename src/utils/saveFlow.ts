@@ -31,7 +31,12 @@ export function convertUserData(
     ...userData,
     incomes: userData.incomes.map((item) => {
       if (item.currency !== "eur") {
-        return { ...item, income: item.income * rates[item.currency] };
+        return {
+          ...item,
+          income: item.income * rates[item.currency],
+          accountantCost: item.accountantCost * rates[item.currency],
+          expensesCost: item.expensesCost * rates[item.currency],
+        };
       } else {
         return { ...item };
       }
