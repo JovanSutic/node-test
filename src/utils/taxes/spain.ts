@@ -312,8 +312,16 @@ export const calculateSpainTaxSingle = (
       reportItems.push({
         reportId: 0,
         incomeMaker: index,
+        label: "Total tax",
+        type: `additional_${scenario}`,
+        amount:
+          socials[index] + regionalTax.totalTax + stateTax.totalTax - taxCredit,
+      });
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
         label: "Total net income",
-        type: "additional",
+        type: `additional_${scenario}`,
         amount: netIncome,
       });
     }

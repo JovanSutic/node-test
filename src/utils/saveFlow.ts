@@ -1,11 +1,11 @@
 import type { PriceDto } from "../prices/prices.dto";
 import type {
+  CreateReportItemDto,
   PersonalIncomesDto,
   ReportUserDataDto,
 } from "../reports/reports.dto";
 import type {
   ExchangeRate,
-  PersonalIncomes,
   TaxAnalytic,
   TaxBracket,
   TaxResult,
@@ -21,7 +21,6 @@ import {
   type BudgetItem,
 } from "./budgetData";
 import { roundToTwoDecimals } from "./numbers";
-import { spanishTaxBrackets } from "./taxData";
 import { calculateSpainTax } from "./taxes/spain";
 
 export function convertUserData(
@@ -247,4 +246,15 @@ export function getUserStructure(reportUserData: ReportUserDataDto) {
     spouseNum,
     adultNum,
   };
+}
+
+export function decorateItems(items: CreateReportItemDto[]) {
+  const today = new Date();
+  return items.map((item, index) => {
+    return {
+      ...item,
+      id: index + 1,
+      createdAt: today.toISOString(),
+    };
+  });
 }
