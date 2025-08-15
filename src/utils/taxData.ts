@@ -42,7 +42,7 @@ export const regionsSpain: Record<string, Regions> = {
   "231": { name: "A Corunna", region: "Galicia" },
   "224": { name: "Alicante", region: "Valencian Community" },
   "243": { name: "Almeria", region: "Andalusia" },
-  "4": { name: "Barcelona", region: "Catalonia" },
+  "219": { name: "Barcelona", region: "Catalonia" },
   "221": { name: "Bilbao", region: "Basque Country" },
   "242": { name: "Cadiz", region: "Andalusia" },
   "235": { name: "Cartagena", region: "Region of Murcia" },
