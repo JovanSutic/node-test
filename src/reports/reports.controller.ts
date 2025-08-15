@@ -29,7 +29,7 @@ export class ReportsController {
   ) {}
 
   @Post()
-  // @UseGuards(CognitoAuthGuard)
+  @UseGuards(CognitoAuthGuard)
   @UsePipes(ValidateReportStructurePipe, ValidateCityIdPipe)
   @ApiOperation({ summary: "Create the new report." })
   async create(@Body() reportUserData: ReportUserDataDto, @Req() req: any) {
@@ -47,7 +47,7 @@ export class ReportsController {
   @Post("public")
   @UsePipes(ValidateReportStructurePipe, ValidateCityIdPipe)
   @ApiOperation({ summary: "Generate short public report" })
-  async createShort(@Body() reportUserData: ReportUserDataDto) {
+  async createPublic(@Body() reportUserData: ReportUserDataDto) {
     try {
       return await this.reportsService.generatePublicReport(reportUserData);
     } catch (error: any) {
@@ -60,8 +60,9 @@ export class ReportsController {
   @ApiOperation({ summary: "Get all reports for the authenticated user" })
   async getAllByUser(@Req() req: any) {
     try {
-      const userUuid = this.usersService.extractUserUuidFromRequest(req);
-      return await this.reportsService.getAllByUser(userUuid);
+      // const userUuid = this.usersService.extractUserUuidFromRequest(req);
+      // return await this.reportsService.getAllByUser(userUuid);
+      return {};
     } catch (error) {
       throw error;
     }
