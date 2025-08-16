@@ -122,6 +122,7 @@ export const calculateSpainTaxSingle = (
   const reportItems: CreateReportItemDto[] = [];
   const personalAllowance = 5550;
   const newReduction = scenario === "3rd" ? 0 : 0.2;
+  const unJustifiedCostReduction = 0.07;
   const tarrifaPlana = 980;
   const kidAddition: Record<SpainOption, number> = {
     "1st": 0,
@@ -156,8 +157,13 @@ export const calculateSpainTaxSingle = (
     const fullExpenses = income.accountantCost + income.expensesCost;
     const net = income.income - fullExpenses - socials[index];
 
-    const reduction = net * newReduction;
-    const reductionNet = net - reduction;
+    const reduction = Math.min(net * newReduction, 20000);
+    const firstReductionNet = net - reduction;
+    const justReduction = Math.min(
+      firstReductionNet * unJustifiedCostReduction,
+      2000
+    );
+    const reductionNet = firstReductionNet - justReduction;
 
     const totalAllowance =
       personalAllowance +
@@ -169,7 +175,7 @@ export const calculateSpainTaxSingle = (
 
     const soleRegions = ["Navarre", "Basque Country"];
 
-    const region = regionsSpain[reportUserData.cityId.toString()]?.name;
+    const region = regionsSpain[reportUserData.cityId.toString()]?.region;
 
     const regionalBracket = getSpainRegionalBracket(reportUserData.cityId);
 
@@ -204,6 +210,14 @@ export const calculateSpainTaxSingle = (
         label: "New self-employed reduction",
         type: "reduction",
         amount: reduction,
+      });
+
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
+        label: "Reduction for expenses difficult to justify",
+        type: "reduction",
+        amount: justReduction,
       });
 
       reportItems.push({
@@ -275,7 +289,8 @@ export const calculateSpainTaxSingle = (
           (regionalTax.totalTax +
             socials[index] +
             stateTax.totalTax -
-            taxCredit) / reportUserData.incomes[index].income,
+            taxCredit) /
+          reportUserData.incomes[index].income,
       });
 
       if (income.isUSCitizen) {
