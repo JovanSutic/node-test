@@ -279,7 +279,7 @@ export const FAMILY_BUDGET_LOW: BudgetItem[] = [
 ];
 
 export const KID_BUDGET: BudgetItem[] = [
-  { productId: 29, quantity: 0.15 }, // Rent
+  { productId: 29, quantity: 0.1 }, // Rent
   { productId: 1, quantity: 5 }, // Inexpensive restaurant meals (fewer outings)
   { productId: 2, quantity: 1 }, // Mid-range 3-course meals (rarely)
   { productId: 3, quantity: 2 }, // McMeal (occasional)
