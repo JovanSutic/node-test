@@ -132,14 +132,16 @@ export class DefValueController {
   @ApiOperation({ summary: "Return def values by field." })
   async getByField(@Query() query: DefValueQueryDto) {
     try {
-      const { field, cityId, countryId } = query;
+      const { field, cityId, countryId, definitionId } = query;
       const cityIdNum = Number.isNaN(Number(cityId)) ? undefined : Number(cityId);
       const countryIdNum = Number.isNaN(Number(countryId)) ? undefined : Number(countryId);
+      const definitionIdNum = Number.isNaN(Number(definitionId)) ? undefined : Number(definitionId);
       
       return this.defValueService.getByAspectFieldAndLocation(
         field,
         cityIdNum,
-        countryIdNum
+        countryIdNum,
+        definitionIdNum
       );
     } catch (error) {
       throw error;
