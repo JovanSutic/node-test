@@ -197,4 +197,12 @@ export class DefValueQueryDto {
   @IsOptional()
   @IsNumber()
   countryId: number;
+
+  @ApiProperty({
+    description: "The definition id of the def value",
+    type: Number,
+  })
+  @IsOptional()
+  @IsNumber()
+  definitionId?: number;
 }
