@@ -84,7 +84,8 @@ export class DefValueService {
   async getByAspectFieldAndLocation(
     field: string,
     cityId?: number,
-    countryId?: number
+    countryId?: number,
+    definitionId?: number,
   ) {
     try {
       const defValues = await this.prisma.def_value.findMany({
@@ -99,6 +100,7 @@ export class DefValueService {
             },
             cityId ? { cityId } : {},
             countryId ? { countryId } : {},
+            definitionId ? { definitionId } : {},
             { visible: true },
           ],
         },

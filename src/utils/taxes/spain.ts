@@ -199,6 +199,14 @@ export const calculateSpainTaxSingle = (
       reportItems.push({
         reportId: 0,
         incomeMaker: index,
+        label: "Gross income normalized",
+        type: "gross",
+        amount: income.income,
+      });
+
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
         label: "Full business expenses",
         type: "expenses",
         amount: fullExpenses,
