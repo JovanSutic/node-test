@@ -227,8 +227,8 @@ export function calculateBudget(
 
     let price: number = priceObj.price;
 
-    if (item.type === "top") price = priceObj.top || 0;
-    if (item.type === "bottom") price = priceObj.bottom || 0;
+    if (item.type === "top") price = priceObj.top || priceObj.price * 1.4;
+    if (item.type === "bottom") price = priceObj.bottom || priceObj.price * 0.7;
 
     total += item.quantity * price;
   }
