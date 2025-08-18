@@ -163,15 +163,13 @@ export const calculateSpainTaxSingle = (
       firstReductionNet * unJustifiedCostReduction,
       2000
     );
-    const reductionNet = firstReductionNet - justReduction;
+    const taxableIncome = firstReductionNet - justReduction;
 
     const totalAllowance =
       personalAllowance +
       allowances
         .filter((item) => item.incomeIndex === index)
         .reduce((prev, next) => prev + next.amount, 0);
-
-    const taxableIncome = reductionNet - totalAllowance;
 
     const soleRegions = ["Navarre", "Basque Country"];
 
@@ -182,16 +180,30 @@ export const calculateSpainTaxSingle = (
     const stateTax = soleRegions.includes(region)
       ? { totalTax: 0 }
       : getProgressiveTax(taxableIncome, spanishTaxBrackets);
+    const stateAllowanceTax =
+      stateTax.totalTax > 0
+        ? getProgressiveTax(totalAllowance, spanishTaxBrackets)
+        : { totalTax: 0 };
+    const stateTaxFull =
+      stateTax.totalTax > 0
+        ? stateTax.totalTax - stateAllowanceTax.totalTax
+        : 0;
+
     const regionalTax = getProgressiveTax(taxableIncome, regionalBracket);
+    const regionalAllowanceTax = getProgressiveTax(
+      totalAllowance,
+      regionalBracket
+    );
+    const regionalTaxFull =
+      regionalTax.totalTax - regionalAllowanceTax.totalTax;
 
     const taxCredit = !maternityCheck ? maternityCredit : 0;
 
-    const netIncome =
-      net - stateTax.totalTax - regionalTax.totalTax + taxCredit;
+    const netIncome = net - stateTaxFull - regionalTaxFull + taxCredit;
 
     const federalTax = calculateFederalIncomeTax({
       income: income.income,
-      taxPaidAbroad: stateTax.totalTax + regionalTax.totalTax - taxCredit,
+      taxPaidAbroad: stateTaxFull + regionalTaxFull - taxCredit,
       eurRate,
     });
 
@@ -239,6 +251,14 @@ export const calculateSpainTaxSingle = (
       reportItems.push({
         reportId: 0,
         incomeMaker: index,
+        label: "Allowance tax credit",
+        type: "tax_credit",
+        amount: regionalAllowanceTax.totalTax + stateAllowanceTax.totalTax,
+      });
+
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
         label: "Total social contributions",
         type: "social_contributions",
         amount: socials[index],
@@ -257,7 +277,7 @@ export const calculateSpainTaxSingle = (
         incomeMaker: index,
         label: "State income tax",
         type: "income_tax",
-        amount: stateTax.totalTax,
+        amount: stateTaxFull,
       });
 
       reportItems.push({
@@ -265,7 +285,7 @@ export const calculateSpainTaxSingle = (
         incomeMaker: index,
         label: "Regional income tax",
         type: "income_tax",
-        amount: regionalTax.totalTax,
+        amount: regionalTaxFull,
       });
 
       if (taxCredit > 0) {
@@ -285,7 +305,7 @@ export const calculateSpainTaxSingle = (
         incomeMaker: index,
         label: "Total income tax",
         type: "total_tax",
-        amount: regionalTax.totalTax + stateTax.totalTax - taxCredit,
+        amount: regionalTaxFull + stateTaxFull - taxCredit,
       });
 
       reportItems.push({
@@ -294,10 +314,7 @@ export const calculateSpainTaxSingle = (
         label: "Effective tax",
         type: "effective_tax",
         amount:
-          (regionalTax.totalTax +
-            socials[index] +
-            stateTax.totalTax -
-            taxCredit) /
+          (regionalTaxFull + socials[index] + stateTaxFull - taxCredit) /
           reportUserData.incomes[index].income,
       });
 
@@ -336,8 +353,7 @@ export const calculateSpainTaxSingle = (
         incomeMaker: index,
         label: "Total tax",
         type: `additional_${scenario}`,
-        amount:
-          socials[index] + regionalTax.totalTax + stateTax.totalTax - taxCredit,
+        amount: socials[index] + regionalTaxFull + stateTaxFull - taxCredit,
       });
       reportItems.push({
         reportId: 0,
