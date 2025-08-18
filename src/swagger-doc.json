@@ -4875,6 +4875,15 @@
             "schema": {
               "type": "number"
             }
+          },
+          {
+            "name": "definitionId",
+            "required": true,
+            "in": "query",
+            "description": "The definition id of the def value",
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -6014,7 +6023,7 @@
     },
     "/reports/public": {
       "post": {
-        "operationId": "ReportsController_createShort",
+        "operationId": "ReportsController_createPublic",
         "parameters": [],
         "responses": {
           "201": {

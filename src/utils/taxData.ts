@@ -79,6 +79,53 @@ export const regionalTaxBrackets: Record<string, TaxBracket[]> = {
     { from: 35200.01, to: 60000, rate: 18.5 },
     { from: 60000.01, to: Number.POSITIVE_INFINITY, rate: 22.5 },
   ],
+  "Balearic Islands": [
+    {
+      from: 0,
+      to: 10000,
+      rate: 9.5,
+    },
+    {
+      from: 10000.01,
+      to: 18000,
+      rate: 11.75,
+    },
+    {
+      from: 18000.01,
+      to: 30000,
+      rate: 14.75,
+    },
+    {
+      from: 30000.01,
+      to: 48000,
+      rate: 17.75,
+    },
+    {
+      from: 48000.01,
+      to: 70000,
+      rate: 19.25,
+    },
+    {
+      from: 70000.01,
+      to: 90000,
+      rate: 22.0,
+    },
+    {
+      from: 90000.01,
+      to: 120000,
+      rate: 23.0,
+    },
+    {
+      from: 120000.01,
+      to: 175000,
+      rate: 24.0,
+    },
+    {
+      from: 175000.01,
+      to: Number.POSITIVE_INFINITY,
+      rate: 25.0,
+    },
+  ],
   Catalonia: [
     { from: 0, to: 12450, rate: 10.5 },
     { from: 12450.01, to: 17707.2, rate: 12.0 },
