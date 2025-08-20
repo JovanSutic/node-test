@@ -3,7 +3,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CityDto, CreateCityDto } from "./cities.dto";
 import type { SocialType } from "../social_lifestyle/social_lifestyle.dto";
 import type { PriceType } from "../prices/prices.dto";
-import { CrimeRankDto } from '../crimes/crimes.dto';
+import { CrimeRankDto } from "../crimes/crimes.dto";
 import { getCrimeSummery } from "../utils/crimes";
 
 @Injectable()
@@ -127,7 +127,7 @@ export class CitiesService {
           include: {
             layers: {
               where: { layerTypeId: 2 },
-              select: { value_string: true },
+              select: { value: true },
             },
           },
         }),
@@ -152,17 +152,19 @@ export class CitiesService {
       });
 
       crimeRanks.forEach((item) => {
-        if(groupedCrime[item.cityId]) {
+        if (groupedCrime[item.cityId]) {
           groupedCrime[item.cityId].push(item as unknown as CrimeRankDto);
         }
       });
 
-
       const decoratedCities = citiesWithCost.map((city) => {
-        const crimeSummery = groupedCrime[city.id] ? getCrimeSummery(groupedCrime[city.id]) : null;
+        const { layers, ...rest } = city;
+        const crimeSummery = groupedCrime[city.id]
+          ? getCrimeSummery(groupedCrime[city.id])
+          : null;
         return {
-          ...city,
-          costOfLiving: city.layers[0] || "N/A",
+          ...rest,
+          costOfLiving: city.layers[0].value || null,
           safetyRating: crimeSummery,
         };
       });
