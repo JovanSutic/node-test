@@ -3,6 +3,8 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CityDto, CreateCityDto } from "./cities.dto";
 import type { SocialType } from "../social_lifestyle/social_lifestyle.dto";
 import type { PriceType } from "../prices/prices.dto";
+import { CrimeRankDto } from '../crimes/crimes.dto';
+import { getCrimeSummery } from "../utils/crimes";
 
 @Injectable()
 export class CitiesService {
@@ -30,7 +32,8 @@ export class CitiesService {
         );
       }
     } else {
-      const { name, country, seaside, search, lat, lng, size, countriesId } = createCityDto;
+      const { name, country, seaside, search, lat, lng, size, countriesId } =
+        createCityDto;
 
       try {
         return await this.prisma.cities.create({
@@ -91,6 +94,88 @@ export class CitiesService {
       throw new BadRequestException(
         error.message ||
           "An error occurred while fetching all cities from the database"
+      );
+    }
+  }
+
+  async getAllCards(
+    take: number = 100,
+    sortBy: string,
+    order: "asc" | "desc",
+    fromId?: number,
+    country?: string
+  ) {
+    try {
+      const where: any = {};
+
+      if (fromId !== undefined) {
+        where.id = { gte: fromId };
+      }
+
+      if (country) {
+        where.country = country;
+      }
+
+      // 1. First database query: Get cities and their cost of living data
+      const [citiesWithCost, total] = await Promise.all([
+        this.prisma.cities.findMany({
+          where,
+          take,
+          orderBy: {
+            [sortBy]: order,
+          },
+          include: {
+            layers: {
+              where: { layerTypeId: 2 },
+              select: { value_string: true },
+            },
+          },
+        }),
+        this.prisma.cities.count({ where }),
+      ]);
+
+      // Extract all city IDs from the first database call's results
+      const cityIds = citiesWithCost.map((city) => city.id);
+
+      // 2. Second database query: Get all crime ranks for all cities at once
+      const crimeRanks = await this.prisma.crime_ranks.findMany({
+        where: {
+          cityId: { in: cityIds },
+          crimeAspectId: { not: 13 },
+        },
+      });
+
+      const groupedCrime: Record<string, CrimeRankDto[]> = {};
+
+      cityIds.forEach((item) => {
+        groupedCrime[item] = [];
+      });
+
+      crimeRanks.forEach((item) => {
+        if(groupedCrime[item.cityId]) {
+          groupedCrime[item.cityId].push(item as unknown as CrimeRankDto);
+        }
+      });
+
+
+      const decoratedCities = citiesWithCost.map((city) => {
+        const crimeSummery = groupedCrime[city.id] ? getCrimeSummery(groupedCrime[city.id]) : null;
+        return {
+          ...city,
+          costOfLiving: city.layers[0] || "N/A",
+          safetyRating: crimeSummery,
+        };
+      });
+
+      return {
+        data: decoratedCities,
+        total,
+        limit: take,
+      };
+    } catch (error: any) {
+      throw new BadRequestException(
+        error.message ||
+          "An error occurred while fetching cities from the database"
       );
     }
   }
