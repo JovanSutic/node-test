@@ -133,6 +133,10 @@ export class PersonalIncomesDto {
 
   @IsNumber()
   expensesCost: number;
+
+  @IsNumber()
+  @IsOptional()
+  age?: number;
 }
 
 export class DependentsDto {

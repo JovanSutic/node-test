@@ -161,6 +161,15 @@ export const cities: CreateCityDto[] = [
     size: 3000000,
     seaside: false,
   },
+  {
+    name: "Lisbon",
+    country: "Portugal",
+    search: "Lisbon",
+    lat: 37.970833,
+    lng: 23.72611,
+    size: 3000000,
+    seaside: true,
+  },
 ];
 
 export const years: CreateYearDto[] = [
