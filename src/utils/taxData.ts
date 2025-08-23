@@ -377,3 +377,155 @@ export const socialBrackets: SocialBracket[] = [
     fee: 590,
   },
 ];
+
+export const portugalMainlandTaxBrackets: TaxBracket[] = [
+  {
+    from: 0,
+    to: 8059,
+    rate: 13.0,
+  },
+  {
+    from: 8059.01,
+    to: 12160,
+    rate: 16.5,
+  },
+  {
+    from: 12160.01,
+    to: 17233,
+    rate: 22.0,
+  },
+  {
+    from: 17233.01,
+    to: 22306,
+    rate: 25.0,
+  },
+  {
+    from: 22306.01,
+    to: 28400,
+    rate: 32.0,
+  },
+  {
+    from: 28400.01,
+    to: 41629,
+    rate: 35.5,
+  },
+  {
+    from: 41629.01,
+    to: 44987,
+    rate: 43.5,
+  },
+  {
+    from: 44987.01,
+    to: 83696,
+    rate: 45.0,
+  },
+  {
+    from: 83696.01,
+    to: Infinity,
+    rate: 48.0,
+  },
+];
+
+export const madeiraTaxBrackets: TaxBracket[] = [
+  {
+    from: 0,
+    to: 8059,
+    rate: 10.15,
+  },
+  {
+    from: 8059.01,
+    to: 12160,
+    rate: 14.7,
+  },
+  {
+    from: 12160.01,
+    to: 17233,
+    rate: 18.55,
+  },
+  {
+    from: 17233.01,
+    to: 22306,
+    rate: 19.95,
+  },
+  {
+    from: 22306.01,
+    to: 28400,
+    rate: 29.75,
+  },
+  {
+    from: 28400.01,
+    to: 41629,
+    rate: 33.67,
+  },
+  {
+    from: 41629.01,
+    to: 44987,
+    rate: 42.2,
+  },
+  {
+    from: 44987.01,
+    to: 83696,
+    rate: 43.65,
+  },
+  {
+    from: 83696.01,
+    to: Infinity,
+    rate: 47.52,
+  },
+];
+
+export const azoresTaxBrackets: TaxBracket[] = [
+  {
+    from: 0,
+    to: 8059,
+    rate: 10.15,
+  },
+  {
+    from: 8059.01,
+    to: 12160,
+    rate: 14.7,
+  },
+  {
+    from: 12160.01,
+    to: 17233,
+    rate: 18.55,
+  },
+  {
+    from: 17233.01,
+    to: 22306,
+    rate: 19.95,
+  },
+  {
+    from: 22306.01,
+    to: 28400,
+    rate: 24.5,
+  },
+  {
+    from: 28400.01,
+    to: 41629,
+    rate: 25.9,
+  },
+  {
+    from: 41629.01,
+    to: 44987,
+    rate: 30.45,
+  },
+  {
+    from: 44987.01,
+    to: 83696,
+    rate: 31.5,
+  },
+  {
+    from: 83696.01,
+    to: Infinity,
+    rate: 33.6,
+  },
+];
+
+export function getPortugalBrackets(cityId: number) {
+  if(cityId === 156) {
+    return madeiraTaxBrackets;
+  }
+
+  return portugalMainlandTaxBrackets;
+}
