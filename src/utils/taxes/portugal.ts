@@ -130,7 +130,7 @@ function calculateJoint(
       reportItems.push({
         reportId: 0,
         incomeMaker: index,
-        label: "Allowance tax credit",
+        label: "General tax credit",
         type: "tax_credit",
         amount: taxCredits,
       });
@@ -280,7 +280,7 @@ function calculateIndividual(
     reportItems.push({
       reportId: 0,
       incomeMaker: index,
-      label: "Allowance tax credit",
+      label: "General tax credit",
       type: "tax_credit",
       amount: taxCredits,
     });
