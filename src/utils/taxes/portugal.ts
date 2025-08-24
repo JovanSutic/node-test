@@ -26,12 +26,12 @@ function getJovemExemptionRate(year: number) {
 }
 
 function getJovemReduction(age: number, base: number, year: number) {
-  const jovemLimit = 35;
-  const cap = 28737.5;
+  const JOVEM_LIMIT = 35;
+  const JOVEM_CAP = 28737.5;
   const exemptionRate = getJovemExemptionRate(year);
 
-  if (age < jovemLimit) {
-    return Math.min(cap, base * exemptionRate);
+  if (age <= JOVEM_LIMIT) {
+    return Math.min(JOVEM_CAP, base * exemptionRate);
   }
 
   return 0;
@@ -85,8 +85,11 @@ function calculateJoint(
     taxableBase > creditLimit
       ? 1000
       : 1000 + 4000 * (1 - (taxableBase - 25656) / (creditLimit - 25656));
-  const taxCredits = Math.min(creditsCap, dependentCredits);
-  const totalTaxPerPerson = grossTaxPerPerson.totalTax - taxCredits / 2;
+  const taxCredits = Math.min(creditsCap, dependentCredits) / 2;
+  const totalTaxPerPerson = Math.max(
+    0,
+    grossTaxPerPerson.totalTax - taxCredits
+  );
 
   for (let index = 0; index < 2; index++) {
     const income = reportUserData.incomes[index];
@@ -94,7 +97,10 @@ function calculateJoint(
     const expenses = income.expensesCost + income.accountantCost;
 
     const net = gross - socials[index] - totalTaxPerPerson - expenses;
-    const effectiveRate = (socials[index] + totalTaxPerPerson) / gross;
+    const effectiveRate = Math.max(
+      0,
+      (socials[index] + totalTaxPerPerson) / gross
+    );
 
     const federalTax = calculateFederalIncomeTax({
       income: gross,
@@ -241,9 +247,9 @@ function calculateIndividual(
       : 1000 + 1500 * (1 - (taxableBase - 8059) / (creditLimit - 8059));
   const dependentCredits = getDependentCredits(reportUserData.dependents);
   const taxCredits = Math.min(creditsCap, dependentCredits);
-  const totalTax = grossTax.totalTax - taxCredits;
+  const totalTax = Math.max(0, grossTax.totalTax - taxCredits);
   const net = gross - socials - totalTax - expenses;
-  const effectiveRate = (socials + totalTax) / gross;
+  const effectiveRate = Math.max(0, (socials + totalTax) / gross);
 
   const federalTax = calculateFederalIncomeTax({
     income: gross,
@@ -376,18 +382,20 @@ export function calculatePortugalTax(
       if (prev > (next.age || 0)) {
         return prev;
       }
-      return next.age || 35;
+      return next.age || 36;
     }, 0);
-    const ageDiff = 35 - (highestAge || 35);
-    const years = ageDiff > 0 ? Math.min(ageDiff, 5) : 3;
+    const ageDiff = 36 - (highestAge || 36);
+    const diff = ageDiff < 3 ? 3 : ageDiff;
+    const years = diff > 0 ? Math.min(diff, 5) : 3;
     for (let index = 0; index < years; index++) {
       const year = index + 1;
       const items = calculateJoint(reportUserData, eurRate, year);
       reportItems.push(...items);
     }
   } else {
-    const ageDiff = 35 - (reportUserData.incomes[0].age || 35);
-    const years = ageDiff > 0 ? Math.min(ageDiff, 5) : 3;
+    const ageDiff = 36 - (reportUserData.incomes[0].age || 36);
+    const diff = ageDiff < 3 ? 3 : ageDiff;
+    const years = diff > 0 ? Math.min(diff, 5) : 3;
 
     for (let index = 0; index < years; index++) {
       const year = index + 1;
