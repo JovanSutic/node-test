@@ -58,3 +58,10 @@ export type TaxResult = {
 };
 
 export type SpainOption = "1st" | "2nd" | "3rd";
+
+export interface PrepReportItem {
+  label: string;
+  type: string;
+  amount: number;
+  note?: string;
+}

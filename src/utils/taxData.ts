@@ -523,9 +523,136 @@ export const azoresTaxBrackets: TaxBracket[] = [
 ];
 
 export function getPortugalBrackets(cityId: number) {
-  if(cityId === 156) {
+  if (cityId === 156) {
     return madeiraTaxBrackets;
   }
 
   return portugalMainlandTaxBrackets;
 }
+
+export const regionalTaxBracketsItaly: Record<string, TaxBracket[]> = {
+  Abruzzo: [
+    { from: 0, to: 15000, rate: 1.73 },
+    { from: 15000, to: Number.POSITIVE_INFINITY, rate: 1.73 },
+  ],
+  Basilicata: [
+    { from: 0, to: 28000, rate: 1.23 },
+    { from: 28000, to: Number.POSITIVE_INFINITY, rate: 2.23 },
+  ],
+  Calabria: [
+    { from: 0, to: 28000, rate: 1.73 },
+    { from: 28000, to: Number.POSITIVE_INFINITY, rate: 2.23 },
+  ],
+  Campania: [
+    { from: 0, to: 28000, rate: 1.73 },
+    { from: 28000, to: Number.POSITIVE_INFINITY, rate: 2.23 },
+  ],
+  "Emilia-Romagna": [
+    { from: 0, to: 15000, rate: 1.33 },
+    { from: 15000, to: 28000, rate: 1.93 },
+    { from: 28000, to: 50000, rate: 2.93 },
+    { from: 50000, to: Number.POSITIVE_INFINITY, rate: 3.33 },
+  ],
+  "Friuli-Venezia Giulia": [
+    { from: 0, to: 28000, rate: 1.23 },
+    { from: 28000, to: Number.POSITIVE_INFINITY, rate: 2.23 },
+  ],
+  Lazio: [
+    { from: 0, to: 28000, rate: 1.73 },
+    { from: 28000, to: Number.POSITIVE_INFINITY, rate: 2.23 },
+  ],
+  Liguria: [
+    { from: 0, to: 15000, rate: 1.23 },
+    { from: 15000, to: 28000, rate: 1.93 },
+    { from: 28000, to: 50000, rate: 2.93 },
+    { from: 50000, to: Number.POSITIVE_INFINITY, rate: 3.33 },
+  ],
+  Lombardia: [
+    { from: 0, to: 28000, rate: 1.23 },
+    { from: 28000, to: Number.POSITIVE_INFINITY, rate: 2.23 },
+  ],
+  Marche: [
+    { from: 0, to: 15000, rate: 1.23 },
+    { from: 15000, to: 28000, rate: 1.93 },
+    { from: 28000, to: 50000, rate: 2.93 },
+    { from: 50000, to: Number.POSITIVE_INFINITY, rate: 3.33 },
+  ],
+  Molise: [
+    { from: 0, to: 15000, rate: 2.03 },
+    { from: 15000, to: 28000, rate: 2.23 },
+    { from: 28000, to: 50000, rate: 3.33 },
+    { from: 50000, to: Number.POSITIVE_INFINITY, rate: 3.63 },
+  ],
+  Piemonte: [
+    { from: 0, to: 15000, rate: 1.62 },
+    { from: 15000, to: 28000, rate: 2.13 },
+    { from: 28000, to: 50000, rate: 2.75 },
+    { from: 50000, to: Number.POSITIVE_INFINITY, rate: 3.33 },
+  ],
+  Puglia: [
+    { from: 0, to: 28000, rate: 1.73 },
+    { from: 28000, to: Number.POSITIVE_INFINITY, rate: 2.23 },
+  ],
+  Sardegna: [{ from: 0, to: Number.POSITIVE_INFINITY, rate: 1.23 }],
+  Sicilia: [
+    { from: 0, to: 28000, rate: 1.73 },
+    { from: 28000, to: Number.POSITIVE_INFINITY, rate: 2.23 },
+  ],
+  Toscana: [
+    { from: 0, to: 28000, rate: 1.23 },
+    { from: 28000, to: Number.POSITIVE_INFINITY, rate: 2.23 },
+  ],
+  "Trentino-Alto Adige": [
+    { from: 0, to: Number.POSITIVE_INFINITY, rate: 1.23 },
+  ],
+  Umbria: [
+    { from: 0, to: 15000, rate: 1.23 },
+    { from: 15000, to: 28000, rate: 1.93 },
+    { from: 28000, to: 50000, rate: 2.93 },
+    { from: 50000, to: Number.POSITIVE_INFINITY, rate: 3.33 },
+  ],
+  "Valle d'Aosta": [{ from: 0, to: Number.POSITIVE_INFINITY, rate: 1.23 }],
+  Veneto: [
+    { from: 0, to: 28000, rate: 1.23 },
+    { from: 28000, to: Number.POSITIVE_INFINITY, rate: 2.23 },
+  ],
+};
+
+export const stateTaxBracketsItaly = [
+  { from: 0, to: 28000, rate: 23 },
+  { from: 28001, to: 50000, rate: 35 },
+  { from: 50001, to: Number.POSITIVE_INFINITY, rate: 43 },
+];
+
+export const regionsItaly: Record<string, Regions> = {
+  "257": { name: "Bari", region: "Puglia" },
+  "255": { name: "Bologna", region: "Emilia-Romagna" },
+  "265": { name: "Brescia", region: "Lombardia" },
+  "275": { name: "Cagliari", region: "Sardegna" },
+  "258": { name: "Catania", region: "Sicilia" },
+  "277": { name: "Ferrara", region: "Emilia-Romagna" },
+  "256": { name: "Florence", region: "Toscana" },
+  "276": { name: "Foggia", region: "Puglia" },
+  "254": { name: "Genoa", region: "Liguria" },
+  "273": { name: "Livorno", region: "Toscana" },
+  "261": { name: "Messina", region: "Sicilia" },
+  "250": { name: "Milano", region: "Lombardia" },
+  "268": { name: "Modena", region: "Emilia-Romagna" },
+  "251": { name: "Naples", region: "Campania" },
+  "262": { name: "Padua", region: "Veneto" },
+  "253": { name: "Palermo", region: "Sicilia" },
+  "266": { name: "Parma", region: "Emilia-Romagna" },
+  "271": { name: "Perugia", region: "Umbria" },
+  "263": { name: "Prato", region: "Toscana" },
+  "272": { name: "Ravenna", region: "Emilia-Romagna" },
+  "269": { name: "Reggio Calabria", region: "Calabria" },
+  "270": { name: "Reggio Emilia", region: "Emilia-Romagna" },
+  "274": { name: "Rimini", region: "Emilia-Romagna" },
+  "249": { name: "Rome", region: "Lazio" },
+  "278": { name: "Salerno", region: "Campania" },
+  "267": { name: "Taranto", region: "Puglia" },
+  "264": { name: "Trieste", region: "Friuli-Venezia Giulia" },
+  "252": { name: "Turin", region: "Piemonte" },
+  "260": { name: "Venice", region: "Veneto" },
+  "259": { name: "Verona", region: "Veneto" },
+};
