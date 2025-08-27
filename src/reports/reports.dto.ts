@@ -137,6 +137,18 @@ export class PersonalIncomesDto {
   @IsNumber()
   @IsOptional()
   age?: number;
+
+  @IsBoolean()
+  @IsOptional()
+  isNew?: boolean;
+
+  @IsString()
+  @IsOptional()
+  workType?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isSpecialist?: boolean;
 }
 
 export class DependentsDto {
