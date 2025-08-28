@@ -182,7 +182,10 @@ function getNonFlatCostItems(
     ? 0.6
     : 0.5;
   const reduction = isOrdinario ? 0 : impatriReduction;
-  const taxableBase = firstBase - firstBase * reduction;
+  const nextBase = firstBase - firstBase * reduction;
+  const socialRate = 0.26;
+  const socials = isOrdinario ? firstBase * socialRate : nextBase * socialRate;
+  const taxableBase = isOrdinario ? firstBase - socials : nextBase;
 
   const region = regionsItaly[cityId].region;
   const regionalTaxBrackets = regionalTaxBracketsItaly[region];
@@ -190,11 +193,11 @@ function getNonFlatCostItems(
   const stateTax = getProgressiveTax(taxableBase, stateTaxBracketsItaly);
   const municipalTax = taxableBase * 0.005;
 
-  const socialRate = 0.26;
+  
   const taxCredit = getTaxCredit(dependents, income.income);
   const totalTax =
     regionalTax.totalTax + stateTax.totalTax + municipalTax - taxCredit;
-  const socials = taxableBase * socialRate;
+  
   const effectiveRate = Math.max(0, (socials + totalTax) / income.income);
 
   const net = income.income - totalTax - socials;
