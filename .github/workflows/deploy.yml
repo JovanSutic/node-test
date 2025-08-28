@@ -73,6 +73,18 @@ jobs:
                 echo "Docker Compose is already installed."
             fi
 
+            # Step 2.1: Less disruptive cleanup strategy
+            # This will stop and remove only the old, running production container.
+            # It then prunes exited containers and unused images to free up space.
+            echo "Stopping and removing the old production container..."
+            docker-compose -f docker-compose.prod.yml down
+            
+            echo "Cleaning up all exited containers..."
+            docker container prune -f
+
+            echo "Removing all unused images..."
+            docker image prune -a -f
+
             # Step 3: Pull the latest code from GitHub
             echo "Pulling latest code from GitHub"
             git fetch origin
