@@ -94,7 +94,7 @@ function getFlatCostItems(
             amount: expectedExpenses,
           },
           {
-            label: "Profitability coefficient reduction",
+            label: "Total reductions",
             type: "reduction",
             amount: expectedExpenses,
           },
@@ -148,6 +148,12 @@ function getFlatCostItems(
             type: "net",
             amount: net,
           },
+          {
+            label: "Flat Regime",
+            type: "tax_type",
+            amount: 0,
+            note: "Regime Forfettario",
+          },
         ]
       : [
           {
@@ -193,14 +199,13 @@ function getNonFlatCostItems(
   const stateTax = getProgressiveTax(taxableBase, stateTaxBracketsItaly);
   const municipalTax = taxableBase * 0.005;
 
-  
   const taxCredit = getTaxCredit(dependents, income.income);
   const totalTax =
     regionalTax.totalTax + stateTax.totalTax + municipalTax - taxCredit;
-  
+
   const effectiveRate = Math.max(0, (socials + totalTax) / income.income);
 
-  const net = income.income - totalTax - socials;
+  const net = income.income - totalTax - socials - expenses;
 
   const federalTax = calculateFederalIncomeTax({
     income: income.income,
@@ -289,6 +294,12 @@ function getNonFlatCostItems(
             label: "Total net income",
             type: "net",
             amount: net,
+          },
+          {
+            label: isOrdinario ? "Ordinary Regime" : "Impatriate Regime",
+            type: "tax_type",
+            amount: 0,
+            note: isOrdinario ? "Ordinario Regime" : "Impatriate Regime",
           },
         ]
       : [
