@@ -45,10 +45,10 @@ function getCoefficientExpenses(income: PersonalIncomesDto) {
 }
 
 function getTaxType(income: PersonalIncomesDto) {
-  const flatLimit = 85000;
+  const flatLimit = 8500.01;
   const expenses = income.expensesCost + income.accountantCost;
 
-  if (income.income > flatLimit) {
+  if (income.income < flatLimit) {
     const expectedExpenses = getCoefficientExpenses(income);
     if (expectedExpenses > expenses) return "flat";
   } else {
