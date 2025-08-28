@@ -6,6 +6,7 @@ import type {
 } from "../reports/reports.dto";
 import type {
   ExchangeRate,
+  PrepReportItem,
   TaxAnalytic,
   TaxBracket,
   TaxResult,
@@ -23,6 +24,7 @@ import {
 import { roundToTwoDecimals } from "./numbers";
 import { calculateSpainTax } from "./taxes/spain";
 import { calculatePortugalTax } from "./taxes/portugal";
+import { calculateItalyTax } from "./taxes/italy";
 
 export function convertUserData(
   userData: ReportUserDataDto,
@@ -161,6 +163,7 @@ export const calculateUSTax = (
 export function getTaxCalculationFunction(country: string) {
   if (country === "Spain") return calculateSpainTax;
   if (country === "Portugal") return calculatePortugalTax;
+  if (country === "Italy") return calculateItalyTax;
 
   return null;
 }
@@ -264,4 +267,22 @@ export function decorateItems(items: CreateReportItemDto[]) {
       createdAt: today.toISOString(),
     };
   });
+}
+
+export function packageReportItems(items: PrepReportItem[], itemIndex: number) {
+  const reportItems: CreateReportItemDto[] = [];
+
+  for (let index = 0; index < items.length; index++) {
+    const element = items[index];
+    reportItems.push({
+      reportId: 0,
+      incomeMaker: itemIndex,
+      label: element.label,
+      type: element.type,
+      amount: element.amount,
+      note: element.note || "",
+    });
+  }
+
+  return reportItems;
 }
