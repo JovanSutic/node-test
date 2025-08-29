@@ -71,8 +71,9 @@ function getFlatCostItems(
   const totalTax = taxableBase * rate;
   const socials = taxableBase * socialRate;
   const effectiveRate = Math.max(0, (socials + totalTax) / income.income);
+  const expenses = income.expensesCost + income.accountantCost;
 
-  const net = income.income - totalTax - socials;
+  const net = income.income - totalTax - socials - expenses;
 
   const federalTax = calculateFederalIncomeTax({
     income: income.income,
@@ -94,9 +95,9 @@ function getFlatCostItems(
             amount: expectedExpenses,
           },
           {
-            label: "Total reductions",
-            type: "reduction",
-            amount: expectedExpenses,
+            label: "Full business expenses",
+            type: "expenses",
+            amount: expenses,
           },
           {
             label: "Total social contributions",
@@ -187,8 +188,8 @@ function getNonFlatCostItems(
   )
     ? 0.6
     : 0.5;
-  const reduction = isOrdinario ? 0 : impatriReduction;
-  const nextBase = firstBase - firstBase * reduction;
+  const reduction = isOrdinario ? 0 : firstBase * impatriReduction;
+  const nextBase = firstBase - reduction;
   const socialRate = 0.26;
   const socials = isOrdinario ? firstBase * socialRate : nextBase * socialRate;
   const taxableBase = isOrdinario ? firstBase - socials : nextBase;
