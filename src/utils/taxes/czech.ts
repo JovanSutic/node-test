@@ -250,7 +250,7 @@ function getRegularTaxItems(
           {
             label: "Health Insurance",
             type: "health_insurance",
-            amount: socials,
+            amount: health,
           },
           {
             label: "Taxable income",
@@ -260,7 +260,7 @@ function getRegularTaxItems(
           {
             label: "State income tax",
             type: "income_tax",
-            amount: totalTax,
+            amount: stateTax.totalTax,
           },
           {
             label: "Total income tax",
