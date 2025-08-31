@@ -624,6 +624,11 @@ export const stateTaxBracketsItaly = [
   { from: 50001, to: Number.POSITIVE_INFINITY, rate: 43 },
 ];
 
+export const stateTaxBracketsCzech = [
+  { from: 0, to: 64000, rate: 15 },
+  { from: 64001, to: Number.POSITIVE_INFINITY, rate: 23 },
+];
+
 export const regionsItaly: Record<string, Regions> = {
   "257": { name: "Bari", region: "Puglia" },
   "255": { name: "Bologna", region: "Emilia-Romagna" },
