@@ -169,7 +169,7 @@ function getFlatTaxItems(
             amount: net,
           },
           {
-            label: "Flat Regime",
+            label: "Flat Czech Regime",
             type: "tax_type",
             amount: 0,
             note: "Osoba Samostatně Výdělečně Činná - Individually Earning Person",
@@ -303,7 +303,7 @@ function getRegularTaxItems(
             amount: net,
           },
           {
-            label: "Progressive tax Regime",
+            label: "Progressive tax Czech Regime",
             type: "tax_type",
             amount: 0,
             note: "Osoba Samostatně Výdělečně Činná - Individually Earning Person",
