@@ -160,6 +160,14 @@ function calculateJoint(
       reportItems.push({
         reportId: 0,
         incomeMaker: index,
+        label: "State income tax",
+        type: "income_tax",
+        amount: grossTaxPerPerson.totalTax,
+      });
+
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
         label: "Total income tax",
         type: "total_tax",
         amount: totalTaxPerPerson,
