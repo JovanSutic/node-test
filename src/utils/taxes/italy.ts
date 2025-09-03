@@ -140,7 +140,7 @@ function getFlatCostItems(
                   label: "US self employed tax",
                   type: "us_self_tax",
                   amount: 0,
-                  note: "You don’t need to pay U.S. self-employment tax if you’re already paying social security contributions in Spain, thanks to the U.S.–Spain Totalization Agreement.",
+                  note: "You don’t need to pay U.S. self-employment tax if you’re already paying social security contributions in country of tax residence, thanks to the valid Totalization Agreement.",
                 },
               ]
             : []),
@@ -287,7 +287,7 @@ function getNonFlatCostItems(
                   label: "US self employed tax",
                   type: "us_self_tax",
                   amount: 0,
-                  note: "You don’t need to pay U.S. self-employment tax if you’re already paying social security contributions in Spain, thanks to the U.S.–Spain Totalization Agreement.",
+                  note: "You don’t need to pay U.S. self-employment tax if you’re already paying social security contributions in country of tax residence, thanks to the valid Totalization Agreement.",
                 },
               ]
             : []),
