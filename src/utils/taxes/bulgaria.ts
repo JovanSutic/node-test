@@ -19,7 +19,7 @@ function calculateSpouseSalary(reduction: number) {
   const employeeSocials = minNetSalary * 0.138;
   const companySocials = minNetSalary * 0.19;
   const taxableBase = minNetSalary - employeeSocials;
-  const incomeTax = Math.max(0, taxableBase - reduction);
+  const incomeTax = Math.max(0, (taxableBase - reduction) * 0.1);
 
   return {
     net: taxableBase - incomeTax,
