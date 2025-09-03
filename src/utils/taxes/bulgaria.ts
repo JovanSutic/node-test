@@ -59,7 +59,7 @@ function getDoubleEarnerTaxItems(
     corporateTax + withholdingTax + spouseSalary.jointCost - taxCredit;
 
   const effectiveRate = Math.max(0, (socials + totalTax) / grossIncome);
-  const net = grossIncome - totalTax - socials - expenses;
+  const net = taxableBase - corporateTax - withholdingTax;
 
   const federalTax = calculateFederalIncomeTax({
     income: grossIncome,
