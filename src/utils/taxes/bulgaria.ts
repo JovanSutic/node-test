@@ -137,6 +137,14 @@ function getDoubleEarnerTaxItems(
     reportItems.push({
       reportId: 0,
       incomeMaker: 0,
+      label: "Gross spouse salary",
+      type: "gross_salary",
+      amount: spouseSalary.net + spouseSalary.socials + spouseSalary.tax,
+    });
+
+    reportItems.push({
+      reportId: 0,
+      incomeMaker: 0,
       label: "Total tax credit",
       type: "tax_credit",
       amount: taxCredit,
