@@ -13,6 +13,23 @@ function getTaxReduction(dependents: DependentsDto[]) {
   return childReduction * children;
 }
 
+function getDoubleNet(items: CreateReportItemDto[]) {
+  return (
+    items
+      .filter((item) => item.type === "net")
+      ?.reduce((prev, next) => prev + next.amount, 0) || 0
+  );
+}
+
+function getSelfEmployedSocials(gross: number) {
+  const socialsBaseMax = 2100 * 12;
+  const socialsBaseMin = 550 * 12;
+  const socialBase =
+    gross >= socialsBaseMax ? socialsBaseMax : Math.max(gross, socialsBaseMin);
+
+  return socialBase * 0.32;
+}
+
 function calculateSpouseSalary(reduction: number) {
   const minNetSalaryMonth = 550;
   const minNetSalary = minNetSalaryMonth * 12;
@@ -375,7 +392,7 @@ function getSingleEarnerTaxItems(
             amount: net,
           },
           {
-            label: "EOOD SINGLE",
+            label: "Freelancer",
             type: "tax_type",
             amount: 0,
             note: "",
@@ -397,6 +414,145 @@ function getSingleEarnerTaxItems(
   return packageReportItems(prepItems, index);
 }
 
+function getSingleYearTaxSelf(
+  reportUserData: ReportUserDataDto,
+  eurRate: number,
+  scenario: SpainOption = "1st",
+  index: number
+) {
+  const income = reportUserData.incomes[index];
+  const expenses = income.expensesCost + income.accountantCost;
+  const gross = income.income;
+  const socials = getSelfEmployedSocials(gross);
+  const taxableBase = gross * 0.75;
+  const childrenReduction = getTaxReduction(reportUserData.dependents);
+  const stateTax = (taxableBase - childrenReduction) * 0.1;
+
+  const effectiveRate = Math.max(0, (socials + stateTax) / income.income);
+
+  const net = gross - stateTax - socials - expenses;
+
+  const federalTax = calculateFederalIncomeTax({
+    income: gross,
+    taxPaidAbroad: stateTax,
+    eurRate,
+  });
+
+  const prepItems: PrepReportItem[] =
+    scenario === "1st"
+      ? [
+          {
+            label: "Gross income normalized",
+            type: "gross",
+            amount: income.income,
+          },
+          {
+            label: "Full business expenses",
+            type: "expenses",
+            amount: expenses,
+          },
+          {
+            label: "Tax reductions",
+            type: "reduction",
+            amount: 0,
+          },
+          {
+            label: "Total social contributions",
+            type: "social_contributions",
+            amount: socials,
+          },
+          {
+            label: "Taxable income",
+            type: "taxable_income",
+            amount: taxableBase,
+          },
+          {
+            label: "State income tax",
+            type: "income_tax",
+            amount: stateTax,
+          },
+          {
+            label: "Total income tax",
+            type: "total_tax",
+            amount: stateTax,
+          },
+          {
+            label: "Total tax credit",
+            type: "tax_credit",
+            amount: 0,
+          },
+          {
+            label: "Effective tax",
+            type: "effective_tax",
+            amount: effectiveRate,
+          },
+          ...(income.isUSCitizen
+            ? [
+                {
+                  label: "US Federal income tax",
+                  type: "us_income_tax",
+                  amount: federalTax.amount,
+                  note: federalTax.comment,
+                },
+              ]
+            : []),
+          ...(income.isUSCitizen && socials
+            ? [
+                {
+                  label: "US self employed tax",
+                  type: "us_self_tax",
+                  amount: 0,
+                  note: "You don’t need to pay U.S. self-employment tax if you’re already paying social security contributions in country of tax residence, thanks to the valid Totalization Agreement.",
+                },
+              ]
+            : []),
+          {
+            label: "Total net income",
+            type: "net",
+            amount: net,
+          },
+          {
+            label: "EOOD SINGLE",
+            type: "tax_type",
+            amount: 0,
+            note: "",
+          },
+        ]
+      : [
+          {
+            label: "Total tax",
+            type: `additional_${scenario}`,
+            amount: stateTax + socials,
+          },
+          {
+            label: "Total net income",
+            type: `additional_${scenario}`,
+            amount: net,
+          },
+        ];
+
+  return packageReportItems(prepItems, index);
+}
+
+function getDoubleEarnersSelfTaxItems(
+  reportUserData: ReportUserDataDto,
+  eurRate: number,
+  scenario: SpainOption = "1st"
+) {
+  const items: CreateReportItemDto[] = [];
+  reportUserData.incomes.forEach((_, index) => {
+    const costItems = getSingleYearTaxSelf(
+      reportUserData,
+      eurRate,
+      scenario,
+      index
+    );
+    items.push(...costItems);
+  });
+
+  return items;
+}
+
 function getSingleYearTax(
   reportUserData: ReportUserDataDto,
   eurRate: number,
@@ -405,11 +561,45 @@ function getSingleYearTax(
   const reportItems: CreateReportItemDto[] = [];
 
   if (reportUserData.incomes.length === 1) {
-    const items = getSingleEarnerTaxItems(reportUserData, eurRate, scenario);
-    reportItems.push(...items);
+    const selfItems = getSingleYearTaxSelf(
+      reportUserData,
+      eurRate,
+      scenario,
+      0
+    );
+    const corpItems = getSingleEarnerTaxItems(
+      reportUserData,
+      eurRate,
+      scenario
+    );
+
+    if (
+      (selfItems.find((item) => item.type === "net")?.amount || 0) <=
+      (corpItems.find((item) => item.type === "net")?.amount || 0)
+    ) {
+      reportItems.push(...selfItems);
+    } else {
+      reportItems.push(...corpItems);
+    }
   } else {
-    const items = getDoubleEarnerTaxItems(reportUserData, eurRate, scenario);
-    reportItems.push(...items);
+    const selfItems = getDoubleEarnersSelfTaxItems(
+      reportUserData,
+      eurRate,
+      scenario
+    );
+    const corpItems = getDoubleEarnerTaxItems(
+      reportUserData,
+      eurRate,
+      scenario
+    );
+    const selfItemsNet = getDoubleNet(selfItems);
+    const corpItemsNet = getDoubleNet(corpItems);
+
+    if (selfItemsNet <= corpItemsNet) {
+      reportItems.push(...selfItems);
+    } else {
+      reportItems.push(...corpItems);
+    }
   }
 
   return reportItems;
