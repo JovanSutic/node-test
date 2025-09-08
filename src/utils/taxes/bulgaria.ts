@@ -574,7 +574,7 @@ function getSingleYearTax(
     );
 
     if (
-      (selfItems.find((item) => item.type === "net")?.amount || 0) <=
+      (selfItems.find((item) => item.type === "net")?.amount || 0) >=
       (corpItems.find((item) => item.type === "net")?.amount || 0)
     ) {
       reportItems.push(...selfItems);
@@ -595,7 +595,7 @@ function getSingleYearTax(
     const selfItemsNet = getDoubleNet(selfItems);
     const corpItemsNet = getDoubleNet(corpItems);
 
-    if (selfItemsNet <= corpItemsNet) {
+    if (selfItemsNet >= corpItemsNet) {
       reportItems.push(...selfItems);
     } else {
       reportItems.push(...corpItems);
