@@ -24,8 +24,7 @@ function getDoubleNet(items: CreateReportItemDto[]) {
 function getSelfEmployedSocials(gross: number) {
   const socialsBaseMax = 2100 * 12;
   const socialsBaseMin = 550 * 12;
-  const socialBase =
-    gross >= socialsBaseMax ? socialsBaseMax : Math.max(gross, socialsBaseMin);
+  const socialBase = Math.min(Math.max(gross, socialsBaseMin), socialsBaseMax);
 
   return socialBase * 0.32;
 }
@@ -392,7 +391,7 @@ function getSingleEarnerTaxItems(
             amount: net,
           },
           {
-            label: "Freelancer",
+            label: "EOOD SINGLE",
             type: "tax_type",
             amount: 0,
             note: "",
@@ -414,7 +413,7 @@ function getSingleEarnerTaxItems(
   return packageReportItems(prepItems, index);
 }
 
-function getSingleYearTaxSelf(
+function getSingleEarnerTaxItemsSelf(
   reportUserData: ReportUserDataDto,
   eurRate: number,
   scenario: SpainOption = "1st",
@@ -444,7 +443,7 @@ function getSingleYearTaxSelf(
           {
             label: "Gross income normalized",
             type: "gross",
-            amount: income.income,
+            amount: gross,
           },
           {
             label: "Full business expenses",
@@ -512,7 +511,7 @@ function getSingleYearTaxSelf(
             amount: net,
           },
           {
-            label: "EOOD SINGLE",
+            label: "Freelancer",
             type: "tax_type",
             amount: 0,
             note: "",
@@ -541,7 +540,7 @@ function getDoubleEarnersSelfTaxItems(
 ) {
   const items: CreateReportItemDto[] = [];
   reportUserData.incomes.forEach((_, index) => {
-    const costItems = getSingleYearTaxSelf(
+    const costItems = getSingleEarnerTaxItemsSelf(
       reportUserData,
       eurRate,
       scenario,
@@ -561,7 +560,7 @@ function getSingleYearTax(
   const reportItems: CreateReportItemDto[] = [];
 
   if (reportUserData.incomes.length === 1) {
-    const selfItems = getSingleYearTaxSelf(
+    const selfItems = getSingleEarnerTaxItemsSelf(
       reportUserData,
       eurRate,
       scenario,
@@ -573,10 +572,10 @@ function getSingleYearTax(
       scenario
     );
 
-    if (
-      (selfItems.find((item) => item.type === "net")?.amount || 0) >=
-      (corpItems.find((item) => item.type === "net")?.amount || 0)
-    ) {
+    const selfNet = selfItems.find((item) => item.type === "net")?.amount || 1;
+    const corpNet = corpItems.find((item) => item.type === "net")?.amount || 1;
+
+    if (selfNet >= corpNet) {
       reportItems.push(...selfItems);
     } else {
       reportItems.push(...corpItems);
