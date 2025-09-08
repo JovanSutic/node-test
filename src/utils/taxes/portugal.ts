@@ -8,6 +8,11 @@ import { getPortugalBrackets } from "../taxData";
 
 const scenarios = ["1st", "2nd", "3rd", "4th", "5th"];
 
+function getSimplified(gross: number, expenses: number) {
+  const isSimplified = expenses < gross * 0.25 && gross < 200000;
+  return isSimplified;
+}
+
 function getDependentCredits(dependents: DependentsDto[]) {
   const householdCredit = 250;
   const dependentCredit = 600 * dependents.length;
@@ -45,7 +50,7 @@ function calculateTaxBase(
   const income = reportUserData.incomes[index];
   const gross = income.income;
   const expenses = income.expensesCost + income.accountantCost;
-  const isSimplified = expenses < gross * 0.25;
+  const isSimplified = getSimplified(gross, expenses);
   const grossWithoutExpenses = isSimplified ? gross * 0.75 : gross - expenses;
 
   const socials = year === 1 ? 0 : (gross / 12) * 3 * 0.7 * 0.214 * 4;
@@ -95,6 +100,7 @@ function calculateJoint(
     const income = reportUserData.incomes[index];
     const gross = income.income;
     const expenses = income.expensesCost + income.accountantCost;
+    const isSimplified = getSimplified(gross, expenses);
 
     const net = gross - socials[index] - totalTaxPerPerson - expenses;
     const effectiveRate = Math.max(
@@ -210,6 +216,14 @@ function calculateJoint(
         type: "net",
         amount: net,
       });
+
+      reportItems.push({
+        reportId: 0,
+        incomeMaker: index,
+        label: isSimplified ? "Simplified" : "Organized",
+        type: "tax_type",
+        amount: 0,
+      });
     } else {
       reportItems.push({
         reportId: 0,
@@ -242,6 +256,7 @@ function calculateIndividual(
   const income = reportUserData.incomes[0];
   const gross = income.income;
   const expenses = income.expensesCost + income.accountantCost;
+  const isSimplified = getSimplified(gross, expenses);
 
   const taxableBase = calculateTaxBase(reportUserData, year, 0);
 
@@ -367,6 +382,14 @@ function calculateIndividual(
       label: "Total net income",
       type: "net",
       amount: net,
+    });
+
+    reportItems.push({
+      reportId: 0,
+      incomeMaker: index,
+      label: isSimplified ? "Simplified" : "Organized",
+      type: "tax_type",
+      amount: 0,
     });
   } else {
     reportItems.push({
