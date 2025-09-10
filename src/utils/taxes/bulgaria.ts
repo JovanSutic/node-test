@@ -16,7 +16,7 @@ function getTaxReduction(dependents: DependentsDto[]) {
 function getDoubleNet(items: CreateReportItemDto[]) {
   return (
     items
-      .filter((item) => item.type === "net")
+      .filter((item) => item.type === "net" || item.label === 'Total net income')
       ?.reduce((prev, next) => prev + next.amount, 0) || 0
   );
 }
@@ -572,8 +572,8 @@ function getSingleYearTax(
       scenario
     );
 
-    const selfNet = selfItems.find((item) => item.type === "net")?.amount || 1;
-    const corpNet = corpItems.find((item) => item.type === "net")?.amount || 1;
+    const selfNet = selfItems.find((item) => item.type === "net" || item.label === 'Total net income')?.amount || 1;
+    const corpNet = corpItems.find((item) => item.type === "net" || item.label === 'Total net income')?.amount || 1;
 
     if (selfNet >= corpNet) {
       reportItems.push(...selfItems);
