@@ -149,6 +149,10 @@ export class PersonalIncomesDto {
   @IsBoolean()
   @IsOptional()
   isSpecialist?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  isIndependent?: boolean;
 }
 
 export class DependentsDto {

@@ -27,6 +27,7 @@ import { calculatePortugalTax } from "./taxes/portugal";
 import { calculateItalyTax } from "./taxes/italy";
 import { calculateCzechTax } from "./taxes/czech";
 import { calculateBulgariaTax } from "./taxes/bulgaria";
+import { calculateSerbiaTax } from "./taxes/serbia";
 
 export function convertUserData(
   userData: ReportUserDataDto,
@@ -168,6 +169,7 @@ export function getTaxCalculationFunction(country: string) {
   if (country === "Italy") return calculateItalyTax;
   if (country === "Czech Republic") return calculateCzechTax;
   if (country === "Bulgaria") return calculateBulgariaTax;
+  if (country === "Serbia") return calculateSerbiaTax;
 
   return null;
 }
