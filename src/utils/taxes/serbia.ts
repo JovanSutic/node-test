@@ -53,7 +53,7 @@ function calculateAnnualPersonalIncomeTax(
   totalIncome: number,
   numberOfDependents: number
 ): number {
-  const averageAnnualSalary = 1270320;
+  const averageAnnualSalary = 10850;
   const nonTaxableAmount = averageAnnualSalary * 3;
   const secondTaxBracketThreshold = averageAnnualSalary * 5;
 
@@ -159,12 +159,12 @@ function getBookedItems(
           },
           {
             label: "Yearly salary",
-            type: "salary",
+            type: "gross_salary",
             amount: minSalaryYear,
           },
           {
             label: "Yearly salary contributions",
-            type: "salary",
+            type: "salary_contributions",
             amount: salaryContributions,
           },
           {
@@ -302,12 +302,12 @@ function getCompanyItems(
           },
           {
             label: "Yearly salary",
-            type: "salary",
+            type: "gross_salary",
             amount: minSalaryYear,
           },
           {
             label: "Yearly salary contributions",
-            type: "salary",
+            type: "salary_contributions",
             amount: salaryContributions,
           },
           {
