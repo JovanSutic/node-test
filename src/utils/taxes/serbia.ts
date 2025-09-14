@@ -51,18 +51,20 @@ function calculateGross2(gross1: number): number {
 
 function calculateAnnualPersonalIncomeTax(
   totalIncome: number,
-  numberOfDependents: number
+  numberOfDependents: number,
+  age: number
 ): number {
   const averageAnnualSalary = 10850;
   const nonTaxableAmount = averageAnnualSalary * 3;
   const secondTaxBracketThreshold = averageAnnualSalary * 5;
 
-  // Deductions for dependents
   const taxpayerDeduction = 0.4 * averageAnnualSalary;
   const dependentDeduction = 0.15 * averageAnnualSalary;
 
-  const totalDeductions =
-    taxpayerDeduction + dependentDeduction * numberOfDependents;
+  const under40Deductions = age < 40 ? nonTaxableAmount : 0;
+  const personalDeductions = Math.min(totalIncome * 0.5, taxpayerDeduction + dependentDeduction * numberOfDependents);
+  const totalDeductions = under40Deductions || personalDeductions;
+
   let taxableBase = 0;
 
   if (totalIncome <= nonTaxableAmount) {
@@ -111,7 +113,7 @@ function getBookedItems(
     taxableBase - stateTax + (minSalaryYear - salaryContributions);
   const dependents =
     reportUserData.dependents.length / reportUserData.incomes.length;
-  const additionalTax = calculateAnnualPersonalIncomeTax(firstNet, dependents);
+  const additionalTax = calculateAnnualPersonalIncomeTax(firstNet, dependents, income.age || 40);
 
   const totalTax = stateTax + salaryTax + additionalTax;
   const net = firstNet - additionalTax;
@@ -249,7 +251,7 @@ function getCompanyItems(
     netProfit - withholdingTax + (minSalaryYear - salaryContributions);
   const dependents =
     reportUserData.dependents.length / reportUserData.incomes.length;
-  const additionalTax = calculateAnnualPersonalIncomeTax(firstNet, dependents);
+  const additionalTax = calculateAnnualPersonalIncomeTax(firstNet, dependents, income.age || 40);
 
   const totalTax = corporateTax + withholdingTax + salaryTax + additionalTax;
   const net = firstNet - additionalTax;
