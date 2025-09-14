@@ -56,7 +56,7 @@ function calculateAnnualPersonalIncomeTax(
 ): number {
   const averageAnnualSalary = 10850;
   const nonTaxableAmount = averageAnnualSalary * 3;
-  const secondTaxBracketThreshold = averageAnnualSalary * 5;
+  const secondTaxBracketThreshold = averageAnnualSalary * 6;
 
   const taxpayerDeduction = 0.4 * averageAnnualSalary;
   const dependentDeduction = 0.15 * averageAnnualSalary;
