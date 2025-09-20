@@ -125,9 +125,7 @@ export class CitiesService {
     offset?: number;
   }) {
     try {
-      const cityWhere: any = {
-        visible: true,
-      };
+      const cityWhere: any = {};
 
       if (country) {
         cityWhere.country = country;
