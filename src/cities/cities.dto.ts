@@ -8,6 +8,7 @@ import {
   IsIn,
   IsNumberString,
   IsEnum,
+  IsBooleanString,
 } from "class-validator";
 import { PriceType } from "../prices/prices.dto";
 
@@ -178,6 +179,18 @@ export class CitiesQueryDto {
   @IsOptional()
   @IsString()
   country?: string;
+
+  @IsOptional()
+  @IsBooleanString()
+  seaside?: string;
+
+  @IsOptional()
+  @IsNumberString()
+  size?: string;
+
+  @IsOptional()
+  @IsNumberString()
+  offset?: string;
 }
 
 export class CitiesMissingDto {
