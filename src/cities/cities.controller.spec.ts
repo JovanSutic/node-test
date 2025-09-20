@@ -130,6 +130,84 @@ describe("CitiesController", () => {
     expect(response.status).toBe(200);
   });
 
+  it("should return city cards via GET /cities/cards with filters", async () => {
+    // Step 1: Mock all Prisma calls used in getAllCards
+    prismaServiceMock.def_value = {
+      findMany: jest
+        .fn()
+        .mockResolvedValue([{ countryId: 1 }, { countryId: 2 }]),
+    };
+
+    prismaServiceMock.cities = {
+      findMany: jest.fn().mockResolvedValue([
+        {
+          id: 1,
+          name: "Belgrade",
+          country: "Serbia",
+          search: "Belgrade",
+          lat: 44.1,
+          lng: 20.1,
+          seaside: false,
+          size: 1000000,
+          countryId: 1,
+          layers: [{ value: 1500 }],
+        },
+      ]),
+      count: jest.fn().mockResolvedValue(1),
+    };
+
+    prismaServiceMock.crime_ranks = {
+      findMany: jest.fn().mockResolvedValue([
+        {
+          cityId: 1,
+          crimeAspectId: 1,
+          value: 0.3,
+        },
+      ]),
+    };
+
+    // Step 2: Call the actual endpoint
+    const response = await request(app.getHttpServer())
+      .get("/cities/cards")
+      .query({
+        north: 55,
+        south: 25,
+        east: 30,
+        west: -10,
+        size: 1000000,
+        offset: 0,
+      })
+      .expect(200);
+
+    // Step 3: Assert response
+    expect(response.body).toEqual({
+      data: [
+        expect.objectContaining({
+          id: 1,
+          name: "Belgrade",
+          costOfLiving: 1500,
+          safetyRating: expect.any(Object),
+        }),
+      ],
+      total: 1,
+      limit: 30,
+      offset: 0,
+      hasMore: false,
+    });
+
+    // Step 4: Assert Prisma calls were made correctly
+    expect(prismaServiceMock.cities.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          lat: { gte: 25, lte: 55 },
+          lng: { gte: -10, lte: 30 },
+          size: { lte: 1000000 },
+          countriesId: { in: [1, 2] },
+        }),
+      })
+    );
+  });
+
   it("should return cities with less than 55 CURRENT prices for yearId 16 via GET /cities/missing-prices", async () => {
     const mockCities: CityDto[] = [
       {
@@ -151,11 +229,11 @@ describe("CitiesController", () => {
         seaside: false,
       },
     ];
-  
+
     jest
       .spyOn(citiesService, "getCitiesWithMissingPrices")
       .mockResolvedValue(mockCities);
-  
+
     const response = await request(app.getHttpServer())
       .get("/cities/missing-prices")
       .query({
@@ -164,11 +242,11 @@ describe("CitiesController", () => {
         lessThan: "55",
       })
       .expect(200);
-  
+
     expect(response.body).toEqual(mockCities);
     expect(response.status).toBe(200);
   });
-  
+
   it("should return cities missing social report of type SOLO via GET /cities/missing-social-report", async () => {
     const mockCities: CityDto[] = [
       {
@@ -190,16 +268,16 @@ describe("CitiesController", () => {
         seaside: false,
       },
     ];
-  
+
     jest
       .spyOn(citiesService, "getCitiesWithoutSocialReportType")
       .mockResolvedValue(mockCities);
-  
+
     const response = await request(app.getHttpServer())
       .get("/cities/missing-social-report")
       .query({ type: "SOLO" })
       .expect(200);
-  
+
     expect(response.body).toEqual(mockCities);
     expect(response.status).toBe(200);
   });
