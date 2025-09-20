@@ -164,7 +164,7 @@ export class CitiesService {
         (item) => item.countryId
       );
 
-      cityWhere.countryId = {
+      cityWhere.countriesId = {
         in: eligibleCountryIds,
       };
 
