@@ -14,7 +14,12 @@ import {
   UseGuards,
   Query,
 } from "@nestjs/common";
-import { CreateCityDto, CityDto, CitiesQueryDto, CitiesMissingDto } from "./cities.dto";
+import {
+  CreateCityDto,
+  CityDto,
+  CitiesQueryDto,
+  CitiesMissingDto,
+} from "./cities.dto";
 import { CitiesService } from "./cities.service";
 import {
   ExistenceValidationPipe,
@@ -200,7 +205,7 @@ export class CitiesController {
     }
   }
 
-  @Get('cards')
+  @Get("cards")
   @ApiOperation({
     summary: "Return cities within map bounds (optional limit).",
   })
@@ -245,22 +250,36 @@ export class CitiesController {
   })
   async getCityCards(@Query() filters: CitiesQueryDto) {
     const {
+      north,
+      south,
+      east,
+      west,
       take = "30",
       sortBy = "name",
       order = "asc",
-      fromId,
       country,
+      seaside,
+      size,
+      offset = "0",
     } = filters;
-    try {
-      const parsedTake = Math.min(parseInt(take || "30", 10), 300);
 
-      return await this.citiesService.getAllCards(
-        parsedTake,
+    try {
+      const parsedTake = Math.min(parseInt(take, 10), 300);
+      const parsedOffset = Math.max(parseInt(offset, 10), 0);
+
+      return await this.citiesService.getAllCards({
+        north: parseFloat(north!),
+        south: parseFloat(south!),
+        east: parseFloat(east!),
+        west: parseFloat(west!),
+        take: parsedTake,
         sortBy,
         order,
-        fromId ? parseInt(fromId, 10) : undefined,
-        country
-      );
+        country,
+        seaside: seaside === "true" ? true : undefined,
+        size: parseFloat(size!) || undefined,
+        offset: parsedOffset,
+      });
     } catch (error: any) {
       throw new BadRequestException(
         error.message || "An error occurred while fetching the cities"
@@ -365,9 +384,8 @@ export class CitiesController {
     },
   })
   async getCitiesWithMissingPrices(@Query() filters: CitiesMissingDto) {
+    const { yearId, lessThan, priceType } = filters;
 
-    const {yearId, lessThan, priceType } = filters;
-    
     const yearIdStr = parseInt(yearId, 10);
     const lessThanStr = parseInt(lessThan || "55", 10);
 

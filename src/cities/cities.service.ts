@@ -5,6 +5,7 @@ import type { SocialType } from "../social_lifestyle/social_lifestyle.dto";
 import type { PriceType } from "../prices/prices.dto";
 import { CrimeRankDto } from "../crimes/crimes.dto";
 import { getCrimeSummery } from "../utils/crimes";
+import type { LayerDto } from "../layers/layers.dto";
 
 @Injectable()
 export class CitiesService {
@@ -98,32 +99,86 @@ export class CitiesService {
     }
   }
 
-  async getAllCards(
-    take: number = 100,
-    sortBy: string,
-    order: "asc" | "desc",
-    fromId?: number,
-    country?: string
-  ) {
+  async getAllCards({
+    north,
+    south,
+    east,
+    west,
+    take,
+    sortBy,
+    order,
+    country,
+    seaside,
+    size,
+    offset = 0,
+  }: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+    take: number;
+    sortBy: string;
+    order: "asc" | "desc";
+    country?: string;
+    seaside?: boolean;
+    size?: number;
+    offset?: number;
+  }) {
     try {
-      const where: any = {};
-
-      if (fromId !== undefined) {
-        where.id = { gte: fromId };
-      }
+      const cityWhere: any = {
+        visible: true,
+      };
 
       if (country) {
-        where.country = country;
+        cityWhere.country = country;
       }
 
-      // 1. First database query: Get cities and their cost of living data
+      if (
+        north !== undefined &&
+        south !== undefined &&
+        east !== undefined &&
+        west !== undefined
+      ) {
+        cityWhere.lat = { gte: south, lte: north };
+        cityWhere.lng = { gte: west, lte: east };
+      }
+
+      if (seaside !== undefined) {
+        cityWhere.seaside = seaside;
+      }
+
+      if (size !== undefined) {
+        cityWhere.size = { lte: size };
+      }
+
+      const eligibleCountries = await this.prisma.def_value.findMany({
+        where: {
+          definitionId: 33,
+          countryId: { not: null },
+        },
+        select: {
+          countryId: true,
+        },
+        distinct: ["countryId"],
+      });
+
+      const eligibleCountryIds = eligibleCountries.map(
+        (item) => item.countryId
+      );
+
+      cityWhere.countryId = {
+        in: eligibleCountryIds,
+      };
+
       const [citiesWithCost, total] = await Promise.all([
         this.prisma.cities.findMany({
-          where,
+          where: cityWhere,
+          skip: offset,
           take,
-          orderBy: {
-            [sortBy]: order,
-          },
+          orderBy: [
+            { [sortBy]: order },
+            { id: order },
+          ],
           include: {
             layers: {
               where: { layerTypeId: 2 },
@@ -131,13 +186,13 @@ export class CitiesService {
             },
           },
         }),
-        this.prisma.cities.count({ where }),
+        this.prisma.cities.count({
+          where: cityWhere,
+        }),
       ]);
 
-      // Extract all city IDs from the first database call's results
       const cityIds = citiesWithCost.map((city) => city.id);
 
-      // 2. Second database query: Get all crime ranks for all cities at once
       const crimeRanks = await this.prisma.crime_ranks.findMany({
         where: {
           cityId: { in: cityIds },
@@ -146,26 +201,23 @@ export class CitiesService {
       });
 
       const groupedCrime: Record<string, CrimeRankDto[]> = {};
-
-      cityIds.forEach((item) => {
-        groupedCrime[item] = [];
-      });
-
-      crimeRanks.forEach((item) => {
-        if (groupedCrime[item.cityId]) {
-          groupedCrime[item.cityId].push(item as unknown as CrimeRankDto);
+      cityIds.forEach((id) => (groupedCrime[id] = []));
+      crimeRanks.forEach((rank) => {
+        if (groupedCrime[rank.cityId]) {
+          groupedCrime[rank.cityId].push(rank as unknown as CrimeRankDto);
         }
       });
 
       const decoratedCities = citiesWithCost.map((city) => {
         const { layers, ...rest } = city;
-        const crimeSummery = groupedCrime[city.id]
+        const crimeSummary = groupedCrime[city.id]
           ? getCrimeSummery(groupedCrime[city.id])
           : null;
+
         return {
           ...rest,
-          costOfLiving: city.layers[0].value || null,
-          safetyRating: crimeSummery,
+          costOfLiving: (layers as unknown as LayerDto[])[0]?.value || null,
+          safetyRating: crimeSummary,
         };
       });
 
@@ -173,6 +225,8 @@ export class CitiesService {
         data: decoratedCities,
         total,
         limit: take,
+        offset,
+        hasMore: offset + take < total,
       };
     } catch (error: any) {
       throw new BadRequestException(
