@@ -15,7 +15,12 @@ import { PricesModule } from "../prices/prices.module";
 import { ReportsService } from "./reports.service";
 import { UsersModule } from "../users/users.module";
 import { PricesService } from "../prices/prices.service";
-import { bulgarianPrices, bulgariaCity } from "./reportsData";
+import {
+  bulgarianPrices,
+  bulgariaCity,
+  spainPrices,
+  spainCity,
+} from "./reportsData";
 
 describe("ReportsController", () => {
   let app: INestApplication;
@@ -53,7 +58,7 @@ describe("ReportsController", () => {
     await app.close();
   });
 
-  it("get public report via POST /reports/public", async () => {
+  it("get public report for Bulgaria via POST /reports/public", async () => {
     const publicPostDto = {
       cityId: 18,
       isWorkingMom: false,
@@ -69,8 +74,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest.fn().mockResolvedValue(bulgariaCity);
-
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue(bulgariaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(bulgarianPrices);
 
     const response = await request(app.getHttpServer())
@@ -79,5 +85,38 @@ describe("ReportsController", () => {
       .expect(201);
 
     expect(response.body.net).toBe(39921.831);
+  });
+
+  it("get public report for Spain via POST /reports/public", async () => {
+    const publicPostDto = {
+      cityId: 247,
+      isWorkingMom: true,
+      dependents: [
+        { type: "kid", isDependent: true, age: 2 },
+        { type: "spouse", isDependent: true },
+      ],
+      incomes: [
+        {
+          isUSCitizen: false,
+          currency: "eur",
+          income: 50000,
+          accountantCost: 2160,
+          expensesCost: 0,
+        },
+      ],
+    };
+
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue(spainCity);
+    jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
+
+    const response = await request(app.getHttpServer())
+      .post("/reports/public")
+      .send(publicPostDto);
+
+    // console.log(response.body);
+
+    expect(response.body.net).toBe(42296.2);
   });
 });

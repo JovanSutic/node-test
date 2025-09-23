@@ -7,6 +7,7 @@ import type {
   Allowance,
   Dependents,
   SpainOption,
+  TaxBracket,
 } from "../../types/flow.types";
 import { calculateFederalIncomeTax, getProgressiveTax } from "../saveFlow";
 import {
@@ -15,8 +16,9 @@ import {
   socialBrackets,
   spanishTaxBrackets,
 } from "../taxData";
+import { spainConfig, type TaxConfig } from "./taxRules";
 
-export function getSpainRegionalBracket(cityId: number) {
+function getSpainRegionalBracket(cityId: number) {
   const region = regionsSpain[cityId.toString()];
   if (!region) {
     throw new Error("Provided city does not have the proper region");
@@ -25,34 +27,81 @@ export function getSpainRegionalBracket(cityId: number) {
   return regionalTaxBrackets[region.region];
 }
 
-export function calculateAllowance(data: Dependents[], addition: number) {
+function extractKidsAllowance(config: TaxConfig) {
+  const kidsAllowance: number[] = [];
+
+  Object.entries(config).forEach(([key, value]) => {
+    if (key.startsWith("dependentKid")) {
+      if (typeof value === "number") {
+        kidsAllowance.push(value);
+      }
+    }
+  });
+
+  for (let i = kidsAllowance.length; i < 10; i++) {
+    if (kidsAllowance[i] === undefined) {
+      kidsAllowance.push(kidsAllowance[i - 1]);
+    }
+  }
+
+  return kidsAllowance;
+}
+
+function calculateAllowance(
+  data: Dependents[],
+  addition: number,
+  config: TaxConfig
+) {
   const result: Allowance[] = [];
+  if (config.allowAllowance) {
+    if (config.allowKidsAllowance) {
+      data
+        .filter((item) => item.type === "kid")
+        .forEach((item) => {
+          if (item.isDependent) {
+            const amount = extractKidsAllowance(config);
+            const index = result.filter((item) => item.type === "kid").length;
+            result.push({ type: "kid", amount: amount[index] });
+          }
+        });
+    }
 
-  data
-    .filter((item) => item.type === "kid")
-    .forEach((item) => {
-      if (item.isDependent) {
-        const amount = [2400, 2700, 4000, 4500, 4500, 4500, 4500, 4500];
-        const index = result.filter((item) => item.type === "kid").length;
-        result.push({ type: "kid", amount: amount[index] });
-        if ((item.age || 4) + addition < 3) {
-          result.push({ type: "kid-extra", amount: 2800 });
-        }
-      }
-    });
+    if (config.allowExtraKidAllowance) {
+      data
+        .filter((item) => item.type === "kid")
+        .forEach((item) => {
+          if (item.isDependent) {
+            if (
+              (item.age || config.extraKidAllowanceLimit + 1) + addition <
+              config.extraKidAllowanceLimit
+            ) {
+              result.push({
+                type: "kid-extra",
+                amount: config.extraKidAllowance,
+              });
+            }
+          }
+        });
+    }
 
-  data
-    .filter((item) => item.type === "spouse")
-    .forEach((item) => {
-      if (item.isDependent) {
-        result.push({ type: "spouse", amount: 3400 });
-      }
-    });
+    if (config.allowSpouseAllowance) {
+      data
+        .filter((item) => item.type === "spouse")
+        .forEach((item) => {
+          if (item.isDependent) {
+            result.push({
+              type: "spouse",
+              amount: config.dependentSpouseAllowance,
+            });
+          }
+        });
+    }
+  }
 
   return result;
 }
 
-export function distributeAllowance(
+function distributeAllowance(
   incomes: PersonalIncomesDto[],
   allowances: Allowance[]
 ) {
@@ -79,22 +128,49 @@ export function distributeAllowance(
   }
 }
 
-export const calculateSocials = (incomes: PersonalIncomesDto[]) => {
+function calculateSocialBase(
+  income: PersonalIncomesDto,
+  socialBaseType: string,
+  rate: number
+) {
+  if (socialBaseType === "incomeMinusAllExpenses") {
+    return (
+      ((income.income - (income.expensesCost + income.accountantCost)) * rate) /
+      12
+    );
+  }
+
+  return 0;
+}
+
+const calculateSocials = (
+  incomes: PersonalIncomesDto[],
+  config: TaxConfig,
+  year: number
+) => {
   const result = [];
 
   for (let index = 0; index < incomes.length; index++) {
-    const base =
-      ((incomes[index].income -
-        (incomes[index].expensesCost + incomes[index].accountantCost)) *
-        0.93) /
-      12;
-    const bracket = socialBrackets.find((item) => {
-      if (base > item.from && base < item.to) {
-        return item;
-      }
-    });
+    if (config.allowSocialDiscount && year < config.socialDiscountLength) {
+      result.push(config.socialDiscountedAmount);
+    } else {
+      const base = calculateSocialBase(
+        incomes[index],
+        config.socialBaseType,
+        config.socialBaseRateIndex
+      );
+      if (config.socialTaxType === "progressive") {
+        const bracket = socialBrackets.find((item) => {
+          if (base > item.from && base < item.to) {
+            return item;
+          }
+        });
 
-    result.push((bracket?.fee || 1) * 12);
+        result.push((bracket?.fee || 1) * 12);
+      } else {
+        result.push(base * config.socialRate);
+      }
+    }
   }
 
   return result;
@@ -102,28 +178,113 @@ export const calculateSocials = (incomes: PersonalIncomesDto[]) => {
 
 function getMaternityCredit(
   reportUserData: ReportUserDataDto,
-  addition: number
+  addition: number,
+  config: TaxConfig
 ) {
   const isBaby = reportUserData.dependents.find(
-    (item) => (item.age || 4) + addition < 3 && item.type === "kid"
+    (item) =>
+      (item.age || config.extraKidAllowanceLimit + 1) + addition <
+        config.extraKidAllowanceLimit && item.type === "kid"
   );
   if (isBaby && reportUserData.isWorkingMom) {
-    return 1200;
+    return config.workingMomCredit;
   }
 
   return 0;
 }
 
-export const calculateSpainTaxSingle = (
+function getReductions(base: number, year: number, config: TaxConfig) {
+  const result = {
+    newSelfEmployedReduction: 0,
+    assumedCostReduction: 0,
+    taxableIncome: 0,
+  };
+  let statefulBase = base;
+
+  const sequence = config.taxableIncomeSequence.split(",");
+
+  const newReduction =
+    year < config.newCompanyReductionLength ? config.newCompanyReduction : 0;
+
+  sequence.forEach((item) => {
+    if (
+      item === "allowNewCompanyReduction" &&
+      config.allowNewCompanyReduction
+    ) {
+      const reduction = Math.min(
+        statefulBase * newReduction,
+        config.newCompanyMaxReduction
+      );
+      result.newSelfEmployedReduction = reduction;
+      statefulBase = statefulBase - reduction;
+    }
+    if (
+      item === "allowAssumedCostReduction" &&
+      config.allowAssumedCostReduction
+    ) {
+      const reduction = Math.min(
+        statefulBase * config.assumedCostReduction,
+        config.assumedCostMaxReduction
+      );
+      result.assumedCostReduction = reduction;
+      statefulBase = statefulBase - reduction;
+    }
+  });
+
+  result.taxableIncome = statefulBase;
+
+  return result;
+}
+
+function getStateTax(
+  taxableIncome: number,
+  totalAllowance: number,
+  isStateTax: boolean
+) {
+  if (isStateTax) {
+    const stateTax = getProgressiveTax(taxableIncome, spanishTaxBrackets);
+    const stateAllowanceTax = getProgressiveTax(
+      totalAllowance,
+      spanishTaxBrackets
+    );
+
+    return {
+      tax: stateTax.totalTax - stateAllowanceTax.totalTax,
+      allowanceTax: stateAllowanceTax.totalTax,
+    };
+  }
+
+  return {
+    tax: 0,
+    allowanceTax: 0,
+  };
+}
+
+function getRegionalTax(
+  taxableIncome: number,
+  totalAllowance: number,
+  regionalBrackets: TaxBracket[]
+) {
+  const regionalTax = getProgressiveTax(taxableIncome, regionalBrackets);
+
+  const regionalAllowanceTax = getProgressiveTax(
+    totalAllowance,
+    regionalBrackets
+  );
+
+  return {
+    tax: regionalTax.totalTax - regionalAllowanceTax.totalTax,
+    allowanceTax: regionalAllowanceTax.totalTax,
+  };
+}
+
+const calculateSpainTaxSingle = (
   reportUserData: ReportUserDataDto,
   eurRate: number,
-  scenario: SpainOption = "1st"
+  scenario: SpainOption = "1st",
+  config: TaxConfig
 ) => {
   const reportItems: CreateReportItemDto[] = [];
-  const personalAllowance = 5550;
-  const newReduction = scenario === "3rd" ? 0 : 0.2;
-  const unJustifiedCostReduction = 0.07;
-  const tarrifaPlana = 980;
   const kidAddition: Record<SpainOption, number> = {
     "1st": 0,
     "2nd": 1,
@@ -132,72 +293,55 @@ export const calculateSpainTaxSingle = (
 
   const additionalAllowance = calculateAllowance(
     reportUserData.dependents,
-    kidAddition[scenario]
+    kidAddition[scenario],
+    config
   );
-  let maternityCheck = false;
 
   const allowances = distributeAllowance(
     reportUserData.incomes,
     additionalAllowance
   );
 
-  const maternityCredit = getMaternityCredit(
-    reportUserData,
+  const maternityCredit = config.allowWorkingMomCredit
+    ? getMaternityCredit(reportUserData, kidAddition[scenario], config)
+    : 0;
+
+  const socials = calculateSocials(
+    reportUserData.incomes,
+    config,
     kidAddition[scenario]
   );
 
-  const socials =
-    scenario === "1st"
-      ? [tarrifaPlana, tarrifaPlana]
-      : calculateSocials(reportUserData.incomes);
-
   for (let index = 0; index < reportUserData.incomes.length; index++) {
     const income = reportUserData.incomes[index];
+    const expenses = income.accountantCost + income.expensesCost;
+    const net = income.income - expenses - socials[index];
 
-    const fullExpenses = income.accountantCost + income.expensesCost;
-    const net = income.income - fullExpenses - socials[index];
-
-    const reduction = Math.min(net * newReduction, 20000);
-    const firstReductionNet = net - reduction;
-    const justReduction = Math.min(
-      firstReductionNet * unJustifiedCostReduction,
-      2000
-    );
-    const taxableIncome = firstReductionNet - justReduction;
+    const { newSelfEmployedReduction, assumedCostReduction, taxableIncome } =
+      getReductions(net, kidAddition[scenario], config);
 
     const totalAllowance =
-      personalAllowance +
-      allowances
-        .filter((item) => item.incomeIndex === index)
-        .reduce((prev, next) => prev + next.amount, 0);
+      config.personalAllowance +
+      (config.allowAllowance
+        ? allowances
+            .filter((item) => item.incomeIndex === index)
+            .reduce((prev, next) => prev + next.amount, 0)
+        : 0);
 
     const soleRegions = ["Navarre", "Basque Country"];
-
     const region = regionsSpain[reportUserData.cityId.toString()]?.region;
+    const regionalBrackets = getSpainRegionalBracket(reportUserData.cityId);
 
-    const regionalBracket = getSpainRegionalBracket(reportUserData.cityId);
-
-    const stateTax = soleRegions.includes(region)
-      ? { totalTax: 0 }
-      : getProgressiveTax(taxableIncome, spanishTaxBrackets);
-    const stateAllowanceTax =
-      stateTax.totalTax > 0
-        ? getProgressiveTax(totalAllowance, spanishTaxBrackets)
-        : { totalTax: 0 };
-    const stateTaxFull =
-      stateTax.totalTax > 0
-        ? stateTax.totalTax - stateAllowanceTax.totalTax
-        : 0;
-
-    const regionalTax = getProgressiveTax(taxableIncome, regionalBracket);
-    const regionalAllowanceTax = getProgressiveTax(
+    const { tax: stateTaxFull, allowanceTax: stateAllowanceTax } = getStateTax(
+      taxableIncome,
       totalAllowance,
-      regionalBracket
+      !soleRegions.includes(region)
     );
-    const regionalTaxFull =
-      regionalTax.totalTax - regionalAllowanceTax.totalTax;
 
-    const taxCredit = !maternityCheck ? maternityCredit : 0;
+    const { tax: regionalTaxFull, allowanceTax: regionalAllowanceTax } =
+      getRegionalTax(taxableIncome, totalAllowance, regionalBrackets);
+
+    const taxCredit = maternityCredit;
 
     const netIncome = net - stateTaxFull - regionalTaxFull + taxCredit;
 
@@ -221,7 +365,7 @@ export const calculateSpainTaxSingle = (
         incomeMaker: index,
         label: "Full business expenses",
         type: "expenses",
-        amount: fullExpenses,
+        amount: expenses,
       });
 
       reportItems.push({
@@ -229,7 +373,7 @@ export const calculateSpainTaxSingle = (
         incomeMaker: index,
         label: "New self-employed reduction",
         type: "reduction",
-        amount: reduction,
+        amount: newSelfEmployedReduction,
       });
 
       reportItems.push({
@@ -237,7 +381,7 @@ export const calculateSpainTaxSingle = (
         incomeMaker: index,
         label: "Reduction for expenses difficult to justify",
         type: "reduction",
-        amount: justReduction,
+        amount: assumedCostReduction,
       });
 
       reportItems.push({
@@ -253,7 +397,7 @@ export const calculateSpainTaxSingle = (
         incomeMaker: index,
         label: "Allowance tax credit",
         type: "tax_credit",
-        amount: regionalAllowanceTax.totalTax + stateAllowanceTax.totalTax,
+        amount: regionalAllowanceTax + stateAllowanceTax,
       });
 
       reportItems.push({
@@ -296,8 +440,6 @@ export const calculateSpainTaxSingle = (
           type: "tax_credit",
           amount: taxCredit,
         });
-
-        maternityCheck = true;
       }
 
       reportItems.push({
@@ -372,9 +514,24 @@ export const calculateSpainTax = (
   reportUserData: ReportUserDataDto,
   eurRate: number
 ) => {
-  const first = calculateSpainTaxSingle(reportUserData, eurRate);
-  const second = calculateSpainTaxSingle(reportUserData, eurRate, "2nd");
-  const third = calculateSpainTaxSingle(reportUserData, eurRate, "3rd");
+  const first = calculateSpainTaxSingle(
+    reportUserData,
+    eurRate,
+    "1st",
+    spainConfig
+  );
+  const second = calculateSpainTaxSingle(
+    reportUserData,
+    eurRate,
+    "2nd",
+    spainConfig
+  );
+  const third = calculateSpainTaxSingle(
+    reportUserData,
+    eurRate,
+    "3rd",
+    spainConfig
+  );
 
   return [...first, ...second, ...third];
 };
