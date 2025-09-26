@@ -165,7 +165,7 @@ export const calculateUSTax = (
 
 export function getTaxCalculationFunction(country: string) {
   if (country === "Spain") return calculateSpainTax;
-  if (country === "Portugal") return calculatePortugalTax;
+  if (country === "Portugal") return calculateSpainTax;
   if (country === "Italy") return calculateItalyTax;
   if (country === "Czech Republic") return calculateCzechTax;
   if (country === "Bulgaria") return calculateBulgariaTax;

@@ -606,7 +606,8 @@ function getSingleYearTax(
 
 export function calculateBulgariaTax(
   reportUserData: ReportUserDataDto,
-  eurRate: number
+  eurRate: number,
+  country: string,
 ) {
   const first = getSingleYearTax(reportUserData, eurRate);
   const second = getSingleYearTax(reportUserData, eurRate, "2nd");

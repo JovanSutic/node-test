@@ -1467,3 +1467,15 @@ export const spainCity = {
   size: 203418,
   countriesId: 2,
 };
+
+export const portugalCity = {
+  id: 152,
+  name: "Lisbon",
+  country: "Portugal",
+  search: "Lisbon",
+  lat: 38.71667,
+  lng: -9.13333,
+  seaside: true,
+  size: 567131,
+  countriesId: 3,
+};
