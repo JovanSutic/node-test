@@ -1,148 +1,80 @@
-export interface TaxRules {
-  allowAllowance: boolean;
-  allowSpouseAllowance: boolean;
-  allowKidsAllowance: boolean;
-  allowExtraKidAllowance: boolean;
-  personalAllowance: number;
-  dependentSpouseAllowance: number;
-  dependentKid1: number;
-  dependentKid2: number;
-  dependentKid3: number;
-  dependentKid4: number;
-  extraKidAllowance: number;
-  extraKidAllowanceLimit: number;
-  socialTaxType: string;
-  socialBaseType: string;
-  socialBaseRateIndex: number;
-  socialRate: number;
-  workingMomCredit: number;
-  socialDiscountedAmount: number;
-  socialDiscountLength: number;
-  allowSocialDiscount: boolean;
-  allowNewCompanyReduction: boolean;
-  newCompanyReductionType: string;
-  newCompanyReductionLength: number;
-  newCompanyReduction: number;
-  newCompanyMaxReduction: number;
-  allowTaxCredit: boolean;
-  allowAssumedCostReduction: boolean;
-  assumedCostReductionType: string;
-  assumedCostReductionName: string;
-  assumedCostReduction: number;
-  assumedCostMaxReduction: number;
-  allowanceUseType: string;
-  incomeTaxType: string;
-  taxableIncomeSequence: string;
-  incomeTaxLevels: string;
-  allowOtherReductions: boolean;
-  personalReduction: number;
-  allowAgeReduction: boolean;
-  ageLimit: number;
-  socialMaxCap: number;
-  householdCredit: number;
-  dependentCredit: number;
-  healthAndEduCredit: number;
-
-  creditIncomeLimit: number;
-  creditIncomeLimitJoint: number;
-  creditCapForAboveLimit: number;
-  creditCapMultiplier: number;
-  creditCapDecrease: number;
-  creditCapMultiplierJoint: number;
-  creditCapDecreaseJoint: number;
-  creditCapType: string;
-  ageReductionCap: number;
-  incomeTaxRegionalExclusivity: boolean;
-}
-
-export interface TaxConditions {
-  name: string;
-  subject: string;
-  operation: string;
-  condition: number;
-  conditionType: string;
-  object: string;
-}
-
-interface TaxRegime {
-  name: string;
-  conditions: {
-    type: string;
-    list: TaxConditions[];
-  };
-  rules: TaxRules;
-}
-
-interface TaxConfigExtra {
-  jointFilingBenefits: boolean;
-}
-export interface TaxConfig {
-  country: string;
-  regimes: TaxRegime[];
-  extras: TaxConfigExtra;
-}
+import type { TaxConfig, TaxRules } from "../../types/taxes.types";
 
 const spainRules: TaxRules = {
-  incomeTaxType: "progressive",
-  incomeTaxLevels: "regional,state",
-  incomeTaxRegionalExclusivity: true,
-  taxableIncomeSequence:
-    "expensesReduction,socialsReduction,allowNewCompanyReduction,allowAssumedCostReduction",
+  tax: {
+    type: "progressive",
+    level: "regional,state",
+    regionalExclusivity: true,
+    taxableIncomeSequence:
+      "expensesReduction,socialsReduction,allowNewCompanyReduction,allowAssumedCostReduction",
+  },
 
-  allowNewCompanyReduction: true,
-  newCompanyReductionType: "percentage",
-  newCompanyReduction: 0.2,
-  newCompanyMaxReduction: 20000,
-  newCompanyReductionLength: 2,
+  reduction: {
+    newCompany: {
+      allow: true,
+      type: "percentage",
+      reduction: 0.2,
+      maxReduction: 20000,
+      yearLength: 2,
+    },
+    assumedCost: {
+      allow: true,
+      type: "percentage",
+      reduction: 0.07,
+      maxReduction: 2000,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: true,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
 
-  allowAssumedCostReduction: true,
-  assumedCostReductionType: "percentage",
-  assumedCostReductionName: "unjustified cost",
-  assumedCostReduction: 0.07,
-  assumedCostMaxReduction: 2000,
+  credit: {
+    allow: true,
+    type: "simple",
+    items: {
+      workingMom: 1200,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
 
-  allowOtherReductions: true,
-  personalReduction: 0,
-  allowAgeReduction: false,
-  ageLimit: 0,
-  ageReductionCap: 0,
+  social: {
+    type: "progressive",
+    baseType: "incomeMinusAllExpenses",
+    allowDiscount: true,
+    rateIndex: 0.93,
+    rate: 1,
+    discountedAmount: 980,
+    discountLength: 1,
+    maxCap: 1000000,
+  },
 
-  allowTaxCredit: true,
-  creditCapType: "simple",
-  workingMomCredit: 1200,
-  householdCredit: 0,
-  dependentCredit: 0,
-  healthAndEduCredit: 0,
-  creditIncomeLimit: 0,
-  creditIncomeLimitJoint: 0,
-  creditCapForAboveLimit: 0,
-  creditCapMultiplier: 0,
-  creditCapDecrease: 0,
-  creditCapMultiplierJoint: 0,
-  creditCapDecreaseJoint: 0,
-
-  allowSocialDiscount: true,
-  socialTaxType: "progressive",
-  socialBaseType: "incomeMinusAllExpenses",
-  socialBaseRateIndex: 0.93,
-  socialRate: 1,
-  socialDiscountedAmount: 980,
-  socialDiscountLength: 1,
-  socialMaxCap: 1000000,
-
-  allowAllowance: true,
-  allowSpouseAllowance: true,
-  allowKidsAllowance: true,
-  allowExtraKidAllowance: true,
-  personalAllowance: 5550,
-  dependentSpouseAllowance: 3400,
-  dependentKid1: 2400,
-  dependentKid2: 2700,
-  dependentKid3: 4000,
-  dependentKid4: 4500,
-  extraKidAllowance: 2800,
-  extraKidAllowanceLimit: 3,
-  allowanceUseType: "taxed and reduced",
+  allowance: {
+    allow: true,
+    allowSpouse: true,
+    allowKids: true,
+    allowExtraKid: true,
+    personal: 5550,
+    dependentSpouse: 3400,
+    dependentKids: [2400, 2700, 4000, 4500],
+    extraKid: 2800,
+    extraKidLimit: 3,
+    useType: "taxed and reduced",
+  },
 };
 
 export const spainConfig: TaxConfig = {
@@ -172,66 +104,80 @@ export const spainConfig: TaxConfig = {
 };
 
 export const portugalRules: TaxRules = {
-  incomeTaxType: "progressive",
-  incomeTaxLevels: "state",
-  incomeTaxRegionalExclusivity: false,
-  taxableIncomeSequence:
-    "allowAssumedCostReduction,socialsReduction,allowPersonalReduction,allowAgeReduction",
+  tax: {
+    type: "progressive",
+    level: "state",
+    regionalExclusivity: false,
+    taxableIncomeSequence:
+      "allowAssumedCostReduction,socialsReduction,allowPersonalReduction,allowAgeReduction",
+  },
 
-  allowNewCompanyReduction: false,
-  newCompanyReductionType: "none",
-  newCompanyReduction: 0,
-  newCompanyMaxReduction: 0,
-  newCompanyReductionLength: 0,
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: true,
+      type: "percentage",
+      reduction: 0.25,
+      maxReduction: 200000000,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: true,
+      personal: 4462,
+      age: 35,
+      ageCap: 28737.5,
+    },
+  },
 
-  allowAssumedCostReduction: true,
-  assumedCostReductionType: "percentage",
-  assumedCostReductionName: "simplified regime",
-  assumedCostReduction: 0.25,
-  assumedCostMaxReduction: 200000000,
+  credit: {
+    allow: true,
+    type: "calculated",
+    items: {
+      workingMom: 0,
+      household: 250,
+      dependent: 600,
+      healthAndEdu: 300,
+    },
+    caps: {
+      incomeLimit: 80000,
+      incomeLimitJoint: 120000,
+      aboveLimit: 1000,
+      multiplier: 1500,
+      decrease: 8059,
+      multiplierJoint: 4000,
+      decreaseJoint: 25656,
+    },
+  },
 
-  allowOtherReductions: true,
-  personalReduction: 4462,
-  allowAgeReduction: true,
-  ageLimit: 35,
-  ageReductionCap: 28737.5,
+  social: {
+    type: "flat",
+    baseType: "income",
+    allowDiscount: true,
+    rateIndex: 0.7,
+    rate: 0.214,
+    discountedAmount: 0,
+    discountLength: 1,
+    maxCap: 16100,
+  },
 
-  allowTaxCredit: true,
-  creditCapType: "calculated",
-  workingMomCredit: 0,
-  householdCredit: 250,
-  dependentCredit: 600,
-  healthAndEduCredit: 300,
-  creditIncomeLimit: 80000,
-  creditIncomeLimitJoint: 120000,
-  creditCapForAboveLimit: 1000,
-  creditCapMultiplier: 1500,
-  creditCapDecrease: 8059,
-  creditCapMultiplierJoint: 4000,
-  creditCapDecreaseJoint: 25656,
-
-  allowSocialDiscount: true,
-  socialTaxType: "flat",
-  socialBaseType: "income",
-  socialBaseRateIndex: 0.7,
-  socialRate: 0.214,
-  socialDiscountedAmount: 0,
-  socialDiscountLength: 1,
-  socialMaxCap: 16100,
-
-  allowAllowance: false,
-  allowSpouseAllowance: false,
-  allowKidsAllowance: false,
-  allowExtraKidAllowance: false,
-  personalAllowance: 0,
-  dependentSpouseAllowance: 0,
-  dependentKid1: 0,
-  dependentKid2: 0,
-  dependentKid3: 0,
-  dependentKid4: 0,
-  extraKidAllowance: 0,
-  extraKidAllowanceLimit: 0,
-  allowanceUseType: "no allowance",
+  allowance: {
+    allow: true,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [0],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
 };
 
 export const portugalConfig: TaxConfig = {
@@ -287,8 +233,11 @@ export const portugalConfig: TaxConfig = {
       },
       rules: {
         ...portugalRules,
-        taxableIncomeSequence:
-          "expensesReduction,socialsReduction,allowPersonalReduction,allowAgeReduction",
+        tax: {
+          ...portugalRules.tax,
+          taxableIncomeSequence:
+            "expensesReduction,socialsReduction,allowPersonalReduction,allowAgeReduction",
+        },
       },
     },
   ],
@@ -297,3 +246,317 @@ export const portugalConfig: TaxConfig = {
   },
 };
 
+export const italyFlatRules: TaxRules = {
+  tax: {
+    type: "flat",
+    level: "state",
+    rate: 0.15,
+    other: {
+      newRate: 0.05,
+    },
+    regionalExclusivity: false,
+    taxableIncomeSequence: "allowAssumedCostReduction",
+  },
+
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: true,
+      type: "percentage",
+      reduction: 0,
+      maxReduction: 200000000,
+      workTypeReductions: {
+        software: 0.33,
+        other: 0.22,
+        ecommerce: 0.6,
+        dropship: 0.38,
+      },
+    },
+    other: {
+      allow: true,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
+
+  credit: {
+    allow: false,
+    type: "",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+
+  social: {
+    type: "flat",
+    baseType: "taxIncome",
+    allowDiscount: false,
+    rateIndex: 1,
+    rate: 0.26,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 100000000000,
+  },
+
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [0],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+};
+export const italyImpatriRules: TaxRules = {
+  tax: {
+    type: "progressive",
+    level: "state,regional",
+    other: {
+      municipal: 0.005,
+    },
+    regionalExclusivity: false,
+    taxableIncomeSequence: "expensesReduction,specialImpatriReduction",
+  },
+
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: true,
+      type: "percentage",
+      reduction: 0.5,
+      maxReduction: 200000000,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: true,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+      kids: 0.6,
+    },
+  },
+
+  credit: {
+    allow: false,
+    type: "none",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+      spouse: "800 - 110 * (income / 15000)",
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+
+  social: {
+    type: "flat",
+    baseType: "taxIncome",
+    allowDiscount: false,
+    rateIndex: 12,
+    rate: 0.26,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 100000000000,
+  },
+
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [0],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+};
+
+export const italyOrdinaryRules: TaxRules = {
+  tax: {
+    type: "progressive",
+    level: "state,regional",
+    other: {
+      municipal: 0.005,
+    },
+    regionalExclusivity: false,
+    taxableIncomeSequence: "expensesReduction,socialsReduction",
+  },
+
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: true,
+      type: "percentage",
+      reduction: 0,
+      maxReduction: 200000000,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: true,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
+
+  credit: {
+    allow: false,
+    type: "none",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+      spouse: "800 - 110 * (income / 15000)",
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+
+  social: {
+    type: "flat",
+    baseType: "incomeMinusAllExpenses",
+    allowDiscount: false,
+    rateIndex: 12,
+    rate: 0.26,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 100000000000,
+  },
+
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [0],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+};
+
+export const italyConfig: TaxConfig = {
+  country: "Italy",
+  regimes: [
+    {
+      name: "Flat Regime",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "flat_1",
+            subject: "income",
+            operation: "LESS THAN",
+            condition: 85001,
+            conditionType: "number",
+            object: "",
+          },
+          {
+            name: "flat_2",
+            subject: "expenses",
+            operation: "LESS THAN",
+            condition: 0.22,
+            conditionType: "percentage",
+            object: "income",
+          },
+        ],
+      },
+      rules: italyFlatRules,
+    },
+    {
+      name: "Impatriate Regime",
+      conditions: {
+        type: "OR",
+        list: [
+          {
+            name: "impatriate_1",
+            subject: "isSpecialist",
+            operation: "EQUALS",
+            condition: 1,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: {
+        ...italyImpatriRules,
+      },
+    },
+    {
+      name: "Ordinary Regime",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "flat_1",
+            subject: "income",
+            operation: "MORE THAN",
+            condition: 85000,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: italyOrdinaryRules,
+    },
+  ],
+  extras: {
+    jointFilingBenefits: false,
+  },
+};

@@ -1479,3 +1479,15 @@ export const portugalCity = {
   size: 567131,
   countriesId: 3,
 };
+
+export const italyCity = {
+  id: 249,
+  name: "Rome",
+  country: "Italy",
+  search: "Rome",
+  lat: 41.89193,
+  lng: 12.51133,
+  seaside: false,
+  size: 2873000,
+  countriesId: 1,
+};

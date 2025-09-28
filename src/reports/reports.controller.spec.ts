@@ -21,6 +21,7 @@ import {
   spainPrices,
   spainCity,
   portugalCity,
+  italyCity,
 } from "./reportsData";
 
 describe("ReportsController", () => {
@@ -118,7 +119,8 @@ describe("ReportsController", () => {
 
     const response = await request(app.getHttpServer())
       .post("/reports/public")
-      .send(publicPostDto);
+      .send(publicPostDto)
+      .expect(201);
 
     expect(response.body.net).toBe(93438.2);
   });
@@ -146,7 +148,8 @@ describe("ReportsController", () => {
 
     const response = await request(app.getHttpServer())
       .post("/reports/public")
-      .send(publicPostDto);
+      .send(publicPostDto)
+      .expect(201);
 
     expect(response.body.net).toBe(46719.1);
   });
@@ -183,7 +186,8 @@ describe("ReportsController", () => {
 
     const response = await request(app.getHttpServer())
       .post("/reports/public")
-      .send(publicPostDto);
+      .send(publicPostDto)
+      .expect(201);
 
     expect(response.body.net).toBe(142057.26);
   });
@@ -212,8 +216,99 @@ describe("ReportsController", () => {
 
     const response = await request(app.getHttpServer())
       .post("/reports/public")
-      .send(publicPostDto);
+      .send(publicPostDto)
+      .expect(201);
 
     expect(response.body.net).toBe(87921.54000000001);
+  });
+
+  it("get public report for single FLAT Italy via POST /reports/public", async () => {
+    const publicPostDto = {
+      cityId: 249,
+      isWorkingMom: false,
+      dependents: [],
+      incomes: [
+        {
+          isUSCitizen: false,
+          currency: "eur",
+          income: 80000,
+          accountantCost: 1800,
+          expensesCost: 0,
+          workType: "software",
+          isNew: true,
+        },
+      ],
+    };
+
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue(italyCity);
+    jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
+
+    const response = await request(app.getHttpServer())
+      .post("/reports/public")
+      .send(publicPostDto)
+      .expect(201);
+
+    expect(response.body.net).toBe(61584);
+  });
+
+  it("get public report for single IMPATIATE Italy via POST /reports/public", async () => {
+    const publicPostDto = {
+      cityId: 249,
+      isWorkingMom: false,
+      dependents: [],
+      incomes: [
+        {
+          isUSCitizen: false,
+          currency: "eur",
+          income: 90000,
+          accountantCost: 1800,
+          expensesCost: 0,
+          isSpecialist: true,
+        },
+      ],
+    };
+
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue(italyCity);
+    jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
+
+    const response = await request(app.getHttpServer())
+      .post("/reports/public")
+      .send(publicPostDto)
+      .expect(201);
+
+    expect(response.body.net).toBe(63595.19);
+  });
+
+  it("get public report for single ORDINARY Italy via POST /reports/public", async () => {
+    const publicPostDto = {
+      cityId: 249,
+      isWorkingMom: false,
+      dependents: [],
+      incomes: [
+        {
+          isUSCitizen: false,
+          currency: "eur",
+          income: 90000,
+          accountantCost: 1800,
+          expensesCost: 0,
+        },
+      ],
+    };
+
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue(italyCity);
+    jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
+
+    const response = await request(app.getHttpServer())
+      .post("/reports/public")
+      .send(publicPostDto)
+      .expect(201);
+
+    expect(response.body.net).toBe(42921.149999999994);
   });
 });
