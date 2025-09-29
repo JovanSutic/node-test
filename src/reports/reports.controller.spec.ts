@@ -22,6 +22,7 @@ import {
   spainCity,
   portugalCity,
   italyCity,
+  czechCity,
 } from "./reportsData";
 
 describe("ReportsController", () => {
@@ -310,5 +311,70 @@ describe("ReportsController", () => {
       .expect(201);
 
     expect(response.body.net).toBe(42921.149999999994);
+  });
+
+  it("get public report for single FLAT Czech via POST /reports/public", async () => {
+    const publicPostDto = {
+      cityId: 61,
+      isWorkingMom: false,
+      dependents: [
+        { type: "kid", isDependent: true, age: 5 },
+        { type: "spouse", isDependent: true },
+      ],
+      incomes: [
+        {
+          isUSCitizen: false,
+          currency: "eur",
+          income: 80000,
+          accountantCost: 1440,
+          expensesCost: 0,
+        },
+      ],
+    };
+
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue(czechCity);
+    jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
+
+    const response = await request(app.getHttpServer())
+      .post("/reports/public")
+      .send(publicPostDto)
+      .expect(201);
+
+    expect(response.body.net).toBe(65360);
+  });
+
+  it("get public report for single REGULAR Czech via POST /reports/public", async () => {
+    const publicPostDto = {
+      cityId: 61,
+      isWorkingMom: false,
+      dependents: [
+        { type: "kid", isDependent: true, age: 2 },
+        { type: "kid", isDependent: true, age: 1 },
+        { type: "spouse", isDependent: true },
+      ],
+      incomes: [
+        {
+          isUSCitizen: false,
+          currency: "eur",
+          income: 100000,
+          accountantCost: 1440,
+          expensesCost: 0,
+        },
+      ],
+    };
+
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue(czechCity);
+    jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
+
+    const response = await request(app.getHttpServer())
+      .post("/reports/public")
+      .send(publicPostDto)
+      .expect(201);
+
+    expect(response.body.net).toBe(87241);
   });
 });

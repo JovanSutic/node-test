@@ -1,7 +1,16 @@
 import type { TaxBracket } from "../../types/flow.types";
-import type { TaxType } from "../../types/taxes.types";
+import type { FixedProgressive, TaxRulesTax } from "../../types/taxes.types";
 import { getProgressiveTax } from "../saveFlow";
-import { getPortugalBrackets, regionalTaxBrackets, regionalTaxBracketsItaly, regionsItaly, regionsSpain, spanishTaxBrackets, stateTaxBracketsItaly } from "../taxData";
+import {
+  getPortugalBrackets,
+  regionalTaxBrackets,
+  regionalTaxBracketsItaly,
+  regionsItaly,
+  regionsSpain,
+  spanishTaxBrackets,
+  stateTaxBracketsCzech,
+  stateTaxBracketsItaly,
+} from "../taxData";
 
 export function getSoleRegionMatch(country: string, cityId: number) {
   if (country === "Spain") {
@@ -17,6 +26,7 @@ export function getStateBrackets(country: string, cityId: number) {
   if (country === "Spain") return spanishTaxBrackets;
   if (country === "Portugal") return getPortugalBrackets(cityId);
   if (country === "Italy") return stateTaxBracketsItaly;
+  if (country === "Czech Republic") return stateTaxBracketsCzech;
 
   return [];
 }
@@ -45,11 +55,12 @@ export function getStateTax(taxData: {
   totalAllowance: number;
   isStateTax: boolean;
   brackets: TaxBracket[];
-  type?: TaxType;
-  rate?: number;
+  taxRules: TaxRulesTax;
 }) {
-  const { isStateTax, type, taxableIncome, brackets, totalAllowance, rate } =
+  const { isStateTax, taxRules, taxableIncome, brackets, totalAllowance } =
     taxData;
+
+  const { type, rate } = taxRules;
 
   if (isStateTax) {
     if (type === "progressive") {
@@ -60,6 +71,25 @@ export function getStateTax(taxData: {
         tax: stateTax.totalTax - stateAllowanceTax.totalTax,
         allowanceTax: stateAllowanceTax.totalTax,
       };
+    }
+    if (type === "fixedProgressive") {
+      if (taxRules.other && taxRules.other.fixed && taxRules.other.rate) {
+        let multiplier = 1;
+        if (taxRules.other.rate === "monthly") {
+          multiplier = 12;
+        }
+        const bracket = taxRules.other.fixed.find(
+          (item: FixedProgressive) => taxableIncome <= item.maxIncome
+        );
+        return {
+          tax: bracket.taxAmount * multiplier,
+          allowanceTax: 0,
+        };
+      } else {
+        throw new Error(
+          "Tax type fixedProgressive doesn't have needed information for calculation in the tax rules."
+        );
+      }
     }
     return {
       tax: (rate || 0) * taxableIncome,

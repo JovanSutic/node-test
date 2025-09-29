@@ -2,17 +2,18 @@ import type {
   CreateReportItemDto,
   ReportUserDataDto,
 } from "../../reports/reports.dto";
-import type {
-  SpainOption,
-} from "../../types/flow.types";
-import type {
-  TaxConfig,
-} from "../../types/taxes.types";
+import type { SpainOption } from "../../types/flow.types";
+import type { TaxConfig } from "../../types/taxes.types";
 import { calculateFederalIncomeTax } from "../saveFlow";
 import { calculateAllowance, distributeAllowance } from "./allowance";
 import { getConfig, getConfigRegime } from "./config";
 import { getTaxCredits } from "./credit";
-import { calculateSocials, getJoinTaxableIncome, getReductions } from "./socialsAndReduction";
+import {
+  calculateHealth,
+  calculateSocials,
+  getJoinTaxableIncome,
+  getReductions,
+} from "./socialsAndReduction";
 import {
   getRegionalBrackets,
   getRegionalTax,
@@ -20,7 +21,6 @@ import {
   getStateBrackets,
   getStateTax,
 } from "./tax";
-
 
 const calculateTaxSingle = (
   reportUserData: ReportUserDataDto,
@@ -63,7 +63,7 @@ const calculateTaxSingle = (
       [income],
       regime.rules,
       kidAddition[scenario],
-      reportUserData.dependents,
+      reportUserData.dependents
     );
 
     const expenses = income.accountantCost + income.expensesCost;
@@ -109,8 +109,7 @@ const calculateTaxSingle = (
       totalAllowance,
       isStateTax: !isExclusiveRegion,
       brackets: stateBrackets,
-      rate: regime.rules.tax.rate,
-      type: regime.rules.tax.type,
+      taxRules: regime.rules.tax,
     });
 
     const { tax: regionalTaxFull, allowanceTax: regionalAllowanceTax } =
@@ -129,8 +128,11 @@ const calculateTaxSingle = (
         isForJoint
       ) / reportUserData.incomes.length;
 
+    const healthContributions = calculateHealth([income], regime.rules);
+    const totalHealth = healthContributions.length ? healthContributions[0] : 0;
+
     const totalTax = municipalTax + stateTaxFull + regionalTaxFull - taxCredit;
-    const net = income.income - expenses - socials[0];
+    const net = income.income - expenses - socials[0] - totalHealth;
     const netIncome = net - totalTax;
 
     const federalTax = calculateFederalIncomeTax({

@@ -1,11 +1,12 @@
 import type { PersonalIncomesDto } from "../../reports/reports.dto";
 import type { TaxConditions, TaxConfig, TaxRegime } from "../../types/taxes.types";
-import { italyConfig, portugalConfig, spainConfig } from "./taxRules";
+import { czechConfig, italyConfig, portugalConfig, spainConfig } from "./taxRules";
 
 export function getConfig(country: string) {
   if (country === "Spain") return spainConfig;
   if (country === "Portugal") return portugalConfig;
   if (country === "Italy") return italyConfig;
+  if (country === "Czech Republic") return czechConfig;
 
   return null;
 }

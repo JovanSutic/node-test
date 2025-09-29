@@ -503,7 +503,7 @@ export const italyConfig: TaxConfig = {
             name: "flat_1",
             subject: "income",
             operation: "LESS THAN",
-            condition: 85001,
+            condition: 85000.01,
             conditionType: "number",
             object: "",
           },
@@ -554,6 +554,227 @@ export const italyConfig: TaxConfig = {
         ],
       },
       rules: italyOrdinaryRules,
+    },
+  ],
+  extras: {
+    jointFilingBenefits: false,
+  },
+};
+
+export const czechFlatRules: TaxRules = {
+  tax: {
+    type: "fixedProgressive",
+    level: "state",
+    other: {
+      fixed: [
+        { maxIncome: 40500, taxAmount: 350 },
+        { maxIncome: 61000, taxAmount: 680 },
+        { maxIncome: Number.MAX_SAFE_INTEGER, taxAmount: 1100 },
+      ],
+      rate: "monthly",
+    },
+    regionalExclusivity: false,
+    taxableIncomeSequence: "",
+  },
+
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: false,
+      type: "percentage",
+      reduction: 0,
+      maxReduction: 200000000,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: false,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
+
+  credit: {
+    allow: false,
+    type: "none",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+
+  social: {
+    type: "none",
+    baseType: "",
+    allowDiscount: false,
+    rateIndex: 0,
+    rate: 0,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 100000000000,
+  },
+
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [0],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+};
+
+export const czechRegularRules: TaxRules = {
+  tax: {
+    type: "progressive",
+    level: "state",
+    regionalExclusivity: false,
+    taxableIncomeSequence: "allowAssumedCostReduction",
+  },
+
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: true,
+      type: "percentage",
+      reduction: 0.6,
+      maxReduction: 200000000,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: true,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
+
+  credit: {
+    allow: true,
+    type: "income",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+      personal: 1260,
+      kids: {
+        limit: 3,
+        amounts: [620, 910, 1135, 1135, 1135],
+        dependentSpouse: 1015,
+      }
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+
+  social: {
+    type: "flat",
+    baseType: "taxIncomeAndRate",
+    allowDiscount: false,
+    rateIndex: 0.55,
+    rate: 0.292,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 0,
+    maxCapBase: 91385,
+    minCap: 2335,
+  },
+
+  health: {
+    type: "flat",
+    baseType: "taxIncomeAndRate",
+    rateIndex: 0.5,
+    rate: 0.135,
+    maxCap: 0,
+    maxCapBase: 1000000,
+    minCap: 1540,
+  },
+
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [0],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+};
+
+export const czechConfig: TaxConfig = {
+  country: "Czech Republic",
+  regimes: [
+    {
+      name: "Flat Regime",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "flat_1",
+            subject: "income",
+            operation: "LESS THAN",
+            condition: 81000.01,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: czechFlatRules,
+    },
+    {
+      name: "Regular Regime",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "regular_1",
+            subject: "income",
+            operation: "MORE THAN",
+            condition: 81000.009,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: czechRegularRules,
     },
   ],
   extras: {

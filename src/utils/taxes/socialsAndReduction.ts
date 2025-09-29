@@ -95,7 +95,7 @@ export function getReductions(
         (kids || 0) > 0
           ? rules.reduction.other.kids!
           : rules.reduction.assumedCost.reduction;
-          
+
       const reduction = statefulBase * index;
       statefulBase = statefulBase - reduction;
     }
@@ -139,6 +139,26 @@ function calculateSocialBase(
     return taxableIncome;
   }
 
+  if (rules.social.baseType === "taxIncomeAndRate") {
+    const { taxableIncome } = getReductions(
+      {
+        gross: income.income,
+        expenses: income.accountantCost + income.expensesCost,
+        socials: 0,
+        kids,
+      },
+      { age: income.age || 50 },
+      year,
+      rules
+    );
+
+    const base = taxableIncome * rules.social.rateIndex;
+
+    return rules.social.maxCapBase
+      ? Math.min(base, rules.social.maxCapBase)
+      : base;
+  }
+
   return 0;
 }
 
@@ -170,13 +190,60 @@ export const calculateSocials = (
         result.push((bracket?.fee || 1) * 12);
       } else {
         const social = base * regime.social.rate;
-        result.push(Math.min(regime.social.maxCap, social));
+        if (regime.social.minCap && regime.social.maxCap === 0) {
+          result.push(Math.max(regime.social.minCap, social));
+        } else {
+          result.push(Math.min(regime.social.maxCap, social));
+        }
       }
     }
   }
 
   return result;
 };
+
+function calculateHealthBase(income: PersonalIncomesDto, rules: TaxRules) {
+  if (rules.social.baseType === "taxIncomeAndRate" && rules.health) {
+    const { taxableIncome } = getReductions(
+      {
+        gross: income.income,
+        expenses: income.accountantCost + income.expensesCost,
+        socials: 0,
+        kids: 0,
+      },
+      { age: income.age || 50 },
+      0,
+      rules
+    );
+
+    const base = taxableIncome * rules.health.rateIndex;
+
+    return rules.health.maxCapBase
+      ? Math.min(base, rules.health.maxCapBase)
+      : base;
+  }
+
+  return 0;
+}
+
+export function calculateHealth(
+  incomes: PersonalIncomesDto[],
+  regime: TaxRules
+) {
+  const result = [];
+  for (let index = 0; index < incomes.length; index++) {
+    if (regime.health) {
+      const base = calculateHealthBase(incomes[index], regime);
+      const health = base * regime.health.rate;
+      if (regime.health.minCap && regime.health.maxCap === 0) {
+        result.push(Math.max(regime.health.minCap, health));
+      } else {
+        result.push(Math.min(regime.health.maxCap, health));
+      }
+    }
+  }
+  return result;
+}
 
 export function getJoinTaxableIncome(
   reportUserData: ReportUserDataDto,

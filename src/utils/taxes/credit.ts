@@ -1,4 +1,7 @@
-import type { ReportUserDataDto } from "../../reports/reports.dto";
+import type {
+  DependentsDto,
+  ReportUserDataDto,
+} from "../../reports/reports.dto";
 import type { TaxRules } from "../../types/taxes.types";
 
 function evaluateMathString(
@@ -90,6 +93,29 @@ function getCustomCredit(rules: TaxRules, reportUserData: ReportUserDataDto) {
   return 0;
 }
 
+function getKidsCredit(rules: TaxRules, dependents: DependentsDto[]) {
+  if (rules.credit.items.kids) {
+    const { limit, amounts, dependentSpouse } = rules.credit.items.kids;
+    let credit = 0;
+    let kids = 0;
+
+    dependents.forEach((item) => {
+      if (item.type === "kid" && (item.age || 4) < (limit || 0)) {
+        credit = credit + amounts[kids];
+        kids++;
+      }
+    });
+
+    if(dependentSpouse && dependents.find((item) => item.type === 'spouse' && item.isDependent) && kids > 0) {
+      credit = credit + dependentSpouse;
+    }
+
+    return credit;
+  }
+
+  return 0;
+}
+
 export function getTaxCredits(
   rules: TaxRules,
   reportUserData: ReportUserDataDto,
@@ -101,11 +127,14 @@ export function getTaxCredits(
   const dependentCredit =
     rules.credit.items.dependent * reportUserData.dependents.length;
   const customCredit = getCustomCredit(rules, reportUserData);
+  const kidsCredit = getKidsCredit(rules, reportUserData.dependents);
 
   const credit =
+    kidsCredit +
     customCredit +
     maternityCredit +
     dependentCredit +
+    (rules.credit.items.personal || 0) +
     rules.credit.items.household +
     rules.credit.items.healthAndEdu;
   const creditCap =

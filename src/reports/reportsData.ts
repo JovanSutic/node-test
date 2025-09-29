@@ -1491,3 +1491,15 @@ export const italyCity = {
   size: 2873000,
   countriesId: 1,
 };
+
+export const czechCity = {
+  id: 61,
+  name: "Prague",
+  country: "Czech Republic",
+  search: "Prague",
+  lat: 50.08804,
+  lng: 14.42076,
+  seaside: false,
+  size: 1300000,
+  countriesId: 8,
+};

@@ -1,10 +1,15 @@
-export type TaxType =  "progressive" | "flat";
+export type TaxType =  "progressive" | "flat" | "fixedProgressive";
+
+export interface FixedProgressive {
+    maxIncome: number; 
+    taxAmount: number;
+}
 
 export interface TaxRulesTax {
   type: TaxType;
   level: string;
   rate?: number;
-  other?: Record<string, number>,
+  other?: Record<string, any>,
   regionalExclusivity: boolean;
   taxableIncomeSequence: string;
 }
@@ -47,6 +52,8 @@ export interface TaxRulesCredit {
     dependent: number;
     healthAndEdu: number;
     spouse?: string;
+    personal?: number;
+    kids?: Record<string, any>;
   };
   caps: {
     incomeLimit: number;
@@ -68,6 +75,18 @@ export interface TaxRulesSocial {
   discountedAmount: number;
   discountLength: number;
   maxCap: number;
+  maxCapBase?: number;
+  minCap?: number;
+}
+
+export interface TaxRulesHealth {
+  type: string;
+  baseType: string;
+  rateIndex: number;
+  rate: number;
+  maxCap: number;
+  maxCapBase?: number;
+  minCap?: number;
 }
 
 export interface TaxRulesAllowance {
@@ -93,6 +112,7 @@ export interface TaxRules {
   credit: TaxRulesCredit;
   social: TaxRulesSocial;
   allowance: TaxRulesAllowance;
+  health?: TaxRulesHealth;
 }
 
 export interface TaxConditions {

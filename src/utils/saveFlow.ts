@@ -23,8 +23,6 @@ import {
 } from "./budgetData";
 import { roundToTwoDecimals } from "./numbers";
 import { calculateSpainTax } from "./taxes/spain";
-// import { calculatePortugalTax } from "./taxes/portugal";
-import { calculateItalyTax } from "./taxes/italy";
 import { calculateCzechTax } from "./taxes/czech";
 import { calculateBulgariaTax } from "./taxes/bulgaria";
 import { calculateSerbiaTax } from "./taxes/serbia";
@@ -167,7 +165,7 @@ export function getTaxCalculationFunction(country: string) {
   if (country === "Spain") return calculateSpainTax;
   if (country === "Portugal") return calculateSpainTax;
   if (country === "Italy") return calculateSpainTax;
-  if (country === "Czech Republic") return calculateCzechTax;
+  if (country === "Czech Republic") return calculateSpainTax;
   if (country === "Bulgaria") return calculateBulgariaTax;
   if (country === "Serbia") return calculateSerbiaTax;
 
