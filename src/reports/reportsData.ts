@@ -1503,3 +1503,15 @@ export const czechCity = {
   size: 1300000,
   countriesId: 8,
 };
+
+export const serbiaCity = {
+  id: 1,
+  name: "Belgrade",
+  country: "Serbia",
+  search: "Belgrade",
+  lat: 44.787197,
+  lng: 20.457273,
+  seaside: false,
+  size: 1700000,
+  countriesId: 6,
+};

@@ -2,33 +2,162 @@ import type {
   CreateReportItemDto,
   ReportUserDataDto,
 } from "../../reports/reports.dto";
-import type { SpainOption } from "../../types/flow.types";
+import type { PrepReportItem, SpainOption } from "../../types/flow.types";
 import type { TaxConfig } from "../../types/taxes.types";
-import { calculateFederalIncomeTax } from "../saveFlow";
-import { calculateAllowance, distributeAllowance } from "./allowance";
+import type {
+  AllowanceUnitContract,
+  FinalValuesUnitContract,
+  HealthUnitContract,
+  InitUnitContract,
+  MunicipalTaxUnitContract,
+  RegionalTaxUnitContract,
+  ReportStoreValues,
+  SocialUnitContract,
+  StateTaxUnitContract,
+  TaxableIncomeUnitContract,
+  TaxCreditsUnitContract,
+  USUnitContract,
+} from "../../types/taxProcessing.types";
+import { packageReportItems } from "../saveFlow";
 import { getConfig, getConfigRegime } from "./config";
-import { getTaxCredits } from "./credit";
 import {
-  calculateHealth,
-  calculateSocials,
-  getJoinTaxableIncome,
-  getReductions,
-} from "./socialsAndReduction";
-import {
-  getRegionalBrackets,
-  getRegionalTax,
-  getSoleRegionMatch,
-  getStateBrackets,
-  getStateTax,
-} from "./tax";
+  setFinalValues,
+  setInitialData,
+  setMunicipalTax,
+  setRegionalTax,
+  setSocials,
+  setStateTax,
+  setTaxableIncome,
+  setTaxCredits,
+  setTotalAllowance,
+  setTotalHealth,
+  setUsData,
+  TaxService,
+} from "./taxProcessing";
 
-const calculateTaxSingle = (
+function prepReportItems(
+  reportValues: ReportStoreValues,
+  scenario: SpainOption,
+  index: number
+) {
+  const prepItems: PrepReportItem[] =
+    scenario === "1st"
+      ? [
+          {
+            label: "Gross income normalized",
+            type: "gross",
+            amount: reportValues.grossIncome,
+          },
+          {
+            label: "Allowance tax credit",
+            type: "tax_credit",
+            amount:
+              reportValues.stateTaxAllowance +
+              reportValues.regionalTaxAllowance,
+          },
+          {
+            label: "Full business expenses",
+            type: "expenses",
+            amount: reportValues.totalExpenses,
+          },
+          {
+            label: "Total social contributions",
+            type: "social_contributions",
+            amount: reportValues.socials,
+          },
+          {
+            label: "Health Insurance",
+            type: "health_insurance",
+            amount: reportValues.totalHealth,
+          },
+          {
+            label: "Taxable income",
+            type: "taxable_income",
+            amount: reportValues.taxableIncome,
+          },
+          {
+            label: "State income tax",
+            type: "income_tax",
+            amount: reportValues.stateTax,
+          },
+          {
+            label: "Municipal income tax",
+            type: "income_tax",
+            amount: reportValues.municipalTax,
+          },
+          {
+            label: "Total income tax",
+            type: "total_tax",
+            amount: reportValues.totalTax,
+          },
+          {
+            label: "Total tax credit",
+            type: "tax_credit",
+            amount: reportValues.taxCredit,
+          },
+          {
+            label: "Effective tax",
+            type: "effective_tax",
+            amount: reportValues.effectiveTaxRate,
+          },
+          ...(reportValues.federalTax
+            ? [
+                {
+                  label: "US Federal income tax",
+                  type: "us_income_tax",
+                  amount: reportValues.federalTax.amount,
+                  note: reportValues.federalTax.comment,
+                },
+              ]
+            : []),
+          ...(reportValues.usSelfEmployedTaxNote
+            ? [
+                {
+                  label: "US self employed tax",
+                  type: "us_self_tax",
+                  amount: 0,
+                  note: reportValues.usSelfEmployedTaxNote.comment,
+                },
+              ]
+            : []),
+          {
+            label: "Total net income",
+            type: "net",
+            amount: reportValues.netIncome,
+          },
+          {
+            label: "Progressive tax Czech Regime",
+            type: "tax_type",
+            amount: 0,
+            note: "Osoba Samostatně Výdělečně Činná - Individually Earning Person",
+          },
+        ]
+      : [
+          {
+            label: "Total tax",
+            type: `additional_${scenario}`,
+            amount:
+              reportValues.totalTax +
+              reportValues.socials +
+              reportValues.totalHealth,
+          },
+          {
+            label: "Total net income",
+            type: `additional_${scenario}`,
+            amount: reportValues.netIncome,
+          },
+        ];
+
+  return packageReportItems(prepItems, index);
+}
+
+function calculateTaxSingle(
   reportUserData: ReportUserDataDto,
   eurRate: number,
   scenario: SpainOption = "1st",
   config: TaxConfig,
   country: string
-) => {
+) {
   const reportItems: CreateReportItemDto[] = [];
   const kidAddition: Record<SpainOption, number> = {
     "1st": 0,
@@ -41,264 +170,104 @@ const calculateTaxSingle = (
 
   for (let index = 0; index < reportUserData.incomes.length; index++) {
     const income = reportUserData.incomes[index];
-
-    const regime = getConfigRegime(config, income);
+    const regime = getConfigRegime(
+      config,
+      income,
+      reportUserData.incomes.length
+    );
 
     if (regime === null) {
       throw new Error("Regime was not found");
     }
+    const taxService = new TaxService();
 
-    const additionalAllowance = calculateAllowance(
-      reportUserData.dependents,
-      kidAddition[scenario],
-      regime.rules
-    );
+    const initialUnit: InitUnitContract = {
+      grossIncome: income.income,
+      totalExpenses: income.accountantCost + income.expensesCost,
+    };
+    setInitialData(taxService.forInit(), initialUnit);
 
-    const allowances = distributeAllowance(
-      reportUserData.incomes,
-      additionalAllowance
-    );
+    const socialUnit: SocialUnitContract = {
+      age: income.age || 50,
+      rules: regime.rules,
+      year: kidAddition[scenario],
+      dependents: reportUserData.dependents,
+    };
+    setSocials(taxService.forSocials(), socialUnit);
 
-    const socials = calculateSocials(
-      [income],
-      regime.rules,
-      kidAddition[scenario],
-      reportUserData.dependents
-    );
+    const taxableIncomeUnit: TaxableIncomeUnitContract = {
+      age: income.age || 50,
+      rules: regime.rules,
+      year: kidAddition[scenario],
+      kids: reportUserData.dependents.filter((item) => item.type === "kid")
+        .length,
+      isForJoint,
+      reportUserData,
+      config,
+    };
+    setTaxableIncome(taxService.forTaxableIncome(), taxableIncomeUnit);
 
-    const expenses = income.accountantCost + income.expensesCost;
+    const totalAllowanceUnit: AllowanceUnitContract = {
+      index,
+      rules: regime.rules,
+      year: kidAddition[scenario],
+      reportUserData,
+    };
+    setTotalAllowance(taxService.forAllowance(), totalAllowanceUnit);
 
-    const { newSelfEmployedReduction, assumedCostReduction, taxableIncome } =
-      isForJoint
-        ? getJoinTaxableIncome(reportUserData, config, kidAddition[scenario])
-        : getReductions(
-            {
-              gross: income.income,
-              expenses,
-              socials: socials[0],
-              kids: reportUserData.dependents.filter(
-                (item) => item.type === "kid"
-              ).length,
-            },
-            { age: income.age || 50 },
-            kidAddition[scenario],
-            regime.rules
-          );
+    const stateTaxUnit: StateTaxUnitContract = {
+      rules: regime.rules,
+      country,
+      cityId: reportUserData.cityId,
+    };
+    setStateTax(taxService.forStateTax(), stateTaxUnit);
 
-    const totalAllowance =
-      regime.rules.allowance.personal +
-      (regime.rules.allowance.allow
-        ? allowances
-            .filter((item) => item.incomeIndex === index)
-            .reduce((prev, next) => prev + next.amount, 0)
-        : 0);
+    const regionalTaxUnit: RegionalTaxUnitContract = {
+      rules: regime.rules,
+      country,
+      cityId: reportUserData.cityId,
+    };
+    setRegionalTax(taxService.forRegionalTax(), regionalTaxUnit);
 
-    const isExclusiveRegion = regime.rules.tax.regionalExclusivity
-      ? getSoleRegionMatch(country, reportUserData.cityId)
-      : false;
-    const regionalBrackets = regime.rules.tax.level
-      .split(",")
-      .includes("regional")
-      ? getRegionalBrackets(country, reportUserData.cityId)
-      : [];
+    const municipalTaxUnit: MunicipalTaxUnitContract = {
+      rules: regime.rules,
+    };
+    setMunicipalTax(taxService.forMunicipalTax(), municipalTaxUnit);
 
-    const stateBrackets = getStateBrackets(country, reportUserData.cityId);
+    const taxCreditUnit: TaxCreditsUnitContract = {
+      rules: regime.rules,
+      reportUserData,
+      year: kidAddition[scenario],
+      incomesLength: reportUserData.incomes.length,
+      isForJoint,
+    };
+    setTaxCredits(taxService.forTaxCredit(), taxCreditUnit);
 
-    const { tax: stateTaxFull, allowanceTax: stateAllowanceTax } = getStateTax({
-      taxableIncome,
-      totalAllowance,
-      isStateTax: !isExclusiveRegion,
-      brackets: stateBrackets,
-      taxRules: regime.rules.tax,
-    });
+    const totalHealthUnit: HealthUnitContract = {
+      rules: regime.rules,
+      age: income.age || 50,
+    };
+    setTotalHealth(taxService.forTotalHealth(), totalHealthUnit);
 
-    const { tax: regionalTaxFull, allowanceTax: regionalAllowanceTax } =
-      getRegionalTax(taxableIncome, totalAllowance, regionalBrackets);
+    const finalValuesUnit: FinalValuesUnitContract = {
+      rules: regime.rules,
+    };
+    setFinalValues(taxService.forFinalValues(), finalValuesUnit);
 
-    const municipalTax = regime.rules.tax.other?.municipal
-      ? taxableIncome * regime.rules.tax.other.municipal
-      : 0;
-
-    const taxCredit =
-      getTaxCredits(
-        regime.rules,
-        reportUserData,
-        kidAddition[scenario],
-        taxableIncome,
-        isForJoint
-      ) / reportUserData.incomes.length;
-
-    const healthContributions = calculateHealth([income], regime.rules);
-    const totalHealth = healthContributions.length ? healthContributions[0] : 0;
-
-    const totalTax = municipalTax + stateTaxFull + regionalTaxFull - taxCredit;
-    const net = income.income - expenses - socials[0] - totalHealth;
-    const netIncome = net - totalTax;
-
-    const federalTax = calculateFederalIncomeTax({
-      income: income.income,
-      taxPaidAbroad: stateTaxFull + regionalTaxFull + municipalTax - taxCredit,
+    const usDataUnit: USUnitContract = {
+      isUSCitizen: income.isUSCitizen,
       eurRate,
-    });
+    };
+    setUsData(taxService.forUSData(), usDataUnit);
 
-    if (scenario === "1st") {
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Gross income normalized",
-        type: "gross",
-        amount: income.income,
-      });
+    const { getReportItemValues } = taxService.forReportItems();
 
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Full business expenses",
-        type: "expenses",
-        amount: expenses,
-      });
-
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "New self-employed reduction",
-        type: "reduction",
-        amount: newSelfEmployedReduction,
-      });
-
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Reduction for expenses difficult to justify",
-        type: "reduction",
-        amount: assumedCostReduction,
-      });
-
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Full allowance",
-        type: "allowance",
-        amount: totalAllowance,
-      });
-
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Allowance tax credit",
-        type: "tax_credit",
-        amount: regionalAllowanceTax + stateAllowanceTax,
-      });
-
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Total social contributions",
-        type: "social_contributions",
-        amount: socials[0],
-      });
-
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Taxable income",
-        type: "taxable_income",
-        amount: taxableIncome,
-      });
-
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "State income tax",
-        type: "income_tax",
-        amount: stateTaxFull,
-      });
-
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Regional income tax",
-        type: "income_tax",
-        amount: regionalTaxFull,
-      });
-
-      if (taxCredit > 0) {
-        reportItems.push({
-          reportId: 0,
-          incomeMaker: index,
-          label: "Maternity tax credit",
-          type: "tax_credit",
-          amount: taxCredit,
-        });
-      }
-
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Total income tax",
-        type: "total_tax",
-        amount: totalTax,
-      });
-
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Effective tax",
-        type: "effective_tax",
-        amount:
-          (regionalTaxFull + socials[0] + stateTaxFull - taxCredit) /
-          reportUserData.incomes[index].income,
-      });
-
-      if (income.isUSCitizen) {
-        reportItems.push({
-          reportId: 0,
-          incomeMaker: index,
-          label: "US Federal income tax",
-          type: "us_income_tax",
-          amount: federalTax.amount,
-          note: federalTax.comment,
-        });
-      }
-
-      if (income.isUSCitizen && socials[0]) {
-        reportItems.push({
-          reportId: 0,
-          incomeMaker: index,
-          label: "US self employed tax",
-          type: "us_self_tax",
-          amount: 0,
-          note: "You don’t need to pay U.S. self-employment tax if you’re already paying social security contributions in country of tax residence, thanks to the valid Totalization Agreement.",
-        });
-      }
-
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Total net income",
-        type: "net",
-        amount: netIncome,
-      });
-    } else {
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Total tax",
-        type: `additional_${scenario}`,
-        amount: socials[0] + totalTax,
-      });
-      reportItems.push({
-        reportId: 0,
-        incomeMaker: index,
-        label: "Total net income",
-        type: `additional_${scenario}`,
-        amount: netIncome,
-      });
-    }
+    const items = prepReportItems(getReportItemValues(), scenario, index);
+    reportItems.push(...items);
   }
 
   return reportItems;
-};
+}
 
 export const calculateSpainTax = (
   reportUserData: ReportUserDataDto,

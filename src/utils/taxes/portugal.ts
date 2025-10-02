@@ -3,9 +3,10 @@ import type {
   DependentsDto,
   ReportUserDataDto,
 } from "../../reports/reports.dto";
+import type { TaxRules } from "../../types/taxes.types";
 import { calculateFederalIncomeTax, getProgressiveTax } from "../saveFlow";
 import { getPortugalBrackets } from "../taxData";
-import { portugalRules, type TaxRules } from "./taxRules";
+import { portugalRules } from "./taxRules";
 
 const scenarios = ["1st", "2nd", "3rd", "4th", "5th"];
 
@@ -31,11 +32,11 @@ export function getJovemExemptionRate(year: number) {
   return 0;
 }
 
-function getAgeReduction(age: number, base: number, year: number, config: TaxRules) {
+function getAgeReduction(age: number, base: number, year: number, rules: TaxRules) {
   const exemptionRate = getJovemExemptionRate(year);
 
-  if (age <= config.ageLimit) {
-    return Math.min(config.ageReductionCap, base * exemptionRate);
+ if (age <= rules.reduction.other.age) {
+    return Math.min(rules.reduction.other.ageCap, base * exemptionRate);
   }
 
   return 0;
@@ -55,11 +56,9 @@ function calculateTaxBase(
   const grossWithoutExpenses = isSimplified ? gross * 0.75 : gross - expenses;
 
   const socials = year === 1 ? 0 : (gross / 12) * 3 * 0.7 * 0.214 * 4;
-  console.log('socials',socials);
   const personalReduction = 4462;
   const base = grossWithoutExpenses - socials - personalReduction;
   const jovemReduction = getAgeReduction(income?.age || 50, base, year, portugalRules);
-  console.log('jovemReduction',jovemReduction);
 
   return base - jovemReduction;
 }

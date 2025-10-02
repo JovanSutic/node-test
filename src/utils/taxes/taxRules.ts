@@ -75,6 +75,13 @@ const spainRules: TaxRules = {
     extraKidLimit: 3,
     useType: "taxed and reduced",
   },
+
+  finals: {
+    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth",
+    netIncome:
+      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+  },
 };
 
 export const spainConfig: TaxConfig = {
@@ -177,6 +184,13 @@ export const portugalRules: TaxRules = {
     extraKid: 0,
     extraKidLimit: 0,
     useType: "no allowance",
+  },
+
+  finals: {
+    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth",
+    netIncome:
+      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
   },
 };
 
@@ -329,6 +343,13 @@ export const italyFlatRules: TaxRules = {
     extraKidLimit: 0,
     useType: "no allowance",
   },
+
+  finals: {
+    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth",
+    netIncome:
+      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+  },
 };
 export const italyImpatriRules: TaxRules = {
   tax: {
@@ -409,6 +430,13 @@ export const italyImpatriRules: TaxRules = {
     extraKidLimit: 0,
     useType: "no allowance",
   },
+
+  finals: {
+    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth",
+    netIncome:
+      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+  },
 };
 
 export const italyOrdinaryRules: TaxRules = {
@@ -488,6 +516,13 @@ export const italyOrdinaryRules: TaxRules = {
     extraKid: 0,
     extraKidLimit: 0,
     useType: "no allowance",
+  },
+
+  finals: {
+    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth",
+    netIncome:
+      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
   },
 };
 
@@ -643,6 +678,13 @@ export const czechFlatRules: TaxRules = {
     extraKidLimit: 0,
     useType: "no allowance",
   },
+
+  finals: {
+    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth",
+    netIncome:
+      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+  },
 };
 
 export const czechRegularRules: TaxRules = {
@@ -689,7 +731,7 @@ export const czechRegularRules: TaxRules = {
         limit: 3,
         amounts: [620, 910, 1135, 1135, 1135],
         dependentSpouse: 1015,
-      }
+      },
     },
     caps: {
       incomeLimit: 0,
@@ -737,6 +779,13 @@ export const czechRegularRules: TaxRules = {
     extraKidLimit: 0,
     useType: "no allowance",
   },
+
+  finals: {
+    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth",
+    netIncome:
+      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+  },
 };
 
 export const czechConfig: TaxConfig = {
@@ -775,6 +824,607 @@ export const czechConfig: TaxConfig = {
         ],
       },
       rules: czechRegularRules,
+    },
+  ],
+  extras: {
+    jointFilingBenefits: false,
+  },
+};
+
+export const bulgariaEOODDOUBLERules: TaxRules = {
+  tax: {
+    type: "corporateSuccessive",
+    level: "state",
+    rate: 0.1,
+    other: {
+      withholdingTax: 0.05,
+    },
+    regionalExclusivity: false,
+    taxableIncomeSequence: "expensesReduction,socialsReduction",
+  },
+
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: false,
+      type: "percentage",
+      reduction: 0,
+      maxReduction: 0,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: false,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
+
+  credit: {
+    allow: false,
+    type: "",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+
+  social: {
+    type: "flat",
+    baseType: "flat",
+    allowDiscount: false,
+    rateIndex: 1,
+    rate: 0.283,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 100000000,
+    baseAmount: 550,
+    baseFrequency: "monthly",
+  },
+
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [0],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+
+  finals: {
+    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth",
+    netIncome:
+      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+  },
+};
+
+export const bulgariaEOODRules: TaxRules = {
+  tax: {
+    type: "corporateSuccessive",
+    level: "state",
+    rate: 0.1,
+    other: {
+      withholdingTax: 0.05,
+    },
+    regionalExclusivity: false,
+    taxableIncomeSequence: "expensesReduction,socialsReduction",
+  },
+
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: false,
+      type: "percentage",
+      reduction: 0,
+      maxReduction: 0,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: true,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
+
+  credit: {
+    allow: false,
+    type: "",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+
+  social: {
+    type: "flat",
+    baseType: "flat",
+    allowDiscount: false,
+    rateIndex: 1,
+    rate: 0.283,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 100000000,
+    baseAmount: 550,
+    baseFrequency: "monthly",
+  },
+
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [0],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+
+  finals: {
+    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth",
+    netIncome:
+      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+  },
+};
+
+export const bulgariaFreelancerRules: TaxRules = {
+  tax: {
+    type: "flat",
+    level: "state",
+    rate: 0.1,
+    regionalExclusivity: false,
+    taxableIncomeSequence: "allowAssumedCostReduction,kidsReduction",
+  },
+
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: true,
+      type: "percentage",
+      reduction: 0.25,
+      maxReduction: 200000000,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: true,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+      kids: 3070,
+    },
+  },
+
+  credit: {
+    allow: false,
+    type: "",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+
+  social: {
+    type: "flat",
+    baseType: "incomeBetweenMaxMin",
+    allowDiscount: false,
+    rateIndex: 1,
+    rate: 0.32,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 100000000,
+    maxCapBase: 25200,
+    minCapBase: 6600,
+  },
+
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [0],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+
+  finals: {
+    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth",
+    netIncome:
+      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+  },
+};
+
+export const bulgariaConfig: TaxConfig = {
+  country: "Bulgaria",
+  regimes: [
+    {
+      name: "EOOD Double",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "eoodDouble_1",
+            subject: "incomesLength",
+            operation: "EQUALS",
+            condition: 2,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: bulgariaEOODDOUBLERules,
+    },
+    {
+      name: "EOOD",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "eood_1",
+            subject: "income",
+            operation: "LESS THAN",
+            condition: 94000.01,
+            conditionType: "number",
+            object: "",
+          },
+          {
+            name: "eood_2",
+            subject: "incomesLength",
+            operation: "EQUALS",
+            condition: 1,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: bulgariaEOODRules,
+    },
+    {
+      name: "Freelancer",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "freelancer_1",
+            subject: "income",
+            operation: "MORE THAN",
+            condition: 94000.009,
+            conditionType: "number",
+            object: "",
+          },
+          {
+            name: "freelancer_2",
+            subject: "incomesLength",
+            operation: "EQUALS",
+            condition: 1,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: bulgariaFreelancerRules,
+    },
+  ],
+  extras: {
+    jointFilingBenefits: false,
+  },
+};
+
+export const serbiaFlatRules: TaxRules = {
+  tax: {
+    type: "fixedProgressive",
+    level: "state",
+    other: {
+      fixed: [{ maxIncome: 51000, taxAmount: 360 }],
+      rate: "monthly",
+    },
+    regionalExclusivity: false,
+    taxableIncomeSequence: "",
+  },
+
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: false,
+      type: "",
+      reduction: 0,
+      maxReduction: 0,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: true,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
+
+  credit: {
+    allow: false,
+    type: "",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+
+  social: {
+    type: "flat",
+    baseType: "",
+    allowDiscount: false,
+    rateIndex: 0,
+    rate: 0,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 100000000,
+    maxCapBase: 0,
+    minCapBase: 0,
+  },
+
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [0],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+
+  finals: {
+    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth",
+    netIncome:
+      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+  },
+};
+
+export const serbiaBookedRules: TaxRules = {
+  tax: {
+    type: "salaryMixed",
+    level: "state",
+    rate: 0.1,
+    other: {
+      salary: {
+        tax: 0.1,
+        contributions: 0.3775,
+        untaxed: 243,
+        min: 392,
+      },
+      additional: {},
+    },
+    regionalExclusivity: false,
+    taxableIncomeSequence: "expensesReduction,minSalaryReduction",
+  },
+
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: false,
+      type: "",
+      reduction: 0,
+      maxReduction: 0,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: true,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
+
+  credit: {
+    allow: false,
+    type: "",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+
+  social: {
+    type: "flat",
+    baseType: "incomeBetweenMaxMin",
+    allowDiscount: false,
+    rateIndex: 1,
+    rate: 0.32,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 100000000,
+    maxCapBase: 25200,
+    minCapBase: 6600,
+  },
+
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [0],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+
+  finals: {
+    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth",
+    netIncome:
+      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+  },
+};
+
+export const serbiaConfig: TaxConfig = {
+  country: "Serbia",
+  regimes: [
+    {
+      name: "Flat",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "flat_1",
+            subject: "isIndependent",
+            operation: "EQUALS",
+            condition: 1,
+            conditionType: "number",
+            object: "",
+          },
+          {
+            name: "flat_2",
+            subject: "income",
+            operation: "LESS THAN",
+            condition: 51000,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: serbiaFlatRules,
+    },
+    {
+      name: "Booked",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "booked_1",
+            subject: "isIndependent",
+            operation: "EQUALS",
+            condition: 1,
+            conditionType: "number",
+            object: "",
+          },
+          {
+            name: "booked_2",
+            subject: "income",
+            operation: "MORE THAN",
+            condition: 51000,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: serbiaBookedRules,
+    },
+    {
+      name: "LLC",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "llc_1",
+            subject: "isIndependent",
+            operation: "EQUALS",
+            condition: 0,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: bulgariaFreelancerRules,
     },
   ],
   extras: {

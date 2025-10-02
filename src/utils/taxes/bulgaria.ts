@@ -60,8 +60,10 @@ function getDoubleEarnerTaxItems(
     (prev, next) => prev + next.expensesCost,
     0
   );
+  // sračunava oba grossa i troškove
   const expenses = accountingCost + otherCosts;
   const childrenReduction = getTaxReduction(reportUserData.dependents);
+  // izračunava platu
   const spouseSalary = calculateSpouseSalary(childrenReduction);
   const socials = 0.283 * 550 * 12;
   const taxableBase =

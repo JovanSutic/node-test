@@ -1,4 +1,7 @@
-export type TaxType =  "progressive" | "flat" | "fixedProgressive";
+import type { DependentsDto } from "../reports/reports.dto";
+import type { SpainOption } from "./flow.types";
+
+export type TaxType =  "progressive" | "flat" | "fixedProgressive" | "corporateSuccessive" | "salaryMixed";
 
 export interface FixedProgressive {
     maxIncome: number; 
@@ -75,8 +78,11 @@ export interface TaxRulesSocial {
   discountedAmount: number;
   discountLength: number;
   maxCap: number;
-  maxCapBase?: number;
   minCap?: number;
+  maxCapBase?: number;
+  minCapBase?: number;
+  baseAmount?: number;
+  baseFrequency?: 'monthly' | 'yearly'
 }
 
 export interface TaxRulesHealth {
@@ -102,6 +108,12 @@ export interface TaxRulesAllowance {
   useType: string;
 }
 
+interface TaxRulesFinals {
+  totalTax: string;
+  net: string;
+  netIncome: string;
+}
+
 export interface TaxRules {
   tax: TaxRulesTax;
   reduction: {
@@ -113,6 +125,7 @@ export interface TaxRules {
   social: TaxRulesSocial;
   allowance: TaxRulesAllowance;
   health?: TaxRulesHealth;
+  finals: TaxRulesFinals;
 }
 
 export interface TaxConditions {

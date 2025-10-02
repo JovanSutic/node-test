@@ -1,12 +1,25 @@
 import type { PersonalIncomesDto } from "../../reports/reports.dto";
-import type { TaxConditions, TaxConfig, TaxRegime } from "../../types/taxes.types";
-import { czechConfig, italyConfig, portugalConfig, spainConfig } from "./taxRules";
+import type {
+  TaxConditions,
+  TaxConfig,
+  TaxRegime,
+} from "../../types/taxes.types";
+import {
+  bulgariaConfig,
+  czechConfig,
+  italyConfig,
+  portugalConfig,
+  serbiaConfig,
+  spainConfig,
+} from "./taxRules";
 
 export function getConfig(country: string) {
   if (country === "Spain") return spainConfig;
   if (country === "Portugal") return portugalConfig;
   if (country === "Italy") return italyConfig;
   if (country === "Czech Republic") return czechConfig;
+  if (country === "Bulgaria") return bulgariaConfig;
+  if (country === "Serbia") return serbiaConfig;
 
   return null;
 }
@@ -34,42 +47,68 @@ function normalizeIncomeValue(
   );
 }
 
+function getNormalizedValue(
+  key: "subject" | "object",
+  condition: TaxConditions,
+  income: PersonalIncomesDto,
+  incomesLength: number
+) {
+  if (key === "subject") {
+    if (condition.subject === "incomesLength") return incomesLength;
+    return (
+      normalizeIncomeValue(
+        income,
+        condition.subject as keyof PersonalIncomesDto
+      ) || income.accountantCost + income.expensesCost
+    );
+  } else {
+    if (condition.object === "incomesLength") return incomesLength;
+    return condition.conditionType === "number"
+      ? condition.condition
+      : normalizeIncomeValue(
+          income,
+          condition.object as keyof PersonalIncomesDto
+        ) * condition.condition;
+  }
+}
+
 function getMatchedConditionNumber(
   income: PersonalIncomesDto,
-  conditions: TaxConditions[]
+  conditions: TaxConditions[],
+  incomesLength: number
 ) {
   let result = 0;
 
   for (let index = 0; index < conditions.length; index++) {
-    const element = conditions[index];
-    const subject =
-      normalizeIncomeValue(
-        income,
-        element.subject as keyof PersonalIncomesDto
-      ) || income.accountantCost + income.expensesCost;
-    const object =
-      element.conditionType === "number"
-        ? element.condition
-        : normalizeIncomeValue(
-            income,
-            element.object as keyof PersonalIncomesDto
-          ) * element.condition;
+    const condition = conditions[index];
+    const subject = getNormalizedValue(
+      "subject",
+      condition,
+      income,
+      incomesLength
+    );
+    const object = getNormalizedValue(
+      "object",
+      condition,
+      income,
+      incomesLength
+    );
 
-    if (element.operation === "LESS THAN") {
+    if (condition.operation === "LESS THAN") {
       if (subject < object) {
         result++;
         continue;
       }
     }
 
-    if (element.operation === "MORE THAN") {
+    if (condition.operation === "MORE THAN") {
       if (subject > object) {
         result++;
         continue;
       }
     }
 
-    if (element.operation === "EQUALS") {
+    if (condition.operation === "EQUALS") {
       if (subject === object) {
         result++;
         continue;
@@ -106,7 +145,11 @@ function configureTaxRegimeRules(
   return regime;
 }
 
-export function getConfigRegime(config: TaxConfig, income: PersonalIncomesDto) {
+export function getConfigRegime(
+  config: TaxConfig,
+  income: PersonalIncomesDto,
+  incomesLength: number
+) {
   if (config.regimes.length === 1) {
     return config.regimes[0];
   }
@@ -118,7 +161,8 @@ export function getConfigRegime(config: TaxConfig, income: PersonalIncomesDto) {
       regime.conditions.type === "AND" ? regime.conditions.list.length : 1;
     const matchedConditions = getMatchedConditionNumber(
       income,
-      regime.conditions.list
+      regime.conditions.list,
+      incomesLength
     );
 
     if (matchedConditions >= conditionAssertion) {

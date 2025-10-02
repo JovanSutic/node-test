@@ -91,6 +91,20 @@ export function getStateTax(taxData: {
         );
       }
     }
+    if (type === "corporateSuccessive") {
+      const corporateTax = taxableIncome * rate!;
+      const withholdingTax =
+        (taxableIncome - corporateTax) * (taxRules.other?.withholdingTax || 0);
+
+      return {
+        tax: corporateTax + withholdingTax,
+        allowanceTax: 0,
+        breakdown: {
+          corporateTax,
+          withholdingTax,
+        },
+      };
+    }
     return {
       tax: (rate || 0) * taxableIncome,
       allowanceTax: 0,

@@ -3,31 +3,26 @@ import type {
   ReportUserDataDto,
 } from "../../reports/reports.dto";
 import type { TaxRules } from "../../types/taxes.types";
+import type { FinalValues, TaxDataStore } from "../../types/taxProcessing.types";
 
-function evaluateMathString(
+export function executeCalcString(
   expression: string,
-  variables: Record<string, number>
+  variables: TaxDataStore | Record<string, number> | FinalValues,
 ): number {
   const varNames = Object.keys(variables);
   const varValues = Object.values(variables);
 
   const functionBody = `return ${expression};`;
 
-  try {
-    const mathFunction = new Function(...varNames, functionBody);
+  const mathFunction = new Function(...varNames, functionBody);
 
-    const result = mathFunction(...varValues);
+  const result = mathFunction(...varValues);
 
-    if (typeof result === "number" && !isNaN(result)) {
-      return result;
-    }
-
-    throw new Error("Expression executed but did not return a valid number.");
-  } catch (error) {
-    console.error(`Error executing math expression: ${expression}`);
-    console.error(error);
-    return 0;
+  if (typeof result === "number" && !isNaN(result)) {
+    return result;
   }
+
+  throw new Error("Expression executed but did not return a valid number.");
 }
 
 function getMaternityCredit(
@@ -81,7 +76,7 @@ function getCustomCredit(rules: TaxRules, reportUserData: ReportUserDataDto) {
   ) {
     let result = 0;
     reportUserData.incomes.forEach((item) => {
-      const credit = evaluateMathString(rules.credit.items.spouse!, {
+      const credit = executeCalcString(rules.credit.items.spouse!, {
         income: item.income,
       });
       result = credit + result;
@@ -106,7 +101,11 @@ function getKidsCredit(rules: TaxRules, dependents: DependentsDto[]) {
       }
     });
 
-    if(dependentSpouse && dependents.find((item) => item.type === 'spouse' && item.isDependent) && kids > 0) {
+    if (
+      dependentSpouse &&
+      dependents.find((item) => item.type === "spouse" && item.isDependent) &&
+      kids > 0
+    ) {
       credit = credit + dependentSpouse;
     }
 
