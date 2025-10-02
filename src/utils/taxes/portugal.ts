@@ -3,8 +3,10 @@ import type {
   DependentsDto,
   ReportUserDataDto,
 } from "../../reports/reports.dto";
+import type { TaxRules } from "../../types/taxes.types";
 import { calculateFederalIncomeTax, getProgressiveTax } from "../saveFlow";
 import { getPortugalBrackets } from "../taxData";
+import { portugalRules } from "./taxRules";
 
 const scenarios = ["1st", "2nd", "3rd", "4th", "5th"];
 
@@ -21,7 +23,7 @@ function getDependentCredits(dependents: DependentsDto[]) {
   return householdCredit + dependentCredit + healthEduAvg;
 }
 
-function getJovemExemptionRate(year: number) {
+export function getJovemExemptionRate(year: number) {
   if (year === 1) return 1;
   if (year > 1 && year < 5) return 0.75;
   if (year > 4 && year < 8) return 0.5;
@@ -30,13 +32,11 @@ function getJovemExemptionRate(year: number) {
   return 0;
 }
 
-function getJovemReduction(age: number, base: number, year: number) {
-  const JOVEM_LIMIT = 35;
-  const JOVEM_CAP = 28737.5;
+function getAgeReduction(age: number, base: number, year: number, rules: TaxRules) {
   const exemptionRate = getJovemExemptionRate(year);
 
-  if (age <= JOVEM_LIMIT) {
-    return Math.min(JOVEM_CAP, base * exemptionRate);
+ if (age <= rules.reduction.other.age) {
+    return Math.min(rules.reduction.other.ageCap, base * exemptionRate);
   }
 
   return 0;
@@ -50,13 +50,15 @@ function calculateTaxBase(
   const income = reportUserData.incomes[index];
   const gross = income.income;
   const expenses = income.expensesCost + income.accountantCost;
+  7;
+
   const isSimplified = getSimplified(gross, expenses);
   const grossWithoutExpenses = isSimplified ? gross * 0.75 : gross - expenses;
 
   const socials = year === 1 ? 0 : (gross / 12) * 3 * 0.7 * 0.214 * 4;
   const personalReduction = 4462;
   const base = grossWithoutExpenses - socials - personalReduction;
-  const jovemReduction = getJovemReduction(income?.age || 50, base, year);
+  const jovemReduction = getAgeReduction(income?.age || 50, base, year, portugalRules);
 
   return base - jovemReduction;
 }
@@ -83,13 +85,19 @@ function calculateJoint(
   }
 
   const taxableBase = taxableBases.reduce((prev, next) => prev + next, 0);
-  const dependentCredits = getDependentCredits(reportUserData.dependents);
   const brackets = getPortugalBrackets(reportUserData.cityId);
   const grossTaxPerPerson = getProgressiveTax(taxableBase / 2, brackets);
+
+  // razlike taxableIncome, creditCap
+  // credit cap samo se koriste druge brojke, credit podeljen na 2
+
+
   const creditsCap =
     taxableBase > creditLimit
       ? 1000
       : 1000 + 4000 * (1 - (taxableBase - 25656) / (creditLimit - 25656));
+
+  const dependentCredits = getDependentCredits(reportUserData.dependents);
   const taxCredits = Math.min(creditsCap, dependentCredits) / 2;
   const totalTaxPerPerson = Math.max(
     0,
@@ -259,17 +267,24 @@ function calculateIndividual(
   const isSimplified = getSimplified(gross, expenses);
 
   const taxableBase = calculateTaxBase(reportUserData, year, 0);
+  // urađeno
 
   const socials = year === 1 ? 0 : (gross / 12) * 3 * 0.7 * 0.214 * 4;
+  // urađeno
 
-  const brackets = getPortugalBrackets(reportUserData.cityId);
-  const grossTax = getProgressiveTax(taxableBase, brackets);
   const creditsCap =
     taxableBase > creditLimit
       ? 1000
       : 1000 + 1500 * (1 - (taxableBase - 8059) / (creditLimit - 8059));
   const dependentCredits = getDependentCredits(reportUserData.dependents);
   const taxCredits = Math.min(creditsCap, dependentCredits);
+  // urađeno
+
+  
+
+  const brackets = getPortugalBrackets(reportUserData.cityId);
+  const grossTax = getProgressiveTax(taxableBase, brackets);
+
   const totalTax = Math.max(0, grossTax.totalTax - taxCredits);
   const net = gross - socials - totalTax - expenses;
   const effectiveRate = Math.max(0, (socials + totalTax) / gross);
@@ -413,7 +428,8 @@ function calculateIndividual(
 
 export function calculatePortugalTax(
   reportUserData: ReportUserDataDto,
-  eurRate: number
+  eurRate: number,
+  country: string,
 ) {
   const reportItems: CreateReportItemDto[] = [];
   if (reportUserData.incomes.length > 1) {

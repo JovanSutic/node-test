@@ -364,7 +364,8 @@ export function calculateItalySingleYearTax(
 
 export function calculateItalyTax(
   reportUserData: ReportUserDataDto,
-  eurRate: number
+  eurRate: number,
+  country: string,
 ) {
   const first = calculateItalySingleYearTax(reportUserData, eurRate);
   const second = calculateItalySingleYearTax(reportUserData, eurRate, "2nd");
