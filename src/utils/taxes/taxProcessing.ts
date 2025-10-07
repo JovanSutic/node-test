@@ -1,5 +1,7 @@
 import type { TaxRules } from "../../types/taxes.types";
 import type {
+  AdditionalTaxServiceContract,
+  AdditionalTaxUnitContract,
   AllowanceServiceContract,
   AllowanceUnitContract,
   FinalValuesServiceContract,
@@ -13,6 +15,8 @@ import type {
   RegionalTaxServiceContract,
   RegionalTaxUnitContract,
   ReportItemsServiceContract,
+  SalaryServiceContract,
+  SalaryUnitContract,
   SocialServiceContract,
   SocialUnitContract,
   StateTaxServiceContract,
@@ -33,6 +37,7 @@ import { calculateAllowance, distributeAllowance } from "./allowance";
 import { executeCalcString, getTaxCredits } from "./credit";
 import { getJoinTaxableIncome, getReductions } from "./socialsAndReduction";
 import {
+  calculateAnnualPersonalIncomeTax,
   getRegionalBrackets,
   getRegionalTax,
   getSoleRegionMatch,
@@ -57,8 +62,12 @@ export class TaxService {
       stateTax: 0,
       regionalTax: 0,
       municipalTax: 0,
+      additionalTax: 0,
       taxCredit: 0,
       totalHealth: 0,
+      minSalaryYear: 0,
+      salarySocials: 0,
+      salaryTax: 0,
 
       // --- Final Metrics (Written by Finalizers) ---
       totalTax: 0,
@@ -76,17 +85,32 @@ export class TaxService {
     getGrossIncome: () => this.store.grossIncome,
     getTotalExpenses: () => this.store.totalExpenses,
     getNewSelfEmployedReduction: () => this.store.newSelfEmployedReduction,
+    getStateTax: () => this.store.stateTax,
     getTotalTax: () => this.store.totalTax,
     getTotalAllowance: () => this.store.totalAllowance,
+    getMinAnnualSalary: () => this.store.minSalaryYear,
+    getSalarySocials: () => this.store.salarySocials,
+    getSalaryDiff: () => {
+      return (
+        this.store.minSalaryYear -
+        (this.store.salarySocials + this.store.salaryTax)
+      );
+    },
     getFinalValues: () => ({
       grossIncome: this.store.grossIncome,
       totalExpenses: this.store.totalExpenses,
+      taxableIncome: this.store.taxableIncome,
       socials: this.store.socials,
       totalHealth: this.store.totalHealth,
       municipalTax: this.store.municipalTax,
       stateTax: this.store.stateTax,
       regionalTax: this.store.regionalTax,
       taxCredit: this.store.taxCredit,
+      salaryTax: this.store.salaryTax,
+      additionalTax: this.store.additionalTax,
+      salaryDiff:
+        this.store.minSalaryYear -
+        (this.store.salarySocials + this.store.salaryTax),
     }),
     getReportItemValues: () => ({
       grossIncome: this.store.grossIncome,
@@ -150,6 +174,9 @@ export class TaxService {
     setMunicipalTax: (amount: number) => {
       this.store.municipalTax = amount;
     },
+    setAdditionalTax: (amount: number) => {
+      this.store.additionalTax = amount;
+    },
     setHealth: (amount: number) => {
       this.store.totalHealth = amount;
     },
@@ -168,6 +195,15 @@ export class TaxService {
     ) => {
       this.store.federalTax = federal;
       this.store.usSelfEmployedTaxNote = selfEmployed;
+    },
+    setSalaryData: (
+      minSalaryYear: number,
+      salarySocials: number,
+      salaryTax: number
+    ) => {
+      this.store.minSalaryYear = minSalaryYear;
+      this.store.salarySocials = salarySocials;
+      this.store.salaryTax = salaryTax;
     },
   };
 
@@ -190,6 +226,7 @@ export class TaxService {
   forTaxableIncome(): TaxableIncomeServiceContract {
     return this.createService<TaxableIncomeServiceContract>([
       "getGrossIncome",
+      "getMinAnnualSalary",
       "getTotalExpenses",
       "getSocials",
       "setTaxableIncome",
@@ -202,6 +239,7 @@ export class TaxService {
     return this.createService<SocialServiceContract>([
       "getGrossIncome",
       "getTotalExpenses",
+      "getSalarySocials",
       "setSocials",
     ]);
   }
@@ -235,6 +273,15 @@ export class TaxService {
     ]);
   }
 
+  forAdditionalTax(): AdditionalTaxServiceContract {
+    return this.createService<AdditionalTaxServiceContract>([
+      "setAdditionalTax",
+      "getTaxableIncome",
+      "getStateTax",
+      "getSalaryDiff",
+    ]);
+  }
+
   forTotalHealth(): HealthServiceContract {
     return this.createService<HealthServiceContract>([
       "getGrossIncome",
@@ -248,6 +295,10 @@ export class TaxService {
       "getTaxableIncome",
       "setTaxCredits",
     ]);
+  }
+
+  forSalary(): SalaryServiceContract {
+    return this.createService<SalaryServiceContract>(["setSalaryData"]);
   }
 
   forFinalValues(): FinalValuesServiceContract {
@@ -388,6 +439,9 @@ export const setSocials: TaxProcessor<
       });
 
       service.setSocials((bracket?.fee || 1) * 12);
+    } else if (rules.social.type === "salary") {
+      const result = service.getSalarySocials();
+      service.setSocials(result);
     } else {
       const social = base * rules.social.rate;
       if (rules.social.minCap && rules.social.maxCap === 0) {
@@ -410,6 +464,7 @@ export const setTaxableIncome: TaxProcessor<
     expenses: service.getTotalExpenses(),
     socials: service.getSocials(),
     kids,
+    minSalary: service.getMinAnnualSalary(),
   };
 
   const result = isForJoint
@@ -525,6 +580,31 @@ export const setMunicipalTax: TaxProcessor<
   }
 };
 
+export const setAdditionalTax: TaxProcessor<
+  AdditionalTaxServiceContract,
+  AdditionalTaxUnitContract
+> = (service, unit) => {
+  const { rules, age, dependents } = unit;
+  if (rules.salary) {
+    const firstNet =
+      service.getTaxableIncome() -
+      service.getStateTax() +
+      service.getSalaryDiff();
+    const tax = calculateAnnualPersonalIncomeTax(
+      rules.salary?.salaryAverageAnnual,
+      firstNet,
+      dependents,
+      age
+    );
+
+    if (isNaN(tax) || tax < 0) {
+      throw new Error("Failed to calculate additional personal tax");
+    }
+
+    service.setAdditionalTax(tax);
+  }
+};
+
 function calculateHealthBase(
   grossIncome: number,
   expenses: number,
@@ -604,6 +684,36 @@ export const setTaxCredits: TaxProcessor<
   }
 
   service.setTaxCredits(taxCredit);
+};
+
+export const setSalary: TaxProcessor<
+  SalaryServiceContract,
+  SalaryUnitContract
+> = (service, unit) => {
+  const { rules } = unit;
+  if (!rules.salary) {
+    return;
+  }
+  const minSalaryYear = rules.salary.salaryMinimum * 12;
+  const salarySocials =
+    rules.salary.salaryMinimum * rules.salary.salaryContributionsRate * 12;
+  const salaryTax =
+    (rules.salary.salaryMinimum - rules.salary.salaryUntaxedPart) *
+    rules.salary.salaryTax *
+    12;
+
+  if (
+    isNaN(minSalaryYear) ||
+    minSalaryYear < 0 ||
+    isNaN(salarySocials) ||
+    salarySocials < 0 ||
+    isNaN(salaryTax) ||
+    salaryTax < 0
+  ) {
+    throw new Error("Failed to calculate salary info");
+  }
+
+  service.setSalaryData(minSalaryYear, salarySocials, salaryTax);
 };
 
 export const setFinalValues: TaxProcessor<

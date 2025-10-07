@@ -1,5 +1,6 @@
 import type { DependentsDto, ReportUserDataDto } from "../reports/reports.dto";
 import type { TaxConfig, TaxRules } from "./taxes.types";
+import { getStateTax } from '../utils/taxes/tax';
 
 export interface USData {
   amount: number;
@@ -19,8 +20,12 @@ export interface TaxDataStore {
   stateTax: number;
   regionalTax: number;
   municipalTax: number;
+  additionalTax: number;
   taxCredit: number;
   totalHealth: number;
+  minSalaryYear: number;
+  salarySocials: number;
+  salaryTax: number;
 
   // --- Final Metrics (Written by Finalizers) ---
   totalTax: number;
@@ -46,6 +51,7 @@ export interface InitUnitContract {
 export interface SocialServiceContract {
   getGrossIncome(): number;
   getTotalExpenses(): number;
+  getSalarySocials(): number;
   setSocials(amount: number): void;
 }
 
@@ -59,6 +65,7 @@ export interface SocialUnitContract {
 export interface TaxableIncomeServiceContract {
   getGrossIncome(): number;
   getTotalExpenses(): number;
+  getMinAnnualSalary(): number;
   getSocials(): number;
   setTaxableIncome(amount: number): void;
   setAssumedCostReduction(amount: number): void;
@@ -117,6 +124,18 @@ export interface MunicipalTaxServiceContract {
   setMunicipalTax(amount: number): void;
 }
 
+export interface AdditionalTaxUnitContract {
+  rules: TaxRules;
+  age: number;
+  dependents: number;
+}
+export interface AdditionalTaxServiceContract {
+  setAdditionalTax(amount: number): void;
+  getTaxableIncome(): number;
+  getStateTax(): number;
+  getSalaryDiff(): number;
+}
+
 export interface MunicipalTaxUnitContract {
   rules: TaxRules;
 }
@@ -143,6 +162,18 @@ export interface TaxCreditsUnitContract {
   isForJoint: boolean;
   incomesLength: number;
   reportUserData: ReportUserDataDto;
+}
+
+export interface SalaryServiceContract {
+  setSalaryData(
+    minSalaryYear: number,
+    salarySocials: number,
+    salaryTax: number
+  ): void;
+}
+
+export interface SalaryUnitContract {
+  rules: TaxRules;
 }
 
 export interface FinalValues {

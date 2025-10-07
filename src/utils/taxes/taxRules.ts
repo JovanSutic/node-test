@@ -1266,15 +1266,6 @@ export const serbiaBookedRules: TaxRules = {
     type: "salaryMixed",
     level: "state",
     rate: 0.1,
-    other: {
-      salary: {
-        tax: 0.1,
-        contributions: 0.3775,
-        untaxed: 243,
-        min: 392,
-      },
-      additional: {},
-    },
     regionalExclusivity: false,
     taxableIncomeSequence: "expensesReduction,minSalaryReduction",
   },
@@ -1324,15 +1315,15 @@ export const serbiaBookedRules: TaxRules = {
 
   social: {
     type: "flat",
-    baseType: "incomeBetweenMaxMin",
+    baseType: "salary",
     allowDiscount: false,
     rateIndex: 1,
-    rate: 0.32,
+    rate: 0,
     discountedAmount: 0,
     discountLength: 0,
     maxCap: 100000000,
-    maxCapBase: 25200,
-    minCapBase: 6600,
+    maxCapBase: 0,
+    minCapBase: 0,
   },
 
   allowance: {
@@ -1349,11 +1340,19 @@ export const serbiaBookedRules: TaxRules = {
   },
 
   finals: {
-    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
-    net: "grossIncome - totalExpenses - socials - totalHealth",
+    totalTax: "stateTax + salaryTax + additionalTax",
+    net: "taxableIncome - stateTax + salaryDiff",
     netIncome:
-      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+      "taxableIncome - stateTax + salaryDiff - additionalTax",
   },
+
+  salary: {
+  salaryContributionsRate: 0.3775,
+  salaryUntaxedPart: 243,
+  salaryTax: 0.1,
+  salaryMinimum: 392,
+  salaryAverageAnnual: 10850,
+}
 };
 
 export const serbiaConfig: TaxConfig = {

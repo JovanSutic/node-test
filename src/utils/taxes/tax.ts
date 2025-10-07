@@ -12,6 +12,50 @@ import {
   stateTaxBracketsItaly,
 } from "../taxData";
 
+export function calculateAnnualPersonalIncomeTax(
+  averageAnnualSalary: number,
+  totalIncome: number,
+  numberOfDependents: number,
+  age: number
+): number {
+  const nonTaxableAmount = averageAnnualSalary * 3;
+  const secondTaxBracketThreshold = averageAnnualSalary * 6;
+
+  const taxpayerDeduction = 0.4 * averageAnnualSalary;
+  const dependentDeduction = 0.15 * averageAnnualSalary;
+
+  const under40Deductions = age < 40 ? nonTaxableAmount : 0;
+  const personalDeductions = Math.min(totalIncome * 0.5, taxpayerDeduction + dependentDeduction * numberOfDependents);
+  const totalDeductions = under40Deductions || personalDeductions;
+
+  let taxableBase = 0;
+
+  if (totalIncome <= nonTaxableAmount) {
+    return 0;
+  }
+
+  const netIncomeAfterNonTaxableAmount = totalIncome - nonTaxableAmount;
+
+  if (netIncomeAfterNonTaxableAmount <= totalDeductions) {
+    taxableBase = 0;
+  } else {
+    taxableBase = netIncomeAfterNonTaxableAmount - totalDeductions;
+  }
+
+  if (taxableBase <= 0) {
+    return 0;
+  } else if (taxableBase <= secondTaxBracketThreshold - nonTaxableAmount) {
+    return taxableBase * 0.1;
+  } else {
+    const baseFirstPart =
+      secondTaxBracketThreshold - nonTaxableAmount - totalDeductions;
+    const taxFirstPart = baseFirstPart * 0.1;
+    const baseSecondPart = taxableBase - baseFirstPart;
+    const taxSecondPart = baseSecondPart * 0.15;
+    return taxFirstPart + taxSecondPart;
+  }
+}
+
 export function getSoleRegionMatch(country: string, cityId: number) {
   if (country === "Spain") {
     const soleRegions = ["Navarre", "Basque Country"];

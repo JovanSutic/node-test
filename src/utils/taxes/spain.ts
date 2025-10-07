@@ -5,6 +5,7 @@ import type {
 import type { PrepReportItem, SpainOption } from "../../types/flow.types";
 import type { TaxConfig } from "../../types/taxes.types";
 import type {
+  AdditionalTaxUnitContract,
   AllowanceUnitContract,
   FinalValuesUnitContract,
   HealthUnitContract,
@@ -12,6 +13,7 @@ import type {
   MunicipalTaxUnitContract,
   RegionalTaxUnitContract,
   ReportStoreValues,
+  SalaryUnitContract,
   SocialUnitContract,
   StateTaxUnitContract,
   TaxableIncomeUnitContract,
@@ -21,10 +23,12 @@ import type {
 import { packageReportItems } from "../saveFlow";
 import { getConfig, getConfigRegime } from "./config";
 import {
+  setAdditionalTax,
   setFinalValues,
   setInitialData,
   setMunicipalTax,
   setRegionalTax,
+  setSalary,
   setSocials,
   setStateTax,
   setTaxableIncome,
@@ -187,6 +191,11 @@ function calculateTaxSingle(
     };
     setInitialData(taxService.forInit(), initialUnit);
 
+    const salaryUnit: SalaryUnitContract = {
+      rules: regime.rules,
+    };
+    setSalary(taxService.forSalary(), salaryUnit);
+
     const socialUnit: SocialUnitContract = {
       age: income.age || 50,
       rules: regime.rules,
@@ -233,6 +242,14 @@ function calculateTaxSingle(
       rules: regime.rules,
     };
     setMunicipalTax(taxService.forMunicipalTax(), municipalTaxUnit);
+
+    const additionalTaxUnit: AdditionalTaxUnitContract = {
+      rules: regime.rules,
+      dependents: reportUserData.dependents.length,
+      age: income.age || 50,
+
+    };
+    setAdditionalTax(taxService.forAdditionalTax(), additionalTaxUnit);
 
     const taxCreditUnit: TaxCreditsUnitContract = {
       rules: regime.rules,
