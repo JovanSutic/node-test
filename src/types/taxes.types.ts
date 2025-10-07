@@ -114,6 +114,14 @@ interface TaxRulesFinals {
   netIncome: string;
 }
 
+interface TaxRulesSalary {
+  salaryContributionsRate: number;
+  salaryUntaxedPart: number;
+  salaryTax: number;
+  salaryMinimum: number;
+  salaryAverageAnnual: number;
+}
+
 export interface TaxRules {
   tax: TaxRulesTax;
   reduction: {
@@ -126,6 +134,7 @@ export interface TaxRules {
   allowance: TaxRulesAllowance;
   health?: TaxRulesHealth;
   finals: TaxRulesFinals;
+  salary?: TaxRulesSalary;
 }
 
 export interface TaxConditions {
@@ -160,6 +169,7 @@ export interface IncomeBasics {
   expenses: number;
   socials: number;
   kids?: number;
+  minSalary?: number;
 }
 
 export interface TaxAdditions {

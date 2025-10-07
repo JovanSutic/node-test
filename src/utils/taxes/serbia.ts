@@ -108,8 +108,11 @@ function getBookedItems(
   const taxableBase = gross - expenses - minSalaryYear;
   const stateTax = taxableBase * 0.1;
   const socials = salarySocials;
+
   const salaryContributions = salaryTax + socials;
-  // ovo što se dodaje za salary ću da računam kao credit
+ 
+  
+
   const firstNet =
     taxableBase - stateTax + (minSalaryYear - salaryContributions);
   const dependents =
@@ -117,7 +120,6 @@ function getBookedItems(
     // ovo ću da računam kao neki dodatni tax
   const additionalTax = calculateAnnualPersonalIncomeTax(firstNet, dependents, income.age || 40);
 
-  //state tax regularno, additional tax će biti dodatno, i salary tax mora da bude izračunato nekako
   const totalTax = stateTax + salaryTax + additionalTax;
   const net = firstNet - additionalTax;
 
