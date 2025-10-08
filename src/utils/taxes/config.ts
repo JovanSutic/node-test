@@ -27,7 +27,7 @@ export function getConfig(country: string) {
 function normalizeIncomeValue(
   income: PersonalIncomesDto,
   key: keyof PersonalIncomesDto
-): number {
+): number | undefined{
   const value = income[key];
 
   if (typeof value === "number") {
@@ -39,7 +39,7 @@ function normalizeIncomeValue(
   }
 
   if (value === null || value === undefined) {
-    return 0;
+    return undefined;
   }
 
   throw new Error(
@@ -55,20 +55,23 @@ function getNormalizedValue(
 ) {
   if (key === "subject") {
     if (condition.subject === "incomesLength") return incomesLength;
-    return (
-      normalizeIncomeValue(
-        income,
-        condition.subject as keyof PersonalIncomesDto
-      ) || income.accountantCost + income.expensesCost
-    );
+    return normalizeIncomeValue(
+      income,
+      condition.subject as keyof PersonalIncomesDto
+    ) !== undefined
+      ? normalizeIncomeValue(
+          income,
+          condition.subject as keyof PersonalIncomesDto
+        )
+      : income.accountantCost + income.expensesCost;
   } else {
     if (condition.object === "incomesLength") return incomesLength;
     return condition.conditionType === "number"
       ? condition.condition
-      : normalizeIncomeValue(
+      : (normalizeIncomeValue(
           income,
           condition.object as keyof PersonalIncomesDto
-        ) * condition.condition;
+        ) || 0) * condition.condition;
   }
 }
 
@@ -86,13 +89,13 @@ function getMatchedConditionNumber(
       condition,
       income,
       incomesLength
-    );
+    ) || 0;
     const object = getNormalizedValue(
       "object",
       condition,
       income,
       incomesLength
-    );
+    ) || 0;
 
     if (condition.operation === "LESS THAN") {
       if (subject < object) {

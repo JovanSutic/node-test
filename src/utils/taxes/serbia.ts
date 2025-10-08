@@ -39,8 +39,8 @@ function getSalaryBasicInfo(minSalary: number) {
 }
 
 function calculateGross2(gross1: number): number {
-  const employerPensionRate = 0.1; // PIO on gross1
-  const employerUnemploymentRate = 0.0025; // Unemployment on gross1
+  const employerPensionRate = 0.1;
+  const employerUnemploymentRate = 0.0025;
 
   // --- Calculations ---
   const employerContributions =
@@ -117,7 +117,6 @@ function getBookedItems(
     taxableBase - stateTax + (minSalaryYear - salaryContributions);
   const dependents =
     reportUserData.dependents.length / reportUserData.incomes.length;
-    // ovo ću da računam kao neki dodatni tax
   const additionalTax = calculateAnnualPersonalIncomeTax(firstNet, dependents, income.age || 40);
 
   const totalTax = stateTax + salaryTax + additionalTax;

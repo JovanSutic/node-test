@@ -472,4 +472,35 @@ describe("ReportsController", () => {
 
     expect(response.body.net).toBe(66149.606);
   });
+
+  it("get public report for single LLC Serbia via POST /reports/public", async () => {
+    const publicPostDto = {
+      cityId: 1,
+      isWorkingMom: false,
+      dependents: [{ type: "kid", isDependent: true, age: 5 }],
+      incomes: [
+        {
+          isUSCitizen: false,
+          currency: "eur",
+          income: 100000,
+          accountantCost: 1440,
+          expensesCost: 0,
+          age: 40,
+          isIndependent: false,
+        },
+      ],
+    };
+
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue(serbiaCity);
+    jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
+
+    const response = await request(app.getHttpServer())
+      .post("/reports/public")
+      .send(publicPostDto)
+      .expect(201);
+
+    expect(response.body.net).toBe(67269.278);
+  });
 });
