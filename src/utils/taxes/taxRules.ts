@@ -1355,6 +1355,103 @@ export const serbiaBookedRules: TaxRules = {
 }
 };
 
+export const serbiaLLCRules: TaxRules = {
+  tax: {
+    type: "corporateSuccessive",
+    level: "state",
+    rate: 0.15,
+    other: {
+      withholdingTax: 0.15,
+    },
+    regionalExclusivity: false,
+    taxableIncomeSequence: "expensesReduction,minSalaryReduction",
+  },
+
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: false,
+      type: "",
+      reduction: 0,
+      maxReduction: 0,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: true,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
+
+  credit: {
+    allow: false,
+    type: "",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+
+  social: {
+    type: "flat",
+    baseType: "salary",
+    allowDiscount: false,
+    rateIndex: 1,
+    rate: 0,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 100000000,
+    maxCapBase: 0,
+    minCapBase: 0,
+  },
+
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [0],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+
+  finals: {
+    totalTax: "stateTax + salaryTax + additionalTax",
+    net: "taxableIncome - stateTax + salaryDiff",
+    netIncome:
+      "taxableIncome - stateTax + salaryDiff - additionalTax",
+  },
+
+  salary: {
+  salaryContributionsRate: 0.3775,
+  salaryUntaxedPart: 243,
+  salaryTax: 0.1,
+  salaryMinimum: 432.2,
+  salaryAverageAnnual: 10850,
+}
+};
+
 export const serbiaConfig: TaxConfig = {
   country: "Serbia",
   regimes: [
@@ -1411,7 +1508,7 @@ export const serbiaConfig: TaxConfig = {
     {
       name: "LLC",
       conditions: {
-        type: "AND",
+        type: "OR",
         list: [
           {
             name: "llc_1",
@@ -1423,7 +1520,7 @@ export const serbiaConfig: TaxConfig = {
           },
         ],
       },
-      rules: bulgariaFreelancerRules,
+      rules: serbiaLLCRules,
     },
   ],
   extras: {
