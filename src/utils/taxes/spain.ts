@@ -1,5 +1,6 @@
 import type {
   CreateReportItemDto,
+  PersonalIncomesDto,
   ReportUserDataDto,
 } from "../../reports/reports.dto";
 import type { PrepReportItem, SpainOption } from "../../types/flow.types";
@@ -58,6 +59,26 @@ function prepReportItems(
             amount:
               reportValues.stateTaxAllowance +
               reportValues.regionalTaxAllowance,
+          },
+          {
+            label: "Yearly salary",
+            type: "gross_salary",
+            amount: reportValues.minSalaryYear,
+          },
+          {
+            label: "Yearly salary contributions",
+            type: "salary_contributions",
+            amount: reportValues.salaryContributions,
+          },
+          {
+            label: "Full allowance",
+            type: "allowance",
+            amount: reportValues.totalAllowance,
+          },
+          {
+            label: "Reduction for expenses difficult to justify",
+            type: "reduction",
+            amount: reportValues.assumedCostReduction,
           },
           {
             label: "Full business expenses",
@@ -155,6 +176,20 @@ function prepReportItems(
   return packageReportItems(prepItems, index);
 }
 
+function mergeIncomes(incomes: PersonalIncomesDto[]) {
+  let result: PersonalIncomesDto | undefined = undefined;
+  incomes.forEach((item) => {
+    if (!result) {
+      result = { ...item };
+    } else {
+      result.income = result.income + item.income;
+      result.expensesCost = result.expensesCost + item.expensesCost;
+    }
+  });
+
+  return result ? [result] : [];
+}
+
 function calculateTaxSingle(
   reportUserData: ReportUserDataDto,
   eurRate: number,
@@ -171,13 +206,18 @@ function calculateTaxSingle(
 
   const isForJoint =
     reportUserData.incomes.length === 2 && config.extras.jointFilingBenefits;
+  const isForJointCalc =
+    reportUserData.incomes.length === 2 && config.extras.jointCalculation;
+  const userIncomes = isForJointCalc
+    ? mergeIncomes(reportUserData.incomes)
+    : reportUserData.incomes;
 
-  for (let index = 0; index < reportUserData.incomes.length; index++) {
-    const income = reportUserData.incomes[index];
+  for (let index = 0; index < userIncomes.length; index++) {
+    const income = userIncomes[index];
     const regime = getConfigRegime(
       config,
       income,
-      reportUserData.incomes.length
+      isForJointCalc ? 2 : userIncomes.length
     );
 
     if (regime === null) {
@@ -193,6 +233,7 @@ function calculateTaxSingle(
 
     const salaryUnit: SalaryUnitContract = {
       rules: regime.rules,
+      country,
     };
     setSalary(taxService.forSalary(), salaryUnit);
 
@@ -247,7 +288,6 @@ function calculateTaxSingle(
       rules: regime.rules,
       dependents: reportUserData.dependents.length,
       age: income.age || 50,
-
     };
     setAdditionalTax(taxService.forAdditionalTax(), additionalTaxUnit);
 

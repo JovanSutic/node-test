@@ -379,6 +379,42 @@ describe("ReportsController", () => {
     expect(response.body.net).toBe(70052.031);
   });
 
+  it("get public report for double EEOD Bulgaria via POST /reports/public", async () => {
+    const publicPostDto = {
+      cityId: 18,
+      isWorkingMom: false,
+      dependents: [],
+      incomes: [
+        {
+          isUSCitizen: false,
+          currency: "eur",
+          income: 50000,
+          accountantCost: 1200,
+          expensesCost: 0,
+        },
+        {
+          isUSCitizen: false,
+          currency: "eur",
+          income: 50000,
+          accountantCost: 1200,
+          expensesCost: 0,
+        },
+      ],
+    };
+
+    prismaServiceMock.cities.findUnique = jest
+      .fn()
+      .mockResolvedValue(bulgariaCity);
+    jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
+
+    const response = await request(app.getHttpServer())
+      .post("/reports/public")
+      .send(publicPostDto)
+      .expect(201);
+
+    expect(response.body.net).toBe(81282.141);
+  });
+
   it("get public report for single FREELANCE Bulgaria via POST /reports/public", async () => {
     const publicPostDto = {
       cityId: 18,

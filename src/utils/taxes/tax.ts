@@ -1,5 +1,10 @@
 import type { TaxBracket } from "../../types/flow.types";
-import type { FixedProgressive, TaxRulesTax } from "../../types/taxes.types";
+import type {
+  FixedProgressive,
+  TaxRules,
+  TaxRulesSalary,
+  TaxRulesTax,
+} from "../../types/taxes.types";
 import { getProgressiveTax } from "../saveFlow";
 import {
   getPortugalBrackets,
@@ -25,7 +30,10 @@ export function calculateAnnualPersonalIncomeTax(
   const dependentDeduction = 0.15 * averageAnnualSalary;
 
   const under40Deductions = age < 40 ? nonTaxableAmount : 0;
-  const personalDeductions = Math.min(totalIncome * 0.5, taxpayerDeduction + dependentDeduction * numberOfDependents);
+  const personalDeductions = Math.min(
+    totalIncome * 0.5,
+    taxpayerDeduction + dependentDeduction * numberOfDependents
+  );
   const totalDeductions = under40Deductions || personalDeductions;
 
   let taxableBase = 0;
@@ -183,5 +191,34 @@ export function getRegionalTax(
   return {
     tax: 0,
     allowanceTax: 0,
+  };
+}
+
+export function calculateSalary(salaryRules: TaxRulesSalary) {
+  const minSalaryYear = salaryRules.salaryMinimum * 12;
+  const salarySocials =
+    salaryRules.salaryMinimum * salaryRules.salaryContributionsRate * 12;
+  const salaryTax =
+    (salaryRules.salaryMinimum - salaryRules.salaryUntaxedPart) *
+    salaryRules.salaryTax *
+    12;
+
+  return { minSalaryYear, salarySocials, salaryTax };
+}
+
+export function calculateSalaryBulgaria(
+  reduction: number,
+  minNetSalaryMonth: number
+) {
+  const minNetSalary = minNetSalaryMonth * 12;
+  const employeeSocials = minNetSalary * 0.138;
+  const companySocials = minNetSalary * 0.19;
+  const taxableBase = minNetSalary - employeeSocials;
+  const incomeTax = Math.max(0, (taxableBase - reduction) * 0.1);
+
+  return {
+    minSalaryYear: minNetSalary + companySocials,
+    salaryTax: incomeTax,
+    salarySocials: employeeSocials + companySocials,
   };
 }

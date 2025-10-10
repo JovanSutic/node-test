@@ -1,6 +1,6 @@
 import type { DependentsDto, ReportUserDataDto } from "../reports/reports.dto";
 import type { TaxConfig, TaxRules } from "./taxes.types";
-import { getStateTax } from '../utils/taxes/tax';
+import { getStateTax } from "../utils/taxes/tax";
 
 export interface USData {
   amount: number;
@@ -174,6 +174,7 @@ export interface SalaryServiceContract {
 
 export interface SalaryUnitContract {
   rules: TaxRules;
+  country: string;
 }
 
 export interface FinalValues {
@@ -185,6 +186,10 @@ export interface FinalValues {
   stateTax: number;
   regionalTax: number;
   taxCredit: number;
+  salaryTax: number;
+  additionalTax: number;
+  salaryDiff: number;
+  salaryContributions: number;
 }
 
 export interface FinalValuesServiceContract {
@@ -232,6 +237,10 @@ export interface ReportStoreValues {
   stateTaxAllowance: number;
   regionalTaxAllowance: number;
   effectiveTaxRate: number;
+  totalAllowance: number;
+  assumedCostReduction: number;
+  salaryContributions: number;
+  minSalaryYear: number;
 }
 
 export interface ReportItemsServiceContract {

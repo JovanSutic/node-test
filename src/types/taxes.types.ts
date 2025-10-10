@@ -114,7 +114,7 @@ interface TaxRulesFinals {
   netIncome: string;
 }
 
-interface TaxRulesSalary {
+export interface TaxRulesSalary {
   salaryContributionsRate: number;
   salaryUntaxedPart: number;
   salaryTax: number;
@@ -157,6 +157,7 @@ export interface TaxRegime {
 
 interface TaxConfigExtra {
   jointFilingBenefits: boolean;
+  jointCalculation?: boolean;
 }
 export interface TaxConfig {
   country: string;
