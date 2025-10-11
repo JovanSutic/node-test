@@ -239,7 +239,8 @@ export interface ReportStoreValues {
   effectiveTaxRate: number;
   totalAllowance: number;
   assumedCostReduction: number;
-  salaryContributions: number;
+  salarySocials: number;
+  salaryTax: number;
   minSalaryYear: number;
 }
 

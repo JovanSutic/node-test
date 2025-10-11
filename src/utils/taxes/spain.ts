@@ -43,7 +43,9 @@ import {
 function prepReportItems(
   reportValues: ReportStoreValues,
   scenario: SpainOption,
-  index: number
+  index: number,
+  isJointCalculation = false,
+  name: string
 ) {
   const prepItems: PrepReportItem[] =
     scenario === "1st"
@@ -60,16 +62,20 @@ function prepReportItems(
               reportValues.stateTaxAllowance +
               reportValues.regionalTaxAllowance,
           },
-          {
-            label: "Yearly salary",
-            type: "gross_salary",
-            amount: reportValues.minSalaryYear,
-          },
-          {
-            label: "Yearly salary contributions",
-            type: "salary_contributions",
-            amount: reportValues.salaryContributions,
-          },
+          ...(!isJointCalculation
+            ? [
+                {
+                  label: "Yearly salary",
+                  type: "gross_salary",
+                  amount: reportValues.minSalaryYear,
+                },
+                {
+                  label: "Yearly salary contributions",
+                  type: "salary_contributions",
+                  amount: reportValues.salaryTax + reportValues.salarySocials,
+                },
+              ]
+            : []),
           {
             label: "Full allowance",
             type: "allowance",
@@ -151,10 +157,10 @@ function prepReportItems(
             amount: reportValues.netIncome,
           },
           {
-            label: "Progressive tax Czech Regime",
+            label: name,
             type: "tax_type",
             amount: 0,
-            note: "Osoba Samostatně Výdělečně Činná - Individually Earning Person",
+            note: "",
           },
         ]
       : [
@@ -172,8 +178,45 @@ function prepReportItems(
             amount: reportValues.netIncome,
           },
         ];
+  const result = packageReportItems(prepItems, index);
+  if (scenario === "1st" && isJointCalculation) {
+    result.push({
+      reportId: 0,
+      incomeMaker: 1,
+      label: "Total social contributions",
+      type: "social_contributions",
+      amount: reportValues.salarySocials,
+    });
 
-  return packageReportItems(prepItems, index);
+    result.push({
+      reportId: 0,
+      incomeMaker: 1,
+      label: "State income tax",
+      type: "income_tax",
+      amount: reportValues.salaryTax,
+    });
+
+    result.push({
+      reportId: 0,
+      incomeMaker: 1,
+      label: "Total net income",
+      type: "net",
+      amount:
+        reportValues.minSalaryYear -
+        reportValues.salarySocials -
+        reportValues.salaryTax,
+    });
+
+    result.push({
+      reportId: 0,
+      incomeMaker: 1,
+      label: name,
+      type: "tax_type",
+      amount: 0,
+    });
+  }
+
+  return result;
 }
 
 function mergeIncomes(incomes: PersonalIncomesDto[]) {
@@ -319,7 +362,13 @@ function calculateTaxSingle(
 
     const { getReportItemValues } = taxService.forReportItems();
 
-    const items = prepReportItems(getReportItemValues(), scenario, index);
+    const items = prepReportItems(
+      getReportItemValues(),
+      scenario,
+      index,
+      isForJointCalc,
+      regime.name
+    );
     reportItems.push(...items);
   }
 

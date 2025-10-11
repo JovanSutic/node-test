@@ -924,8 +924,8 @@ export const bulgariaEOODDOUBLERules: TaxRules = {
 
   finals: {
     totalTax: "stateTax + salaryContributions - taxCredit",
-    net: "taxableIncome - stateTax + salaryDiff",
-    netIncome: "taxableIncome - stateTax + salaryDiff",
+    net: "taxableIncome - stateTax",
+    netIncome: "taxableIncome - stateTax",
   },
 };
 
