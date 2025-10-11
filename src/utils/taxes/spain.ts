@@ -1,5 +1,6 @@
 import type {
   CreateReportItemDto,
+  PersonalIncomesDto,
   ReportUserDataDto,
 } from "../../reports/reports.dto";
 import type { PrepReportItem, SpainOption } from "../../types/flow.types";
@@ -42,7 +43,9 @@ import {
 function prepReportItems(
   reportValues: ReportStoreValues,
   scenario: SpainOption,
-  index: number
+  index: number,
+  isJointCalculation = false,
+  name: string
 ) {
   const prepItems: PrepReportItem[] =
     scenario === "1st"
@@ -58,6 +61,30 @@ function prepReportItems(
             amount:
               reportValues.stateTaxAllowance +
               reportValues.regionalTaxAllowance,
+          },
+          ...(!isJointCalculation
+            ? [
+                {
+                  label: "Yearly salary",
+                  type: "gross_salary",
+                  amount: reportValues.minSalaryYear,
+                },
+                {
+                  label: "Yearly salary contributions",
+                  type: "salary_contributions",
+                  amount: reportValues.salaryTax + reportValues.salarySocials,
+                },
+              ]
+            : []),
+          {
+            label: "Full allowance",
+            type: "allowance",
+            amount: reportValues.totalAllowance,
+          },
+          {
+            label: "Reduction for expenses difficult to justify",
+            type: "reduction",
+            amount: reportValues.assumedCostReduction,
           },
           {
             label: "Full business expenses",
@@ -130,10 +157,10 @@ function prepReportItems(
             amount: reportValues.netIncome,
           },
           {
-            label: "Progressive tax Czech Regime",
+            label: name,
             type: "tax_type",
             amount: 0,
-            note: "Osoba Samostatně Výdělečně Činná - Individually Earning Person",
+            note: "",
           },
         ]
       : [
@@ -151,8 +178,59 @@ function prepReportItems(
             amount: reportValues.netIncome,
           },
         ];
+  const result = packageReportItems(prepItems, index);
+  if (scenario === "1st" && isJointCalculation) {
+    result.push({
+      reportId: 0,
+      incomeMaker: 1,
+      label: "Total social contributions",
+      type: "social_contributions",
+      amount: reportValues.salarySocials,
+    });
 
-  return packageReportItems(prepItems, index);
+    result.push({
+      reportId: 0,
+      incomeMaker: 1,
+      label: "State income tax",
+      type: "income_tax",
+      amount: reportValues.salaryTax,
+    });
+
+    result.push({
+      reportId: 0,
+      incomeMaker: 1,
+      label: "Total net income",
+      type: "net",
+      amount:
+        reportValues.minSalaryYear -
+        reportValues.salarySocials -
+        reportValues.salaryTax,
+    });
+
+    result.push({
+      reportId: 0,
+      incomeMaker: 1,
+      label: name,
+      type: "tax_type",
+      amount: 0,
+    });
+  }
+
+  return result;
+}
+
+function mergeIncomes(incomes: PersonalIncomesDto[]) {
+  let result: PersonalIncomesDto | undefined = undefined;
+  incomes.forEach((item) => {
+    if (!result) {
+      result = { ...item };
+    } else {
+      result.income = result.income + item.income;
+      result.expensesCost = result.expensesCost + item.expensesCost;
+    }
+  });
+
+  return result ? [result] : [];
 }
 
 function calculateTaxSingle(
@@ -171,13 +249,18 @@ function calculateTaxSingle(
 
   const isForJoint =
     reportUserData.incomes.length === 2 && config.extras.jointFilingBenefits;
+  const isForJointCalc =
+    reportUserData.incomes.length === 2 && config.extras.jointCalculation;
+  const userIncomes = isForJointCalc
+    ? mergeIncomes(reportUserData.incomes)
+    : reportUserData.incomes;
 
-  for (let index = 0; index < reportUserData.incomes.length; index++) {
-    const income = reportUserData.incomes[index];
+  for (let index = 0; index < userIncomes.length; index++) {
+    const income = userIncomes[index];
     const regime = getConfigRegime(
       config,
       income,
-      reportUserData.incomes.length
+      isForJointCalc ? 2 : userIncomes.length
     );
 
     if (regime === null) {
@@ -193,6 +276,7 @@ function calculateTaxSingle(
 
     const salaryUnit: SalaryUnitContract = {
       rules: regime.rules,
+      country,
     };
     setSalary(taxService.forSalary(), salaryUnit);
 
@@ -247,7 +331,6 @@ function calculateTaxSingle(
       rules: regime.rules,
       dependents: reportUserData.dependents.length,
       age: income.age || 50,
-
     };
     setAdditionalTax(taxService.forAdditionalTax(), additionalTaxUnit);
 
@@ -279,7 +362,13 @@ function calculateTaxSingle(
 
     const { getReportItemValues } = taxService.forReportItems();
 
-    const items = prepReportItems(getReportItemValues(), scenario, index);
+    const items = prepReportItems(
+      getReportItemValues(),
+      scenario,
+      index,
+      isForJointCalc,
+      regime.name
+    );
     reportItems.push(...items);
   }
 

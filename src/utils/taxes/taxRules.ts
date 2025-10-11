@@ -223,7 +223,7 @@ export const portugalConfig: TaxConfig = {
       rules: portugalRules,
     },
     {
-      name: "Organized Regime",
+      name: "Organized",
       conditions: {
         type: "OR",
         list: [
@@ -792,7 +792,7 @@ export const czechConfig: TaxConfig = {
   country: "Czech Republic",
   regimes: [
     {
-      name: "Flat Regime",
+      name: "Flat Czech Regime",
       conditions: {
         type: "AND",
         list: [
@@ -809,7 +809,7 @@ export const czechConfig: TaxConfig = {
       rules: czechFlatRules,
     },
     {
-      name: "Regular Regime",
+      name: "Progressive tax Czech Regime",
       conditions: {
         type: "AND",
         list: [
@@ -840,7 +840,8 @@ export const bulgariaEOODDOUBLERules: TaxRules = {
       withholdingTax: 0.05,
     },
     regionalExclusivity: false,
-    taxableIncomeSequence: "expensesReduction,socialsReduction",
+    taxableIncomeSequence:
+      "expensesReduction,socialsReduction,minSalaryReduction",
   },
 
   reduction: {
@@ -859,10 +860,11 @@ export const bulgariaEOODDOUBLERules: TaxRules = {
       workTypeReductions: {},
     },
     other: {
-      allow: false,
+      allow: true,
       personal: 0,
       age: 0,
       ageCap: 0,
+      kids: 3070,
     },
   },
 
@@ -912,11 +914,18 @@ export const bulgariaEOODDOUBLERules: TaxRules = {
     useType: "no allowance",
   },
 
+  salary: {
+    salaryContributionsRate: 0.328,
+    salaryUntaxedPart: 0,
+    salaryTax: 0.1,
+    salaryMinimum: 550,
+    salaryAverageAnnual: 10850,
+  },
+
   finals: {
-    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
-    net: "grossIncome - totalExpenses - socials - totalHealth",
-    netIncome:
-      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+    totalTax: "stateTax + salaryContributions - taxCredit",
+    net: "taxableIncome - stateTax",
+    netIncome: "taxableIncome - stateTax",
   },
 };
 
@@ -1100,7 +1109,7 @@ export const bulgariaConfig: TaxConfig = {
   country: "Bulgaria",
   regimes: [
     {
-      name: "EOOD Double",
+      name: "EOOD DOUBLE",
       conditions: {
         type: "AND",
         list: [
@@ -1117,7 +1126,7 @@ export const bulgariaConfig: TaxConfig = {
       rules: bulgariaEOODDOUBLERules,
     },
     {
-      name: "EOOD",
+      name: "EOOD SINGLE",
       conditions: {
         type: "AND",
         list: [
@@ -1168,6 +1177,7 @@ export const bulgariaConfig: TaxConfig = {
     },
   ],
   extras: {
+    jointCalculation: true,
     jointFilingBenefits: false,
   },
 };
@@ -1266,6 +1276,9 @@ export const serbiaBookedRules: TaxRules = {
     type: "salaryMixed",
     level: "state",
     rate: 0.1,
+    other: {
+      allowAdditional: true,
+    },
     regionalExclusivity: false,
     taxableIncomeSequence: "expensesReduction,minSalaryReduction",
   },
@@ -1342,17 +1355,16 @@ export const serbiaBookedRules: TaxRules = {
   finals: {
     totalTax: "stateTax + salaryTax + additionalTax",
     net: "taxableIncome - stateTax + salaryDiff",
-    netIncome:
-      "taxableIncome - stateTax + salaryDiff - additionalTax",
+    netIncome: "taxableIncome - stateTax + salaryDiff - additionalTax",
   },
 
   salary: {
-  salaryContributionsRate: 0.3775,
-  salaryUntaxedPart: 243,
-  salaryTax: 0.1,
-  salaryMinimum: 392,
-  salaryAverageAnnual: 10850,
-}
+    salaryContributionsRate: 0.3775,
+    salaryUntaxedPart: 243,
+    salaryTax: 0.1,
+    salaryMinimum: 392,
+    salaryAverageAnnual: 10850,
+  },
 };
 
 export const serbiaLLCRules: TaxRules = {
@@ -1362,6 +1374,7 @@ export const serbiaLLCRules: TaxRules = {
     rate: 0.15,
     other: {
       withholdingTax: 0.15,
+      allowAdditional: true,
     },
     regionalExclusivity: false,
     taxableIncomeSequence: "expensesReduction,minSalaryReduction",
@@ -1439,24 +1452,23 @@ export const serbiaLLCRules: TaxRules = {
   finals: {
     totalTax: "stateTax + salaryTax + additionalTax",
     net: "taxableIncome - stateTax + salaryDiff",
-    netIncome:
-      "taxableIncome - stateTax + salaryDiff - additionalTax",
+    netIncome: "taxableIncome - stateTax + salaryDiff - additionalTax",
   },
 
   salary: {
-  salaryContributionsRate: 0.3775,
-  salaryUntaxedPart: 243,
-  salaryTax: 0.1,
-  salaryMinimum: 432.2,
-  salaryAverageAnnual: 10850,
-}
+    salaryContributionsRate: 0.3775,
+    salaryUntaxedPart: 243,
+    salaryTax: 0.1,
+    salaryMinimum: 432.2,
+    salaryAverageAnnual: 10850,
+  },
 };
 
 export const serbiaConfig: TaxConfig = {
   country: "Serbia",
   regimes: [
     {
-      name: "Flat",
+      name: "Flat Serbian Regime",
       conditions: {
         type: "AND",
         list: [
@@ -1481,7 +1493,7 @@ export const serbiaConfig: TaxConfig = {
       rules: serbiaFlatRules,
     },
     {
-      name: "Booked",
+      name: "Bookkeeping Regime",
       conditions: {
         type: "AND",
         list: [
@@ -1506,7 +1518,7 @@ export const serbiaConfig: TaxConfig = {
       rules: serbiaBookedRules,
     },
     {
-      name: "LLC",
+      name: "LLC Regime",
       conditions: {
         type: "OR",
         list: [

@@ -267,10 +267,8 @@ function calculateIndividual(
   const isSimplified = getSimplified(gross, expenses);
 
   const taxableBase = calculateTaxBase(reportUserData, year, 0);
-  // urađeno
 
   const socials = year === 1 ? 0 : (gross / 12) * 3 * 0.7 * 0.214 * 4;
-  // urađeno
 
   const creditsCap =
     taxableBase > creditLimit
@@ -278,10 +276,6 @@ function calculateIndividual(
       : 1000 + 1500 * (1 - (taxableBase - 8059) / (creditLimit - 8059));
   const dependentCredits = getDependentCredits(reportUserData.dependents);
   const taxCredits = Math.min(creditsCap, dependentCredits);
-  // urađeno
-
-  
-
   const brackets = getPortugalBrackets(reportUserData.cityId);
   const grossTax = getProgressiveTax(taxableBase, brackets);
 

@@ -38,6 +38,8 @@ import { executeCalcString, getTaxCredits } from "./credit";
 import { getJoinTaxableIncome, getReductions } from "./socialsAndReduction";
 import {
   calculateAnnualPersonalIncomeTax,
+  calculateSalary,
+  calculateSalaryBulgaria,
   getRegionalBrackets,
   getRegionalTax,
   getSoleRegionMatch,
@@ -108,6 +110,7 @@ export class TaxService {
       taxCredit: this.store.taxCredit,
       salaryTax: this.store.salaryTax,
       additionalTax: this.store.additionalTax,
+      salaryContributions: this.store.salarySocials + this.store.salaryTax,
       salaryDiff:
         this.store.minSalaryYear -
         (this.store.salarySocials + this.store.salaryTax),
@@ -117,6 +120,8 @@ export class TaxService {
       totalExpenses: this.store.totalExpenses,
       socials: this.store.socials,
       totalHealth: this.store.totalHealth,
+      totalAllowance: this.store.totalAllowance,
+      assumedCostReduction: this.store.assumedCostReduction,
       taxableIncome: this.store.taxableIncome,
       municipalTax: this.store.municipalTax,
       stateTax: this.store.stateTax,
@@ -127,6 +132,9 @@ export class TaxService {
       federalTax: this.store.federalTax,
       usSelfEmployedTaxNote: this.store.usSelfEmployedTaxNote,
       netIncome: this.store.netIncome,
+      salarySocials: this.store.salarySocials,
+      salaryTax: this.store.salaryTax,
+      minSalaryYear: this.store.minSalaryYear,
       stateTaxAllowance: this.store.stateTaxAllowance,
       regionalTaxAllowance: this.store.regionalTaxAllowance,
     }),
@@ -585,7 +593,7 @@ export const setAdditionalTax: TaxProcessor<
   AdditionalTaxUnitContract
 > = (service, unit) => {
   const { rules, age, dependents } = unit;
-  if (rules.salary) {
+  if (rules.salary && rules.tax.other?.allowAdditional) {
     const firstNet =
       service.getTaxableIncome() -
       service.getStateTax() +
@@ -690,17 +698,15 @@ export const setSalary: TaxProcessor<
   SalaryServiceContract,
   SalaryUnitContract
 > = (service, unit) => {
-  const { rules } = unit;
+  const { rules, country } = unit;
   if (!rules.salary) {
     return;
   }
-  const minSalaryYear = rules.salary.salaryMinimum * 12;
-  const salarySocials =
-    rules.salary.salaryMinimum * rules.salary.salaryContributionsRate * 12;
-  const salaryTax =
-    (rules.salary.salaryMinimum - rules.salary.salaryUntaxedPart) *
-    rules.salary.salaryTax *
-    12;
+
+  const { minSalaryYear, salarySocials, salaryTax } =
+    country === "Bulgaria"
+      ? calculateSalaryBulgaria(0, rules.salary.salaryMinimum)
+      : calculateSalary(rules.salary);
 
   if (
     isNaN(minSalaryYear) ||
@@ -760,8 +766,10 @@ export const setFinalValues: TaxProcessor<
   }
 
   const effectiveRate =
-    (finalValues.regionalTax +
+    (finalValues.municipalTax +
+      finalValues.regionalTax +
       finalValues.stateTax +
+      finalValues.salaryContributions +
       finalValues.socials -
       finalValues.taxCredit) /
     finalValues.grossIncome;
