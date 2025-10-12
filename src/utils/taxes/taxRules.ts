@@ -1264,10 +1264,9 @@ export const serbiaFlatRules: TaxRules = {
   },
 
   finals: {
-    totalTax: "municipalTax + stateTax + regionalTax - taxCredit",
-    net: "grossIncome - totalExpenses - socials - totalHealth",
-    netIncome:
-      "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
+    totalTax: "stateTax - taxCredit",
+    net: "(grossIncome - socials - totalHealth) - (stateTax - taxCredit)",
+    netIncome: "(grossIncome - socials - totalHealth) - (stateTax - taxCredit)",
   },
 };
 

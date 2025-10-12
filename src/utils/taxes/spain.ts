@@ -56,6 +56,16 @@ function prepReportItems(
             amount: reportValues.grossIncome,
           },
           {
+            label: "Corporate income tax",
+            type: "income_tax",
+            amount: reportValues.corporateTax,
+          },
+          {
+            label: "Withholding tax",
+            type: "dividend_tax",
+            amount: reportValues.withholdingTax,
+          },
+          {
             label: "Allowance tax credit",
             type: "tax_credit",
             amount:
