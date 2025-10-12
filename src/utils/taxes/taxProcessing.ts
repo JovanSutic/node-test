@@ -70,6 +70,8 @@ export class TaxService {
       minSalaryYear: 0,
       salarySocials: 0,
       salaryTax: 0,
+      corporateTax: 0,
+      withholdingTax: 0,
 
       // --- Final Metrics (Written by Finalizers) ---
       totalTax: 0,
@@ -137,6 +139,8 @@ export class TaxService {
       minSalaryYear: this.store.minSalaryYear,
       stateTaxAllowance: this.store.stateTaxAllowance,
       regionalTaxAllowance: this.store.regionalTaxAllowance,
+      corporateTax: this.store.corporateTax,
+      withholdingTax: this.store.withholdingTax,
     }),
 
     // Setters
@@ -181,6 +185,12 @@ export class TaxService {
     },
     setMunicipalTax: (amount: number) => {
       this.store.municipalTax = amount;
+    },
+    setCorporateTax: (amount: number) => {
+      this.store.corporateTax = amount;
+    },
+    setWithholdingTax: (amount: number) => {
+      this.store.withholdingTax = amount;
     },
     setAdditionalTax: (amount: number) => {
       this.store.additionalTax = amount;
@@ -271,6 +281,8 @@ export class TaxService {
       "getTotalAllowance",
       "setStateTax",
       "setStateTaxAllowance",
+      "setCorporateTax",
+      "setWithholdingTax",
     ]);
   }
 
@@ -556,7 +568,7 @@ export const setStateTax: TaxProcessor<
     ? getSoleRegionMatch(country, cityId)
     : false;
 
-  const { tax, allowanceTax } = getStateTax({
+  const { tax, allowanceTax, breakdown } = getStateTax({
     taxableIncome: service.getTaxableIncome(),
     totalAllowance: service.getTotalAllowance(),
     isStateTax: !isExclusiveRegion,
@@ -566,6 +578,11 @@ export const setStateTax: TaxProcessor<
 
   if (isNaN(tax) || tax < 0 || isNaN(allowanceTax) || allowanceTax < 0) {
     throw new Error("Failed to calculate state tax");
+  }
+
+  if (breakdown) {
+    service.setCorporateTax(breakdown.corporateTax);
+    service.setWithholdingTax(breakdown.withholdingTax);
   }
 
   service.setStateTaxAllowance(allowanceTax);

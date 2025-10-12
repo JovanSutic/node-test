@@ -1,6 +1,5 @@
 import type { DependentsDto, ReportUserDataDto } from "../reports/reports.dto";
 import type { TaxConfig, TaxRules } from "./taxes.types";
-import { getStateTax } from "../utils/taxes/tax";
 
 export interface USData {
   amount: number;
@@ -26,6 +25,8 @@ export interface TaxDataStore {
   minSalaryYear: number;
   salarySocials: number;
   salaryTax: number;
+  corporateTax: number;
+  withholdingTax: number;
 
   // --- Final Metrics (Written by Finalizers) ---
   totalTax: number;
@@ -111,6 +112,8 @@ export interface StateTaxServiceContract {
   getTotalAllowance(): number;
   setStateTax(amount: number): void;
   setStateTaxAllowance(amount: number): void;
+  setCorporateTax(amount: number): void;
+  setWithholdingTax(amount: number): void;
 }
 
 export interface StateTaxUnitContract {
@@ -242,6 +245,8 @@ export interface ReportStoreValues {
   salarySocials: number;
   salaryTax: number;
   minSalaryYear: number;
+  corporateTax: number;
+  withholdingTax: number;
 }
 
 export interface ReportItemsServiceContract {

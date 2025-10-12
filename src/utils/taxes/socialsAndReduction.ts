@@ -109,7 +109,7 @@ export function getReductions(
     }
   });
 
-  result.taxableIncome = statefulBase;
+  result.taxableIncome = Math.max(0, statefulBase);
 
   return result;
 }
@@ -238,7 +238,11 @@ export function getJoinTaxableIncome(
   let jointTaxableIncome = 0;
   for (let index = 0; index < reportUserData.incomes.length; index++) {
     const income = reportUserData.incomes[index];
-    const regime = getConfigRegime(config, income, reportUserData.incomes.length)!;
+    const regime = getConfigRegime(
+      config,
+      income,
+      reportUserData.incomes.length
+    )!;
     const socials = calculateSocials([income], regime.rules, year);
     const incomeBasics = {
       gross: income.income,
