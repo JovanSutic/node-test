@@ -39,8 +39,8 @@ function getSalaryBasicInfo(minSalary: number) {
 }
 
 function calculateGross2(gross1: number): number {
-  const employerPensionRate = 0.1; // PIO on gross1
-  const employerUnemploymentRate = 0.0025; // Unemployment on gross1
+  const employerPensionRate = 0.1;
+  const employerUnemploymentRate = 0.0025;
 
   // --- Calculations ---
   const employerContributions =
@@ -108,7 +108,11 @@ function getBookedItems(
   const taxableBase = gross - expenses - minSalaryYear;
   const stateTax = taxableBase * 0.1;
   const socials = salarySocials;
+
   const salaryContributions = salaryTax + socials;
+ 
+  
+
   const firstNet =
     taxableBase - stateTax + (minSalaryYear - salaryContributions);
   const dependents =
@@ -511,7 +515,8 @@ function getSingleYearTax(
 
 export function calculateSerbiaTax(
   reportUserData: ReportUserDataDto,
-  eurRate: number
+  eurRate: number,
+  country: string,
 ) {
   const first = getSingleYearTax(reportUserData, eurRate);
   const second = getSingleYearTax(reportUserData, eurRate, "2nd");

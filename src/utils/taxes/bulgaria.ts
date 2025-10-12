@@ -29,8 +29,7 @@ function getSelfEmployedSocials(gross: number) {
   return socialBase * 0.32;
 }
 
-function calculateSpouseSalary(reduction: number) {
-  const minNetSalaryMonth = 550;
+function calculateSpouseSalary(reduction: number, minNetSalaryMonth: number) {
   const minNetSalary = minNetSalaryMonth * 12;
   const employeeSocials = minNetSalary * 0.138;
   const companySocials = minNetSalary * 0.19;
@@ -40,7 +39,7 @@ function calculateSpouseSalary(reduction: number) {
   return {
     net: taxableBase - incomeTax,
     companyCost: minNetSalary + companySocials,
-    jointCost: employeeSocials + companySocials + incomeTax,
+    fullCost: employeeSocials + companySocials + incomeTax,
     tax: incomeTax,
     socials: employeeSocials + companySocials,
   };
@@ -60,10 +59,12 @@ function getDoubleEarnerTaxItems(
     (prev, next) => prev + next.expensesCost,
     0
   );
+
   const expenses = accountingCost + otherCosts;
   const childrenReduction = getTaxReduction(reportUserData.dependents);
-  const spouseSalary = calculateSpouseSalary(childrenReduction);
-  const socials = 0.283 * 550 * 12;
+  const minNetSalary = 550;
+  const spouseSalary = calculateSpouseSalary(childrenReduction, minNetSalary);
+  const socials = 0.283 * minNetSalary * 12;
   const taxableBase =
     grossIncome - expenses - socials - spouseSalary.companyCost;
 
@@ -72,7 +73,7 @@ function getDoubleEarnerTaxItems(
   const netProfit = taxableBase - corporateTax - taxCredit;
   const withholdingTax = netProfit * 0.05;
   const totalTax =
-    corporateTax + withholdingTax + spouseSalary.jointCost - taxCredit;
+    corporateTax + withholdingTax + spouseSalary.fullCost - taxCredit;
 
   const effectiveRate = Math.max(0, (socials + totalTax) / grossIncome);
   const net = taxableBase - corporateTax - withholdingTax;
@@ -606,7 +607,8 @@ function getSingleYearTax(
 
 export function calculateBulgariaTax(
   reportUserData: ReportUserDataDto,
-  eurRate: number
+  eurRate: number,
+  country: string,
 ) {
   const first = getSingleYearTax(reportUserData, eurRate);
   const second = getSingleYearTax(reportUserData, eurRate, "2nd");

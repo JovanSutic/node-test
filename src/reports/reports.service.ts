@@ -70,7 +70,7 @@ export class ReportsService {
       );
     }
 
-    return calculationFunction(normalizedData, rates.usd);
+    return calculationFunction(normalizedData, rates.usd, city.country);
   }
 
   async getBudgets(reportUserData: ReportUserDataDto): Promise<ReportBudgets> {
