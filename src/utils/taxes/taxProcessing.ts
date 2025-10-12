@@ -756,7 +756,7 @@ export const setFinalValues: TaxProcessor<
     const result = executeCalcString(value, finalValues);
 
     if (key === "totalTax") {
-      results.totalTax = result;
+      results.totalTax = Math.max(0, result);
       service.setTotalTax(result);
     }
 
@@ -769,6 +769,10 @@ export const setFinalValues: TaxProcessor<
       results.netIncome = result;
       service.setNetIncome(result);
     }
+  }
+
+  if (results.totalTax === 0) {
+    results.netIncome = results.net;
   }
 
   if (
