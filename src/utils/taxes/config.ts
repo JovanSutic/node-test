@@ -26,9 +26,14 @@ export function getConfig(country: string) {
 
 function normalizeIncomeValue(
   income: PersonalIncomesDto,
-  key: keyof PersonalIncomesDto
-): number | undefined{
+  key: keyof PersonalIncomesDto,
+  type?: string
+): number | undefined {
   const value = income[key];
+
+  if (type && type === "number" && value === undefined) {
+    return 0;
+  }
 
   if (typeof value === "number") {
     return value;
@@ -57,11 +62,13 @@ function getNormalizedValue(
     if (condition.subject === "incomesLength") return incomesLength;
     return normalizeIncomeValue(
       income,
-      condition.subject as keyof PersonalIncomesDto
+      condition.subject as keyof PersonalIncomesDto,
+      condition.conditionType
     ) !== undefined
       ? normalizeIncomeValue(
           income,
-          condition.subject as keyof PersonalIncomesDto
+          condition.subject as keyof PersonalIncomesDto,
+          condition.conditionType
         )
       : income.accountantCost + income.expensesCost;
   } else {
@@ -70,7 +77,8 @@ function getNormalizedValue(
       ? condition.condition
       : (normalizeIncomeValue(
           income,
-          condition.object as keyof PersonalIncomesDto
+          condition.object as keyof PersonalIncomesDto,
+          condition.conditionType
         ) || 0) * condition.condition;
   }
 }
@@ -84,18 +92,10 @@ function getMatchedConditionNumber(
 
   for (let index = 0; index < conditions.length; index++) {
     const condition = conditions[index];
-    const subject = getNormalizedValue(
-      "subject",
-      condition,
-      income,
-      incomesLength
-    ) || 0;
-    const object = getNormalizedValue(
-      "object",
-      condition,
-      income,
-      incomesLength
-    ) || 0;
+    const subject =
+      getNormalizedValue("subject", condition, income, incomesLength) || 0;
+    const object =
+      getNormalizedValue("object", condition, income, incomesLength) || 0;
 
     if (condition.operation === "LESS THAN") {
       if (subject < object) {
@@ -141,8 +141,8 @@ function configureTaxRegimeRules(
       regime.rules.reduction.assumedCost.workTypeReductions[workTypeKey]!;
   }
 
-  if (isNewRateConfig && income.isNew) {
-    regime.rules.tax.rate = regime.rules.tax.other!.newRate;
+  if (isNewRateConfig && Boolean(income?.isNew)) {
+    regime.rules.tax.rate = regime.rules.tax.other?.newRate;
   }
 
   return regime;
