@@ -20,8 +20,8 @@ services:
       driver: awslogs
       options:
         awslogs-group: /ec2/node-test-prod
-        awslogs-region: eu-central-1 
-        awslogs-stream-prefix: nest-api-logs
+        awslogs-region: eu-central-1
+        awslogs-stream: "{{.Name}}-{{.ID}}"
 networks:
   app_network:
     driver: bridge
