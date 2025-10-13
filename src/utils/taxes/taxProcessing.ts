@@ -141,6 +141,7 @@ export class TaxService {
       regionalTaxAllowance: this.store.regionalTaxAllowance,
       corporateTax: this.store.corporateTax,
       withholdingTax: this.store.withholdingTax,
+      additionalTax: this.store.additionalTax,
     }),
 
     // Setters
