@@ -141,7 +141,15 @@ function configureTaxRegimeRules(
       regime.rules.reduction.assumedCost.workTypeReductions[workTypeKey]!;
   }
 
+  console.log("isNewRateConfig", isNewRateConfig);
+  console.log("income object", income);
+
   if (isNewRateConfig && Boolean(income?.isNew)) {
+    console.log(
+      `config is changing to newRate which is:${
+        regime.rules.tax.other?.newRate
+      } and on count of isNew which is ${Boolean(income?.isNew)}`
+    );
     regime.rules.tax.rate = regime.rules.tax.other?.newRate;
   }
 
