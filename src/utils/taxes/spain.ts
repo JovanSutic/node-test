@@ -242,7 +242,7 @@ function prepReportItems(
       incomeMaker: 1,
       label: "Total tax",
       type: `additional_${scenario}`,
-      amount: reportValues.salarySocials + reportValues.salaryTax,
+      amount: reportValues.salarySocials,
     });
 
     result.push({
