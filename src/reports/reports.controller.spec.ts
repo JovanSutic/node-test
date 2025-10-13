@@ -174,7 +174,7 @@ describe("ReportsController", () => {
         {
           isUSCitizen: false,
           currency: "eur",
-          income: 100000,
+          income: 50000,
           accountantCost: 1800,
           expensesCost: 0,
           age: 29,
@@ -192,7 +192,7 @@ describe("ReportsController", () => {
       .send(publicPostDto)
       .expect(201);
 
-    expect(response.body.net).toBe(87921.54000000001);
+    expect(response.body.net).toBe(48190.93);
   });
 
   it("get public report for single FLAT Italy via POST /reports/public", async () => {

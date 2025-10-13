@@ -16,7 +16,12 @@ services:
       - "3000:3000"
     networks:
       - app_network
-
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: /ec2/node-test-prod
+        awslogs-region: eu-central-1 
+        awslogs-stream-prefix: nest-api-logs
 networks:
   app_network:
     driver: bridge
