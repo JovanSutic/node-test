@@ -122,6 +122,16 @@ function prepReportItems(
             amount: reportValues.stateTax,
           },
           {
+            label: "Regional income tax",
+            type: "income_tax",
+            amount: reportValues.regionalTax,
+          },
+          {
+            label: "Additional income tax",
+            type: "income_tax",
+            amount: reportValues.additionalTax,
+          },
+          {
             label: "Municipal income tax",
             type: "income_tax",
             amount: reportValues.municipalTax,
@@ -223,6 +233,27 @@ function prepReportItems(
       label: name,
       type: "tax_type",
       amount: 0,
+    });
+  }
+
+  if (scenario !== "1st" && isJointCalculation) {
+    result.push({
+      reportId: 0,
+      incomeMaker: 1,
+      label: "Total tax",
+      type: `additional_${scenario}`,
+      amount: reportValues.salarySocials + reportValues.salaryTax,
+    });
+
+    result.push({
+      reportId: 0,
+      incomeMaker: 1,
+      label: "Total net income",
+      type: `additional_${scenario}`,
+      amount:
+        reportValues.minSalaryYear -
+        reportValues.salarySocials -
+        reportValues.salaryTax,
     });
   }
 

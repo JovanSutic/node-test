@@ -142,7 +142,6 @@ function configureTaxRegimeRules(
   }
 
   console.log("isNewRateConfig", isNewRateConfig);
-  console.log("income object", income);
 
   if (isNewRateConfig && Boolean(income?.isNew)) {
     console.log(
