@@ -247,6 +247,7 @@ export interface ReportStoreValues {
   minSalaryYear: number;
   corporateTax: number;
   withholdingTax: number;
+  additionalTax: number;
 }
 
 export interface ReportItemsServiceContract {
