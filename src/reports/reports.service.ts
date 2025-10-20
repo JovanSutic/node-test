@@ -20,6 +20,9 @@ import type {
 } from "./reports.dto";
 import { SocialType } from "../social_lifestyle/social_lifestyle.dto";
 import type { ExchangeRate } from "../types/flow.types";
+import { DefValueService } from "../def_value/def_value.service";
+import { processTaxConfigStrings } from "../utils/taxes/config";
+import type { TaxConfig } from "../types/taxes.types";
 
 interface ReportBudgets {
   comfortBudget: number;
@@ -30,6 +33,7 @@ interface ReportBudgets {
 export class ReportsService {
   constructor(
     private readonly citiesService: CitiesService,
+    private readonly defValueService: DefValueService,
     private readonly currenciesService: CurrenciesService,
     private readonly pricesService: PricesService,
     private readonly prisma: PrismaService
@@ -48,7 +52,8 @@ export class ReportsService {
 
   async getReportItems(
     reportUserData: ReportUserDataDto,
-    rates: ExchangeRate
+    rates: ExchangeRate,
+    config: TaxConfig
   ): Promise<any> {
     const normalizedData = convertUserData(reportUserData, rates);
 
@@ -70,7 +75,7 @@ export class ReportsService {
       );
     }
 
-    return calculationFunction(normalizedData, rates.usd, city.country);
+    return calculationFunction(normalizedData, rates.usd, city.country, config);
   }
 
   async getBudgets(reportUserData: ReportUserDataDto): Promise<ReportBudgets> {
@@ -206,8 +211,36 @@ export class ReportsService {
     }
   }
 
+  async getCountryTaxConfig(cityId: number) {
+    const city = await this.safeExecute(
+      () => this.citiesService.getById(cityId),
+      "An error occurred while fetching the city and country of the report"
+    );
+
+    if (!city) {
+      throw new InternalServerErrorException(
+        `Failed to fetch city with id: ${cityId}`
+      );
+    }
+
+    const defValues = await this.safeExecute(
+      () => this.defValueService.getConfigTaxRulesByCountry(city.countriesId!),
+      "An error occurred while fetching the city and country of the report"
+    );
+
+    if (!defValues || !defValues.length) {
+      throw new InternalServerErrorException(
+        `Failed to fetch tax rules and country config for city with id: ${cityId}`
+      );
+    }
+
+    const configArr = processTaxConfigStrings(defValues);
+
+    return configArr;
+  }
+
   async generatePublicReport(reportUserData: ReportUserDataDto) {
-   const { kidsNum, adultNum } = getUserStructure(reportUserData);
+    const { kidsNum, adultNum } = getUserStructure(reportUserData);
     const socialType =
       kidsNum > 0
         ? SocialType.FAMILY
@@ -220,8 +253,13 @@ export class ReportsService {
       "Failed to fetch currencies"
     );
 
+    const config = await this.safeExecute(
+      () => this.getCountryTaxConfig(Number(reportUserData.cityId)),
+      "Failed to fetch currencies"
+    );
+
     const reportItems = await this.safeExecute<CreateReportItemDto[]>(
-      () => this.getReportItems(reportUserData, rates),
+      () => this.getReportItems(reportUserData, rates, config),
       "Failed to generate report items"
     );
 
@@ -242,67 +280,67 @@ export class ReportsService {
       expensesComfort: budgets.comfortBudget,
       type: socialType,
       userData: { ...reportUserData, rates },
-      costItems: decorateItems(reportItems)
+      costItems: decorateItems(reportItems),
     };
 
     return createReportDto;
   }
 
-  async generatePrivateReport(
-    reportUserData: ReportUserDataDto,
-    userUuid: string
-  ) {
-    const { kidsNum, adultNum } = getUserStructure(reportUserData);
-    const socialType =
-      kidsNum > 0
-        ? SocialType.FAMILY
-        : adultNum === 2
-        ? SocialType.PAIR
-        : SocialType.SOLO;
+  // async generatePrivateReport(
+  //   reportUserData: ReportUserDataDto,
+  //   userUuid: string
+  // ) {
+  //   const { kidsNum, adultNum } = getUserStructure(reportUserData);
+  //   const socialType =
+  //     kidsNum > 0
+  //       ? SocialType.FAMILY
+  //       : adultNum === 2
+  //       ? SocialType.PAIR
+  //       : SocialType.SOLO;
 
-    const rates = await this.safeExecute(
-      () => this.currenciesService.fetchRate(),
-      "Failed to fetch currencies"
-    );
+  //   const rates = await this.safeExecute(
+  //     () => this.currenciesService.fetchRate(),
+  //     "Failed to fetch currencies"
+  //   );
 
-    const reportItems = await this.safeExecute<CreateReportItemDto[]>(
-      () => this.getReportItems(reportUserData, rates),
-      "Failed to generate report items"
-    );
+  //   const reportItems = await this.safeExecute<CreateReportItemDto[]>(
+  //     () => this.getReportItems(reportUserData, rates),
+  //     "Failed to generate report items"
+  //   );
 
-    const budgets = await this.safeExecute(
-      () => this.getBudgets(reportUserData),
-      "Failed to calculate budget data"
-    );
+  //   const budgets = await this.safeExecute(
+  //     () => this.getBudgets(reportUserData),
+  //     "Failed to calculate budget data"
+  //   );
 
-    const netAmount =
-      reportItems
-        .filter((item) => item.type === "net")
-        ?.reduce((prev, next) => prev + next.amount, 0) || 0;
-    const createReportDto: CreateReportDto = {
-      userUuid,
-      cityId: reportUserData.cityId,
-      net: netAmount,
-      save: netAmount - budgets.comfortBudget,
-      expensesLow: budgets.lowBudget || 0,
-      expensesComfort: budgets.comfortBudget,
-      type: socialType,
-      userData: { ...reportUserData, rates },
-    };
+  //   const netAmount =
+  //     reportItems
+  //       .filter((item) => item.type === "net")
+  //       ?.reduce((prev, next) => prev + next.amount, 0) || 0;
+  //   const createReportDto: CreateReportDto = {
+  //     userUuid,
+  //     cityId: reportUserData.cityId,
+  //     net: netAmount,
+  //     save: netAmount - budgets.comfortBudget,
+  //     expensesLow: budgets.lowBudget || 0,
+  //     expensesComfort: budgets.comfortBudget,
+  //     type: socialType,
+  //     userData: { ...reportUserData, rates },
+  //   };
 
-    const report = await this.safeExecute(
-      () => this.create(createReportDto),
-      "Failed to save report"
-    );
+  //   const report = await this.safeExecute(
+  //     () => this.create(createReportDto),
+  //     "Failed to save report"
+  //   );
 
-    await this.safeExecute(
-      () => this.createItems(reportItems, report.id),
-      "Failed to save report items"
-    );
+  //   await this.safeExecute(
+  //     () => this.createItems(reportItems, report.id),
+  //     "Failed to save report items"
+  //   );
 
-    return await this.safeExecute(
-      () => this.getById(report.id, userUuid),
-      "Failed to retrieve final report"
-    );
-  }
+  //   return await this.safeExecute(
+  //     () => this.getById(report.id, userUuid),
+  //     "Failed to retrieve final report"
+  //   );
+  // }
 }

@@ -1,8 +1,12 @@
+import { InternalServerErrorException } from "@nestjs/common";
+import type { DefValueDto } from "../../def_value/def_value.dto";
+import type { DefinitionDto } from "../../definition/definition.dto";
 import type { PersonalIncomesDto } from "../../reports/reports.dto";
 import type {
   TaxConditions,
   TaxConfig,
   TaxRegime,
+  TaxRules,
 } from "../../types/taxes.types";
 import {
   bulgariaConfig,
@@ -180,6 +184,142 @@ export function getConfigRegime(
       break;
     }
   }
+
+  return result;
+}
+
+export function decorateTaxRules(partialRules: Partial<TaxRules>) {
+  if (!partialRules.reduction) {
+    partialRules.reduction = {
+      newCompany: {
+        allow: false,
+        type: "none",
+        reduction: 0,
+        maxReduction: 0,
+        yearLength: 0,
+      },
+      assumedCost: {
+        allow: false,
+        type: "",
+        reduction: 0,
+        maxReduction: 0,
+        workTypeReductions: {},
+      },
+      other: {
+        allow: true,
+        personal: 0,
+        age: 0,
+        ageCap: 0,
+      },
+    };
+  }
+
+  if (!partialRules.credit) {
+    partialRules.credit = {
+      allow: false,
+      type: "",
+      items: {
+        workingMom: 0,
+        household: 0,
+        dependent: 0,
+        healthAndEdu: 0,
+      },
+      caps: {
+        incomeLimit: 0,
+        incomeLimitJoint: 0,
+        aboveLimit: 0,
+        multiplier: 0,
+        decrease: 0,
+        multiplierJoint: 0,
+        decreaseJoint: 0,
+      },
+    };
+  }
+
+  if (!partialRules.social) {
+    partialRules.social = {
+      type: "flat",
+      baseType: "",
+      allowDiscount: false,
+      rateIndex: 0,
+      rate: 0,
+      discountedAmount: 0,
+      discountLength: 0,
+      maxCap: 100000000,
+      maxCapBase: 0,
+      minCapBase: 0,
+    };
+  }
+
+  if (!partialRules.allowance) {
+    partialRules.allowance = {
+      allow: false,
+      allowSpouse: false,
+      allowKids: false,
+      allowExtraKid: false,
+      personal: 0,
+      dependentSpouse: 0,
+      dependentKids: [0],
+      extraKid: 0,
+      extraKidLimit: 0,
+      useType: "no allowance",
+    };
+  }
+
+  return partialRules as TaxRules;
+}
+
+export function parseConfig(value: string) {
+  const cleanedString = value.slice(1, -1);
+  const jsonObject = JSON.parse(cleanedString);
+
+  return jsonObject;
+}
+
+type DefValueWithDefinition = DefValueDto & { definition: DefinitionDto };
+type TaxRegimeUnparsed = Omit<TaxRegime, 'rules'> & {rules: number};
+
+function createTaxConfig(configDef: DefValueWithDefinition, rulesDef: Record<string, TaxRules>) {
+  const config: Record<string, any> =  parseConfig(configDef.value!);
+
+  config.regimes.forEach((item: TaxRegimeUnparsed) => {
+    (item.rules as unknown as TaxRules) = rulesDef[item.rules];
+    return item;
+  });
+
+  return config as TaxConfig;
+}
+
+
+
+export function processTaxConfigStrings(defValues: DefValueWithDefinition[]) {
+  const configDef: DefValueWithDefinition | undefined = defValues.find(
+    (item) => item.definition.type === "country_tax_configuration"
+  );
+
+  if (!configDef) {
+    throw new InternalServerErrorException(
+      "Failed to find the country_tax_configuration definition value for this country."
+    );
+  }
+
+  const rulesDef: DefValueWithDefinition[] = defValues.filter(
+    (item) => item.definition.type !== "country_tax_configuration"
+  );
+
+  if (!rulesDef.length) {
+    throw new InternalServerErrorException(
+      "Failed to find the tax_regime_rules definition value for this country."
+    );
+  }
+
+  const rulesRecord = rulesDef.reduce((prev: Record<string, TaxRules>, next: DefValueWithDefinition) => {
+    const rule = parseConfig(next.value!);
+    prev[`${rule.id}`] = decorateTaxRules(rule);
+    return prev;
+  }, {})
+
+  const result = createTaxConfig(configDef, rulesRecord)
 
   return result;
 }

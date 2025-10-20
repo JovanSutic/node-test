@@ -15,6 +15,8 @@ import { PricesModule } from "../prices/prices.module";
 import { ReportsService } from "./reports.service";
 import { UsersModule } from "../users/users.module";
 import { PricesService } from "../prices/prices.service";
+import { DefValueService } from "../def_value/def_value.service";
+
 import {
   bulgarianPrices,
   bulgariaCity,
@@ -24,25 +26,40 @@ import {
   italyCity,
   czechCity,
   serbiaCity,
+  mockDefValuesSerbia,
+  mockDefinitions,
+  mockDefValuesBulgaria,
+  mockDefValuesCzech,
+  mockDefValuesItaly,
+  mockDefValuesPortugal,
+  mockDefValuesSpain,
 } from "./reportsData";
 
 describe("ReportsController", () => {
   let app: INestApplication;
   let reportsService: ReportsService;
   let pricesService: PricesService;
+  let defValueService: DefValueService;
   let prismaServiceMock: Partial<PrismaService>;
 
   beforeEach(async () => {
     prismaServiceMock = {
       reports: { findUnique: jest.fn(), findFirst: jest.fn() },
       cities: { findUnique: jest.fn(), findFirst: jest.fn() },
-      prices: { findMany: jest.fn(), count: jest.fn() },
+      definition: { findMany: jest.fn() },
+      def_value: { findMany: jest.fn() },
     };
 
     const module: TestingModule = await Test.createTestingModule({
       imports: [CitiesModule, CurrenciesModule, PricesModule, UsersModule],
       controllers: [ReportsController],
-      providers: [ReportsService, PrismaService, JwtService, ConfigService],
+      providers: [
+        ReportsService,
+        DefValueService,
+        PrismaService,
+        JwtService,
+        ConfigService,
+      ],
     })
       .overrideProvider(PrismaService)
       .useValue(prismaServiceMock)
@@ -55,6 +72,7 @@ describe("ReportsController", () => {
     app = module.createNestApplication();
     reportsService = module.get<ReportsService>(ReportsService);
     pricesService = module.get<PricesService>(PricesService);
+    defValueService = module.get<DefValueService>(DefValueService);
     await app.init();
   });
 
@@ -85,9 +103,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(spainCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesSpain);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(spainCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -114,9 +132,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(spainCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesSpain);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(spainCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -152,9 +170,11 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(portugalCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(
+      mockDefValuesPortugal
+    );
+    prismaServiceMock.cities.findUnique.mockResolvedValue(portugalCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -182,9 +202,11 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(portugalCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(
+      mockDefValuesPortugal
+    );
+    prismaServiceMock.cities.findUnique.mockResolvedValue(portugalCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -213,9 +235,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(italyCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesItaly);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(italyCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -243,9 +265,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(italyCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesItaly);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(italyCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -272,9 +294,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(italyCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesItaly);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(italyCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -304,9 +326,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(czechCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesCzech);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(czechCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -337,9 +359,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(czechCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesCzech);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(czechCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -366,9 +388,11 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(bulgariaCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(
+      mockDefValuesBulgaria
+    );
+    prismaServiceMock.cities.findUnique.mockResolvedValue(bulgariaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -402,9 +426,11 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(bulgariaCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(
+      mockDefValuesBulgaria
+    );
+    prismaServiceMock.cities.findUnique.mockResolvedValue(bulgariaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -434,9 +460,11 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(bulgariaCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(
+      mockDefValuesBulgaria
+    );
+    prismaServiceMock.cities.findUnique.mockResolvedValue(bulgariaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -465,9 +493,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(serbiaCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesSerbia);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(serbiaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -496,9 +524,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(serbiaCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesSerbia);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(serbiaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -527,9 +555,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(serbiaCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesSerbia);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(serbiaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())

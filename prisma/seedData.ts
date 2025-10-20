@@ -55,10 +55,11 @@ export const countries: CreateCountryDto[] = [
   { name: "Netherlands" },
   { name: "France" },
   { name: "Germany" },
-  { name: "Austria" },
-  { name: "Hungary" },
   { name: "Serbia" },
+  { name: "Hungary" },
+  { name: "Austria" },
   { name: "Greece" },
+  { name: "Bulgaria" },
 ];
 
 export const cities: CreateCityDto[] = [
@@ -125,7 +126,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Vienna",
     country: "Austria",
-    countriesId: 6,
+    countriesId: 8,
     search: "Vienna",
     lat: 48.20849,
     lng: 16.37208,
@@ -145,7 +146,7 @@ export const cities: CreateCityDto[] = [
   {
     name: "Belgrade",
     country: "Serbia",
-    countriesId: 8,
+    countriesId: 6,
     search: "Belgrade",
     lat: 44.80401,
     lng: 20.46513,
@@ -1379,6 +1380,16 @@ export const definitions: CreateDefinitionDto[] = [
     type: "text_list",
     aspectId: 1,
   },
+  {
+    label: "Tax config",
+    type: "country_tax_configuration",
+    aspectId: 2,
+  },
+  {
+    label: "Tax regime rules",
+    type: "tax_regime_rules",
+    aspectId: 2,
+  },
 ];
 
 export const defValues: CreateDefValueDto[] = [
@@ -1436,6 +1447,38 @@ export const defValues: CreateDefValueDto[] = [
     countryId: 1,
     value: "Include dependent family members",
     type: "item",
+    visible: true,
+  },
+  {
+    definitionId: 4,
+    countryId: 6,
+    value:
+      '"{"country":"Serbia","regimes":[{"name":"Flat Serbian Regime","conditions":{"type":"AND","list":[{"name":"flat_1","subject":"isIndependent","operation":"EQUALS","condition":1,"conditionType":"number","object":""},{"name":"flat_2","subject":"income","operation":"LESS THAN","condition":51000,"conditionType":"number","object":""}]},"rules":1},{"name":"Bookkeeping Regime","conditions":{"type":"AND","list":[{"name":"booked_1","subject":"isIndependent","operation":"EQUALS","condition":1,"conditionType":"number","object":""},{"name":"booked_2","subject":"income","operation":"MORE THAN","condition":51000,"conditionType":"number","object":""}]},"rules":2},{"name":"LLC Regime","conditions":{"type":"OR","list":[{"name":"llc_1","subject":"isIndependent","operation":"EQUALS","condition":0,"conditionType":"number","object":""}]},"rules":3}],"extras":{"jointFilingBenefits":false}}"',
+    type: "country_config",
+    visible: true,
+  },
+  {
+    definitionId: 5,
+    countryId: 6,
+    value:
+      '"{"id":1,"tax":{"type":"fixedProgressive","level":"state","other":{"fixed":[{"maxIncome":51000,"taxAmount":360}],"rate":"monthly"},"regionalExclusivity":false,"taxableIncomeSequence":""},"finals":{"totalTax":"stateTax - taxCredit","net":"(grossIncome - socials - totalHealth) - (stateTax - taxCredit)","netIncome":"(grossIncome - socials - totalHealth) - (stateTax - taxCredit)"}}"',
+    type: "country_tax_rule",
+    visible: true,
+  },
+  {
+    definitionId: 5,
+    countryId: 6,
+    value:
+      '"{"id":2,"tax":{"type":"salaryMixed","level":"state","rate":0.1,"other":{"allowAdditional":true},"regionalExclusivity":false,"taxableIncomeSequence":"expensesReduction,minSalaryReduction"},"social":{"type":"flat","baseType":"salary","allowDiscount":false,"rateIndex":1,"rate":0,"discountedAmount":0,"discountLength":0,"maxCap":100000000,"maxCapBase":0,"minCapBase":0},"finals":{"totalTax":"stateTax + salaryTax + additionalTax","net":"taxableIncome - stateTax + salaryDiff","netIncome":"taxableIncome - stateTax + salaryDiff - additionalTax"},"salary":{"salaryContributionsRate":0.3775,"salaryUntaxedPart":243,"salaryTax":0.1,"salaryMinimum":392,"salaryAverageAnnual":10850}}"',
+    type: "country_tax_rule",
+    visible: true,
+  },
+  {
+    definitionId: 5,
+    countryId: 6,
+    value:
+      '"{"id":3,"tax":{"type":"corporateSuccessive","level":"state","rate":0.15,"other":{"withholdingTax":0.15,"allowAdditional":true},"regionalExclusivity":false,"taxableIncomeSequence":"expensesReduction,minSalaryReduction"},"social":{"type":"flat","baseType":"salary","allowDiscount":false,"rateIndex":1,"rate":0,"discountedAmount":0,"discountLength":0,"maxCap":100000000,"maxCapBase":0,"minCapBase":0},"finals":{"totalTax":"stateTax + salaryTax + additionalTax","net":"taxableIncome - stateTax + salaryDiff","netIncome":"taxableIncome - stateTax + salaryDiff - additionalTax"},"salary":{"salaryContributionsRate":0.3775,"salaryUntaxedPart":243,"salaryTax":0.1,"salaryMinimum":432.2,"salaryAverageAnnual":10850}}"',
+    type: "country_tax_rule",
     visible: true,
   },
 ];

@@ -22,7 +22,7 @@ import {
   type BudgetItem,
 } from "./budgetData";
 import { roundToTwoDecimals } from "./numbers";
-import { calculateSpainTax } from "./taxes/spain";
+import { calculateTax } from "./taxes/spain";
 
 export function convertUserData(
   userData: ReportUserDataDto,
@@ -159,12 +159,12 @@ export const calculateUSTax = (
 };
 
 export function getTaxCalculationFunction(country: string) {
-  if (country === "Spain") return calculateSpainTax;
-  if (country === "Portugal") return calculateSpainTax;
-  if (country === "Italy") return calculateSpainTax;
-  if (country === "Czech Republic") return calculateSpainTax;
-  if (country === "Bulgaria") return calculateSpainTax;
-  if (country === "Serbia") return calculateSpainTax;
+  if (country === "Spain") return calculateTax;
+  if (country === "Portugal") return calculateTax;
+  if (country === "Italy") return calculateTax;
+  if (country === "Czech Republic") return calculateTax;
+  if (country === "Bulgaria") return calculateTax;
+  if (country === "Serbia") return calculateTax;
 
   return null;
 }

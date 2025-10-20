@@ -416,12 +416,12 @@ function calculateTaxSingle(
   return reportItems;
 }
 
-export const calculateSpainTax = (
+export const calculateTax = (
   reportUserData: ReportUserDataDto,
   eurRate: number,
-  country: string
+  country: string,
+  config: TaxConfig
 ) => {
-  const config = getConfig(country);
   if (config) {
     const result = [];
     const projections: SpainOption[] = ["1st", "2nd", "3rd"];
