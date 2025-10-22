@@ -15,6 +15,8 @@ import { PricesModule } from "../prices/prices.module";
 import { ReportsService } from "./reports.service";
 import { UsersModule } from "../users/users.module";
 import { PricesService } from "../prices/prices.service";
+import { DefValueService } from "../def_value/def_value.service";
+
 import {
   bulgarianPrices,
   bulgariaCity,
@@ -24,25 +26,40 @@ import {
   italyCity,
   czechCity,
   serbiaCity,
+  mockDefValuesSerbia,
+  mockDefinitions,
+  mockDefValuesBulgaria,
+  mockDefValuesCzech,
+  mockDefValuesItaly,
+  mockDefValuesPortugal,
+  mockDefValuesSpain,
 } from "./reportsData";
 
 describe("ReportsController", () => {
   let app: INestApplication;
   let reportsService: ReportsService;
   let pricesService: PricesService;
+  let defValueService: DefValueService;
   let prismaServiceMock: Partial<PrismaService>;
 
   beforeEach(async () => {
     prismaServiceMock = {
       reports: { findUnique: jest.fn(), findFirst: jest.fn() },
       cities: { findUnique: jest.fn(), findFirst: jest.fn() },
-      prices: { findMany: jest.fn(), count: jest.fn() },
+      definition: { findMany: jest.fn() },
+      def_value: { findMany: jest.fn() },
     };
 
     const module: TestingModule = await Test.createTestingModule({
       imports: [CitiesModule, CurrenciesModule, PricesModule, UsersModule],
       controllers: [ReportsController],
-      providers: [ReportsService, PrismaService, JwtService, ConfigService],
+      providers: [
+        ReportsService,
+        DefValueService,
+        PrismaService,
+        JwtService,
+        ConfigService,
+      ],
     })
       .overrideProvider(PrismaService)
       .useValue(prismaServiceMock)
@@ -55,6 +72,7 @@ describe("ReportsController", () => {
     app = module.createNestApplication();
     reportsService = module.get<ReportsService>(ReportsService);
     pricesService = module.get<PricesService>(PricesService);
+    defValueService = module.get<DefValueService>(DefValueService);
     await app.init();
   });
 
@@ -85,9 +103,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(spainCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesSpain);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(spainCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -102,21 +120,24 @@ describe("ReportsController", () => {
     const publicPostDto = {
       cityId: 218,
       isWorkingMom: false,
-      dependents: [],
+      dependents: [
+        { type: "kid", isDependent: true, age: 2 },
+        { type: "spouse", isDependent: true },
+      ],
       incomes: [
         {
           isUSCitizen: false,
           currency: "eur",
-          income: 60000,
+          income: 45000,
           accountantCost: 2160,
           expensesCost: 0,
         },
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(spainCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesSpain);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(spainCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -124,37 +145,42 @@ describe("ReportsController", () => {
       .send(publicPostDto)
       .expect(201);
 
-    expect(response.body.net).toBe(46719.1);
+    expect(response.body.net).toBe(38523.59);
   });
 
   it("get public report for couple Portugal via POST /reports/public", async () => {
     const publicPostDto = {
       cityId: 152,
       isWorkingMom: false,
-      dependents: [],
+      dependents: [
+        { type: "kid", isDependent: true, age: 3 },
+        { type: "kid", isDependent: true, age: 5 },
+      ],
       incomes: [
         {
           isUSCitizen: false,
           currency: "eur",
-          income: 100000,
+          income: 25000,
           accountantCost: 1800,
           expensesCost: 0,
-          age: 29,
+          age: 18,
         },
         {
           isUSCitizen: false,
           currency: "eur",
-          income: 55000,
+          income: 35000,
           accountantCost: 1800,
           expensesCost: 0,
-          age: 26,
+          age: 18,
         },
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(portugalCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(
+      mockDefValuesPortugal
+    );
+    prismaServiceMock.cities.findUnique.mockResolvedValue(portugalCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -162,29 +188,31 @@ describe("ReportsController", () => {
       .send(publicPostDto)
       .expect(201);
 
-    expect(response.body.net).toBe(142057.26);
+    expect(response.body.net).toBe(58150);
   });
 
   it("get public report for single Portugal via POST /reports/public", async () => {
     const publicPostDto = {
       cityId: 152,
       isWorkingMom: false,
-      dependents: [],
+      dependents: [{ type: "kid", isDependent: true, age: 4 }],
       incomes: [
         {
           isUSCitizen: false,
           currency: "eur",
-          income: 50000,
+          income: 120000,
           accountantCost: 1800,
           expensesCost: 0,
-          age: 29,
+          age: 40,
         },
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(portugalCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(
+      mockDefValuesPortugal
+    );
+    prismaServiceMock.cities.findUnique.mockResolvedValue(portugalCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -192,7 +220,7 @@ describe("ReportsController", () => {
       .send(publicPostDto)
       .expect(201);
 
-    expect(response.body.net).toBe(48190.93);
+    expect(response.body.net).toBe(88682.54000000001);
   });
 
   it("get public report for single FLAT Italy via POST /reports/public", async () => {
@@ -213,9 +241,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(italyCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesItaly);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(italyCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -243,9 +271,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(italyCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesItaly);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(italyCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -265,16 +293,16 @@ describe("ReportsController", () => {
         {
           isUSCitizen: false,
           currency: "eur",
-          income: 90000,
+          income: 100000,
           accountantCost: 1800,
           expensesCost: 0,
         },
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(italyCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesItaly);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(italyCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -282,7 +310,7 @@ describe("ReportsController", () => {
       .send(publicPostDto)
       .expect(201);
 
-    expect(response.body.net).toBe(42921.149999999994);
+    expect(response.body.net).toBe(46937.13);
   });
 
   it("get public report for single FLAT Czech via POST /reports/public", async () => {
@@ -304,9 +332,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(czechCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesCzech);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(czechCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -321,25 +349,21 @@ describe("ReportsController", () => {
     const publicPostDto = {
       cityId: 61,
       isWorkingMom: false,
-      dependents: [
-        { type: "kid", isDependent: true, age: 2 },
-        { type: "kid", isDependent: true, age: 1 },
-        { type: "spouse", isDependent: true },
-      ],
+      dependents: [],
       incomes: [
         {
           isUSCitizen: false,
           currency: "eur",
-          income: 100000,
+          income: 120000,
           accountantCost: 1440,
-          expensesCost: 0,
+          expensesCost: 6600,
         },
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(czechCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesCzech);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(czechCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -347,7 +371,7 @@ describe("ReportsController", () => {
       .send(publicPostDto)
       .expect(201);
 
-    expect(response.body.net).toBe(87241);
+    expect(response.body.net).toBe(95071.2);
   });
 
   it("get public report for single EEOD Bulgaria via POST /reports/public", async () => {
@@ -366,9 +390,11 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(bulgariaCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(
+      mockDefValuesBulgaria
+    );
+    prismaServiceMock.cities.findUnique.mockResolvedValue(bulgariaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -402,9 +428,11 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(bulgariaCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(
+      mockDefValuesBulgaria
+    );
+    prismaServiceMock.cities.findUnique.mockResolvedValue(bulgariaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -419,24 +447,23 @@ describe("ReportsController", () => {
     const publicPostDto = {
       cityId: 18,
       isWorkingMom: false,
-      dependents: [
-        { type: "kid", isDependent: true, age: 4 },
-        { type: "spouse", isDependent: true },
-      ],
+      dependents: [],
       incomes: [
         {
           isUSCitizen: false,
           currency: "eur",
-          income: 100000,
+          income: 120000,
           accountantCost: 1200,
-          expensesCost: 0,
+          expensesCost: 4140,
         },
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(bulgariaCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(
+      mockDefValuesBulgaria
+    );
+    prismaServiceMock.cities.findUnique.mockResolvedValue(bulgariaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -444,7 +471,7 @@ describe("ReportsController", () => {
       .send(publicPostDto)
       .expect(201);
 
-    expect(response.body.net).toBe(83543);
+    expect(response.body.net).toBe(97596);
   });
 
   it("get public report for single FLAT Serbia via POST /reports/public", async () => {
@@ -465,9 +492,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(serbiaCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesSerbia);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(serbiaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -496,9 +523,9 @@ describe("ReportsController", () => {
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(serbiaCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesSerbia);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(serbiaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -513,23 +540,22 @@ describe("ReportsController", () => {
     const publicPostDto = {
       cityId: 1,
       isWorkingMom: false,
-      dependents: [{ type: "kid", isDependent: true, age: 5 }],
+      dependents: [],
       incomes: [
         {
           isUSCitizen: false,
           currency: "eur",
           income: 100000,
           accountantCost: 1440,
-          expensesCost: 0,
-          age: 40,
-          isIndependent: false,
+          expensesCost: 2400,
+          age: 25,
         },
       ],
     };
 
-    prismaServiceMock.cities.findUnique = jest
-      .fn()
-      .mockResolvedValue(serbiaCity);
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(mockDefValuesSerbia);
+    prismaServiceMock.cities.findUnique.mockResolvedValue(serbiaCity);
     jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
 
     const response = await request(app.getHttpServer())
@@ -537,6 +563,6 @@ describe("ReportsController", () => {
       .send(publicPostDto)
       .expect(201);
 
-    expect(response.body.net).toBe(67269.278);
+    expect(response.body.net).toBe(68366.92800000001);
   });
 });

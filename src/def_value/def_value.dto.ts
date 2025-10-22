@@ -104,7 +104,7 @@ export class DefValueDto {
   })
   @IsOptional()
   @IsNumber()
-  cityId?: number;
+  cityId?: number | null;
 
   @ApiProperty({
     description: "The country id of the def value",
@@ -112,7 +112,7 @@ export class DefValueDto {
   })
   @IsOptional()
   @IsNumber()
-  countryId?: number;
+  countryId?: number | null;
 
   @ApiProperty({
     description: "The type of the def value",
@@ -128,7 +128,7 @@ export class DefValueDto {
   })
   @IsOptional()
   @IsString()
-  value?: string;
+  value?: string | null;
 
   @ApiProperty({
     description: "The score of the def value",
@@ -136,7 +136,7 @@ export class DefValueDto {
   })
   @IsOptional()
   @IsNumber()
-  score?: number;
+  score?: number | null;
 
   @ApiProperty({
     description: "The comment of the def value",
@@ -144,7 +144,7 @@ export class DefValueDto {
   })
   @IsOptional()
   @IsString()
-  comment?: string;
+  comment?: string | null;
 
   @ApiProperty({
     description: "The note of the def value",
@@ -152,7 +152,7 @@ export class DefValueDto {
   })
   @IsOptional()
   @IsString()
-  note?: string;
+  note?: string | null;
 
   @ApiProperty({
     description: "The note of the def value",
@@ -206,3 +206,5 @@ export class DefValueQueryDto {
   @IsNumber()
   definitionId?: number;
 }
+
+

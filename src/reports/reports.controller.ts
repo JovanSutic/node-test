@@ -35,10 +35,10 @@ export class ReportsController {
   async create(@Body() reportUserData: ReportUserDataDto, @Req() req: any) {
     try {
       const userUuid = this.usersService.extractUserUuidFromRequest(req);
-      return await this.reportsService.generatePrivateReport(
-        reportUserData,
-        userUuid
-      );
+      // return await this.reportsService.generatePrivateReport(
+      //   reportUserData,
+      //   userUuid
+      // );
     } catch (error: any) {
       throw error;
     }

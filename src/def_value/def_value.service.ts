@@ -85,7 +85,7 @@ export class DefValueService {
     field: string,
     cityId?: number,
     countryId?: number,
-    definitionId?: number,
+    definitionId?: number
   ) {
     try {
       const defValues = await this.prisma.def_value.findMany({
@@ -127,6 +127,39 @@ export class DefValueService {
 
       return Object.values(groupedByDefinition);
     } catch (error: any) {
+      throw new BadRequestException(
+        error.message || "An error occurred while fetching filtered def_values"
+      );
+    }
+  }
+
+  async getConfigTaxRulesByCountry(countryId: number) {
+    try {
+      const configDefinition = await this.prisma.definition.findMany({
+        where: {
+          type: { in: ["country_tax_configuration", "tax_regime_rules"] },
+        },
+      });
+      const definitionIds = configDefinition.map((def) => def.id);
+      const defValues = await this.prisma.def_value.findMany({
+        where: {
+          AND: [
+            { countryId: countryId },
+            { definitionId: { in: definitionIds } },
+            { visible: true },
+          ],
+        },
+        include: {
+          definition: true,
+        },
+        orderBy: {
+          id: "asc",
+        },
+      });
+
+      return defValues;
+    } catch (error: any) {
+      console.error("Prisma error in getConfigTaxRulesByCountry:", error);
       throw new BadRequestException(
         error.message || "An error occurred while fetching filtered def_values"
       );

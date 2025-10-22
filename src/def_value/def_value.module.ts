@@ -8,5 +8,6 @@ import { ConfigService } from "@nestjs/config";
 @Module({
   controllers: [DefValueController],
   providers: [DefValueService, PrismaService, JwtService, ConfigService],
+  exports: [DefValueService],
 })
 export class DefValueModule {}

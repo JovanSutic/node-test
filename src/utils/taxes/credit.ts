@@ -79,7 +79,7 @@ function getCustomCredit(rules: TaxRules, reportUserData: ReportUserDataDto) {
       const credit = executeCalcString(rules.credit.items.spouse!, {
         income: item.income,
       });
-      result = credit + result;
+      result = Math.max(credit + result, 0);
     });
 
     return result;

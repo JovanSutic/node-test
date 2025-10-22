@@ -706,7 +706,7 @@ export const setTaxCredits: TaxProcessor<
     ) / incomesLength;
 
   if (isNaN(taxCredit) || taxCredit < 0) {
-    throw new Error("Failed to calculate total health contributions");
+    throw new Error("Failed to calculate tax credit");
   }
 
   service.setTaxCredits(taxCredit);
@@ -787,16 +787,19 @@ export const setFinalValues: TaxProcessor<
     throw new Error("Failed to calculate final values");
   }
 
-  const effectiveRate =
+  const effectiveRate = Math.max(
+    0,
     (finalValues.municipalTax +
       finalValues.regionalTax +
       finalValues.stateTax +
       finalValues.salaryContributions +
       finalValues.socials -
       finalValues.taxCredit) /
-    finalValues.grossIncome;
+      finalValues.grossIncome
+  );
 
   if (isNaN(effectiveRate) || effectiveRate < 0) {
+    console.log(effectiveRate);
     throw new Error("Failed to calculate effective tax rate");
   }
 

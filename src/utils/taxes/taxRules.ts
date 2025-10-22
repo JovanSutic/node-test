@@ -351,6 +351,7 @@ export const italyFlatRules: TaxRules = {
       "(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)",
   },
 };
+
 export const italyImpatriRules: TaxRules = {
   tax: {
     type: "progressive",
