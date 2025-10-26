@@ -754,10 +754,10 @@ export const setFinalValues: TaxProcessor<
   };
 
   for (const [key, value] of Object.entries(rules.finals)) {
-    const result = executeCalcString(value, finalValues);
+    const result = Math.max(0, executeCalcString(value, finalValues));
 
     if (key === "totalTax") {
-      results.totalTax = Math.max(0, result);
+      results.totalTax = result;
       service.setTotalTax(result);
     }
 
