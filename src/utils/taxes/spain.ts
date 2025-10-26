@@ -149,7 +149,7 @@ function prepReportItems(
           {
             label: "Effective tax",
             type: "effective_tax",
-            amount: reportValues.effectiveTaxRate,
+            amount: reportValues.effectiveRate,
           },
           ...(reportValues.federalTax
             ? [
