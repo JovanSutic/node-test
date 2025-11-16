@@ -1,4 +1,4 @@
-import type { TaxRules } from "../../types/taxes.types";
+import type { PathValue, TaxRules } from "../../types/taxes.types";
 import type {
   AdditionalTaxServiceContract,
   AdditionalTaxUnitContract,
@@ -40,6 +40,7 @@ import {
   calculateAnnualPersonalIncomeTax,
   calculateSalary,
   calculateSalaryBulgaria,
+  createTempRules,
   getRegionalBrackets,
   getRegionalTax,
   getSoleRegionMatch,
@@ -92,6 +93,7 @@ export class TaxService {
     getStateTax: () => this.store.stateTax,
     getTotalTax: () => this.store.totalTax,
     getTotalAllowance: () => this.store.totalAllowance,
+    getTotalHealth: () => this.store.totalHealth,
     getMinAnnualSalary: () => this.store.minSalaryYear,
     getSalarySocials: () => this.store.salarySocials,
     getSalaryDiff: () => {
@@ -246,6 +248,7 @@ export class TaxService {
     return this.createService<TaxableIncomeServiceContract>([
       "getGrossIncome",
       "getMinAnnualSalary",
+      "getTotalHealth",
       "getTotalExpenses",
       "getSocials",
       "setTaxableIncome",
@@ -427,6 +430,10 @@ function calculateSocialBase(
     return base;
   }
 
+  if (rules.social.baseType === "takeMaxNormative" && rules.social.maxCapBase) {
+    return Number(rules.social.maxCapBase);
+  }
+
   return 0;
 }
 
@@ -449,6 +456,7 @@ export const setSocials: TaxProcessor<
       year,
       dependents?.filter((item) => item.type === "kid").length || 0
     );
+
     if (base == null || isNaN(base) || base < 0) {
       throw new Error("Failed to calculate social base");
     }
@@ -474,6 +482,82 @@ export const setSocials: TaxProcessor<
   }
 };
 
+function calculateHealthBase(
+  grossIncome: number,
+  expenses: number,
+  age: number,
+  rules: TaxRules
+) {
+  if (rules.health && rules.health.baseType === "taxIncomeAndRate") {
+    let tempRules: TaxRules = rules;
+
+    if (rules.health.alternativeSequence) {
+      const updates: PathValue[] = [
+        {
+          path: "tax.taxableIncomeSequence",
+          value: rules.health.alternativeSequence,
+        },
+      ];
+
+      tempRules = createTempRules(rules, updates);
+    }
+    const { taxableIncome } = getReductions(
+      {
+        gross: grossIncome,
+        expenses,
+        socials: 0,
+        kids: 0,
+      },
+      { age },
+      0,
+      tempRules
+    );
+
+    const base = taxableIncome * rules.health.rateIndex;
+
+    return rules.health.maxCapBase
+      ? Math.min(base, rules.health.maxCapBase)
+      : base;
+  }
+  if (rules.health && rules.health.baseType === "maxBaseCap") {
+    return rules.health.maxCapBase || 0;
+  }
+
+  return 0;
+}
+
+export const setTotalHealth: TaxProcessor<
+  HealthServiceContract,
+  HealthUnitContract
+> = (service, unit) => {
+  const { rules, age } = unit;
+  let healthResult = 0;
+
+  if (rules.health) {
+    const base = calculateHealthBase(
+      service.getGrossIncome(),
+      service.getTotalExpenses(),
+      age,
+      rules
+    );
+    const health = base * rules.health.rate;
+
+    if (rules.health.minCap && rules.health.maxCap === 0) {
+      healthResult = Math.max(rules.health.minCap, health);
+    } else {
+      healthResult = Math.min(rules.health.maxCap, health);
+    }
+  }
+
+  if (isNaN(healthResult) || healthResult < 0) {
+    throw new Error("Failed to calculate total health contributions");
+  }
+
+  if (healthResult > 0) {
+    service.setHealth(healthResult);
+  }
+};
+
 export const setTaxableIncome: TaxProcessor<
   TaxableIncomeServiceContract,
   TaxableIncomeUnitContract
@@ -486,6 +570,7 @@ export const setTaxableIncome: TaxProcessor<
     socials: service.getSocials(),
     kids,
     minSalary: service.getMinAnnualSalary(),
+    health: service.getTotalHealth(),
   };
 
   const result = isForJoint
@@ -631,66 +716,6 @@ export const setAdditionalTax: TaxProcessor<
   }
 };
 
-function calculateHealthBase(
-  grossIncome: number,
-  expenses: number,
-  age: number,
-  rules: TaxRules
-) {
-  if (rules.social.baseType === "taxIncomeAndRate" && rules.health) {
-    const { taxableIncome } = getReductions(
-      {
-        gross: grossIncome,
-        expenses,
-        socials: 0,
-        kids: 0,
-      },
-      { age },
-      0,
-      rules
-    );
-
-    const base = taxableIncome * rules.health.rateIndex;
-
-    return rules.health.maxCapBase
-      ? Math.min(base, rules.health.maxCapBase)
-      : base;
-  }
-
-  return 0;
-}
-
-export const setTotalHealth: TaxProcessor<
-  HealthServiceContract,
-  HealthUnitContract
-> = (service, unit) => {
-  const { rules, age } = unit;
-  let healthResult = 0;
-
-  if (rules.health) {
-    const base = calculateHealthBase(
-      service.getGrossIncome(),
-      service.getTotalExpenses(),
-      age,
-      rules
-    );
-    const health = base * rules.health.rate;
-    if (rules.health.minCap && rules.health.maxCap === 0) {
-      healthResult = Math.max(rules.health.minCap, health);
-    } else {
-      healthResult = Math.min(rules.health.maxCap, health);
-    }
-  }
-
-  if (isNaN(healthResult) || healthResult < 0) {
-    throw new Error("Failed to calculate total health contributions");
-  }
-
-  if (healthResult > 0) {
-    service.setHealth(healthResult);
-  }
-};
-
 export const setTaxCredits: TaxProcessor<
   TaxCreditsServiceContract,
   TaxCreditsUnitContract
@@ -792,6 +817,7 @@ export const setFinalValues: TaxProcessor<
     (finalValues.municipalTax +
       finalValues.regionalTax +
       finalValues.stateTax +
+      finalValues.totalHealth +
       finalValues.salaryContributions +
       finalValues.socials -
       finalValues.taxCredit) /
@@ -799,7 +825,6 @@ export const setFinalValues: TaxProcessor<
   );
 
   if (isNaN(effectiveRate) || effectiveRate < 0) {
-    console.log(effectiveRate);
     throw new Error("Failed to calculate effective tax rate");
   }
 

@@ -11,7 +11,7 @@ import {
   CreateSocialLifestyleDto,
   SocialType,
 } from "../src/social_lifestyle/social_lifestyle.dto";
-import { CreateWeathersDto, WeathersDto } from "../src/weathers/weathers.dto";
+import { CreateWeathersDto } from "../src/weathers/weathers.dto";
 import { CreateCountryDto } from "../src/countries/countries.dto";
 import { CreateAspectDto } from "../src/aspect/aspect.dto";
 import { CreateDefinitionDto } from "../src/definition/definition.dto";
