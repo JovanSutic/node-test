@@ -1,18 +1,25 @@
-import type { DependentsDto } from "../reports/reports.dto";
-import type { SpainOption } from "./flow.types";
-
-export type TaxType =  "progressive" | "flat" | "fixedProgressive" | "corporateSuccessive" | "salaryMixed";
+export type TaxType =
+  | "progressive"
+  | "flat"
+  | "fixedProgressive"
+  | "corporateSuccessive"
+  | "salaryMixed";
 
 export interface FixedProgressive {
-    maxIncome: number; 
-    taxAmount: number;
+  maxIncome: number;
+  taxAmount: number;
+}
+
+export interface PathValue {
+  path: string;
+  value: string | boolean | number;
 }
 
 export interface TaxRulesTax {
   type: TaxType;
   level: string;
   rate?: number;
-  other?: Record<string, any>,
+  other?: Record<string, any>;
   regionalExclusivity: boolean;
   taxableIncomeSequence: string;
 }
@@ -82,7 +89,7 @@ export interface TaxRulesSocial {
   maxCapBase?: number;
   minCapBase?: number;
   baseAmount?: number;
-  baseFrequency?: 'monthly' | 'yearly'
+  baseFrequency?: "monthly" | "yearly";
 }
 
 export interface TaxRulesHealth {
@@ -93,6 +100,7 @@ export interface TaxRulesHealth {
   maxCap: number;
   maxCapBase?: number;
   minCap?: number;
+  alternativeSequence?: string;
 }
 
 export interface TaxRulesAllowance {
@@ -171,6 +179,7 @@ export interface IncomeBasics {
   socials: number;
   kids?: number;
   minSalary?: number;
+  health?: number;
 }
 
 export interface TaxAdditions {
