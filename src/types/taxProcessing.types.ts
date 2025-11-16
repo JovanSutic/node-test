@@ -71,6 +71,7 @@ export interface TaxableIncomeServiceContract {
   setTaxableIncome(amount: number): void;
   setAssumedCostReduction(amount: number): void;
   setNewSelfEmployedReduction(amount: number): void;
+  getTotalHealth(): number;
 }
 
 export interface TaxableIncomeUnitContract {

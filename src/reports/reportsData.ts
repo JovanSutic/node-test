@@ -1516,6 +1516,18 @@ export const serbiaCity = {
   countriesId: 6,
 };
 
+export const romaniaCity = {
+  id: 22,
+  name: "Bucharest",
+  country: "Romania",
+  search: "Bucharest",
+  lat: 44.439663,
+  lng: 26.096306,
+  seaside: false,
+  size: 1836000,
+  countriesId: 11,
+};
+
 export const mockDefinitions = [
   { id: 4, type: "country_tax_configuration" },
   { id: 5, type: "tax_regime_rules" },
@@ -1727,7 +1739,7 @@ export const mockDefValuesPortugal = [
     cityId: null,
     countryId: 3,
     value:
-      '"{"id":1,"tax":{"type":"progressive","level":"state","regionalExclusivity":false,"taxableIncomeSequence":"allowAssumedCostReduction,socialsReduction,allowPersonalReduction,allowAgeReduction"},"reduction":{"newCompany":{"allow":false,"type":"none","reduction":0,"maxReduction":0,"yearLength":0},"assumedCost":{"allow":true,"type":"percentage","reduction":0.25,"maxReduction":200000000,"workTypeReductions":{}},"other":{"allow":true,"personal":4462,"age":35,"ageCap":28737.5}},"credit":{"allow":true,"type":"calculated","items":{"workingMom":0,"household":250,"dependent":600,"healthAndEdu":300},"caps":{"incomeLimit":80000,"incomeLimitJoint":120000,"aboveLimit":1000,"multiplier":1500,"decrease":8059,"multiplierJoint":4000,"decreaseJoint":25656}},"social":{"type":"flat","baseType":"income","allowDiscount":true,"rateIndex":0.7,"rate":0.214,"discountedAmount":0,"discountLength":1,"maxCap":16100},"finals":{"totalTax":"municipalTax + stateTax + regionalTax - taxCredit","net":"grossIncome - totalExpenses - socials - totalHealth","netIncome":"(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)"}}"',
+      '"{"id":1,"tax":{"type":"progressive","level":"state","regionalExclusivity":false,"taxableIncomeSequence":"allowAssumedCostReduction,socialsReduction,allowPersonalReduction,allowAgeReduction"},"reduction":{"newCompany":{"allow":false,"type":"none","reduction":0,"maxReduction":0,"yearLength":0},"assumedCost":{"allow":true,"type":"percentage","reduction":0.25,"maxReduction":200000000,"workTypeReductions":{}},"other":{"allow":true,"personal":4462,"age":35,"ageCap":28737.5}},"credit":{"allow":true,"type":"calculated","items":{"workingMom":0,"household":250,"dependent":600,"healthAndEdu":300},"caps":{"incomeLimit":80000,"incomeLimitJoint":120000,"aboveLimit":1000,"multiplier":1500,"decrease":8059,"multiplierJoint":4000,"decreaseJoint":25656}},"social":{"type":"flat","baseType":"income","allowDiscount":true,"rateIndex":0.7,"rate":0.214,"discountedAmount":0,"discountLength":1,"maxCap":16100},"finals":{"totalTax":"municipalTax + stateTax + regionalTax - taxCredit","net":"grossIncome - totalExpenses - socials - totalHealth","netIncome":"(grossIncome - totalExpenses - socials - totalHealth) - Math.max(0,municipalTax + stateTax + regionalTax - taxCredit)"}}"',
     score: null,
     comment: null,
     note: null,
@@ -1770,6 +1782,48 @@ export const mockDefValuesSpain = [
     countryId: 2,
     value:
       '"{"id":1,"tax":{"type":"progressive","level":"regional,state","regionalExclusivity":true,"taxableIncomeSequence":"expensesReduction,socialsReduction,allowNewCompanyReduction,allowAssumedCostReduction"},"reduction":{"newCompany":{"allow":true,"type":"percentage","reduction":0.2,"maxReduction":20000,"yearLength":2},"assumedCost":{"allow":true,"type":"percentage","reduction":0.07,"maxReduction":2000,"workTypeReductions":{}},"other":{"allow":true,"personal":0,"age":0,"ageCap":0}},"credit":{"allow":true,"type":"simple","items":{"workingMom":1200,"household":0,"dependent":0,"healthAndEdu":0},"caps":{"incomeLimit":0,"incomeLimitJoint":0,"aboveLimit":0,"multiplier":0,"decrease":0,"multiplierJoint":0,"decreaseJoint":0}},"social":{"type":"progressive","baseType":"incomeMinusAllExpenses","allowDiscount":true,"rateIndex":0.93,"rate":1,"discountedAmount":980,"discountLength":1,"maxCap":1000000},"allowance":{"allow":true,"allowSpouse":true,"allowKids":true,"allowExtraKid":true,"personal":5550,"dependentSpouse":3400,"dependentKids":[2400,2700,4000,4500],"extraKid":2800,"extraKidLimit":3,"useType":"taxed and reduced"},"finals":{"totalTax":"municipalTax + stateTax + regionalTax - taxCredit","net":"grossIncome - totalExpenses - socials - totalHealth","netIncome":"(grossIncome - totalExpenses - socials - totalHealth) - (municipalTax + stateTax + regionalTax - taxCredit)"}}"',
+    score: null,
+    comment: null,
+    note: null,
+    type: "country_tax_rule",
+    visible: true,
+  },
+].map((item, index) => ({
+  ...item,
+  definition: mockDefinitions[index] || mockDefinitions[1],
+}));
+
+export const mockDefValuesRomania = [
+  {
+    definitionId: 50,
+    cityId: null,
+    countryId: 11,
+    value:
+      '"{"country":"Romania","regimes":[{"name":"Norma de Venit","conditions":{"type":"AND","list":[{"name":"norma_1","subject":"income","operation":"LESS THAN","condition":25001,"conditionType":"number","object":""}]},"rules":1},{"name":"Sistem Real","conditions":{"type":"AND","list":[{"name":"real_1","subject":"income","operation":"MORE THAN","condition":25000,"conditionType":"number","object":""}]},"rules":2}],"extras":{"jointFilingBenefits":false}}"',
+    score: null,
+    comment: null,
+    note: null,
+    type: "country_config",
+    visible: true,
+  },
+  {
+    definitionId: 51,
+    cityId: null,
+    countryId: 11,
+    value:
+      '"{"id":1,"tax":{"type":"flat","level":"state","rate":0.1,"other":{},"regionalExclusivity":false,"taxableIncomeSequence":"allowAssumedCostReduction"},"reduction":{"newCompany":{"allow":false,"type":"none","reduction":0,"maxReduction":0,"yearLength":0},"assumedCost":{"allow":true,"type":"percentage","reduction":0.5,"maxReduction":25000,"workTypeReductions":{}},"other":{"allow":false,"personal":0,"age":0,"ageCap":0}},"social":{"type":"flat","baseType":"takeMaxNormative","allowDiscount":false,"rateIndex":1,"rate":0.25,"discountedAmount":0,"discountLength":0,"maxCap":0, "minCap":10, "maxCapBase":10000},"health":{"type":"flat","baseType":"maxBaseCap","rateIndex":1,"rate":0.1,"maxCap":0,"maxCapBase":12500,"minCap":10},"finals":{"totalTax":"stateTax - taxCredit","net":"grossIncome - totalExpenses - socials - totalHealth - stateTax","netIncome":"grossIncome - totalExpenses - socials - totalHealth - stateTax"}}"',
+    score: null,
+    comment: null,
+    note: null,
+    type: "country_tax_rule",
+    visible: true,
+  },
+  {
+    definitionId: 51,
+    cityId: null,
+    countryId: 11,
+    value:
+      '"{"id":2,"tax":{"type":"flat","level":"state","rate":0.1,"other":{},"regionalExclusivity":false,"taxableIncomeSequence":"expensesReduction,socialsReduction,healthReduction"},"reduction":{"newCompany":{"allow":false,"type":"none","reduction":0,"maxReduction":0,"yearLength":0},"assumedCost":{"allow":false,"type":"actualExpenses","reduction":0,"maxReduction":0,"workTypeReductions":{}},"other":{"allow":true,"personal":0,"age":0,"ageCap":0}},"social":{"type":"flat","baseType":"taxIncomeAndRate","allowDiscount":false,"rateIndex":1,"rate":0.25,"discountedAmount":0,"discountLength":0,"maxCap":0,"minCap":1,"minCapBase":9700,"maxCapBase":19500},"health":{"type":"flat","baseType":"maxBaseCap","rateIndex":1,"rate":0.1,"maxCapBase":48800,"minCap":0,"maxCap":24300},"finals":{"totalTax":"stateTax - taxCredit","net":"grossIncome - totalExpenses - socials - totalHealth - stateTax","netIncome":"grossIncome - totalExpenses - socials - totalHealth - stateTax"}}"',
     score: null,
     comment: null,
     note: null,

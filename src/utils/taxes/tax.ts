@@ -1,6 +1,7 @@
 import type { TaxBracket } from "../../types/flow.types";
 import type {
   FixedProgressive,
+  PathValue,
   TaxRules,
   TaxRulesSalary,
   TaxRulesTax,
@@ -16,6 +17,32 @@ import {
   stateTaxBracketsCzech,
   stateTaxBracketsItaly,
 } from "../taxData";
+
+export function createTempRules(
+  rules: TaxRules,
+  updates: PathValue[]
+): TaxRules {
+  const tempRules: TaxRules = JSON.parse(JSON.stringify(rules)) as TaxRules;
+  updates.forEach(({ path, value }) => {
+    const pathParts = path.split(".");
+    let current: any = tempRules;
+
+    for (let i = 0; i < pathParts.length - 1; i++) {
+      const key = pathParts[i];
+
+      if (typeof current[key] === "undefined" || current[key] === null) {
+        current[key] = {};
+      }
+      current = current[key];
+    }
+
+    if (pathParts.length > 0) {
+      current[pathParts[pathParts.length - 1]] = value;
+    }
+  });
+
+  return tempRules;
+}
 
 export function calculateAnnualPersonalIncomeTax(
   averageAnnualSalary: number,

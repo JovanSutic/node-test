@@ -1539,3 +1539,227 @@ export const serbiaConfig: TaxConfig = {
     jointFilingBenefits: false,
   },
 };
+
+export const romaniaNormaRules: TaxRules = {
+  tax: {
+    type: "flat",
+    level: "state",
+    rate: 0.1,
+    other: {},
+    regionalExclusivity: false,
+    taxableIncomeSequence: "allowAssumedCostReduction",
+  },
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: true,
+      type: "percentage",
+      reduction: 0.5,
+      maxReduction: 0,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: false,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
+  credit: {
+    allow: false,
+    type: "none",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+  social: {
+    type: "flat",
+    baseType: "takeMaxNormative",
+    allowDiscount: false,
+    rateIndex: 1,
+    rate: 0.25,
+    discountedAmount: 0,
+    discountLength: 0,
+    minCap: 1,
+    maxCap: 0,
+    maxCapBase: 10000,
+  },
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+  health: {
+    type: "flat",
+    baseType: "maxBaseCap",
+    rateIndex: 1,
+    rate: 0.1,
+    maxCap: 0,
+    maxCapBase: 12500,
+    minCap: 10,
+  },
+  finals: {
+    totalTax: "stateTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth - stateTax",
+    netIncome: "grossIncome - totalExpenses - socials - totalHealth - stateTax",
+  },
+};
+
+export const romaniaRealRules: TaxRules = {
+  tax: {
+    type: "flat",
+    level: "state",
+    rate: 0.1,
+    other: {},
+    regionalExclusivity: false,
+    taxableIncomeSequence: "expensesReduction,socialsReduction,healthReduction",
+  },
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: false,
+      type: "actualExpenses",
+      reduction: 0,
+      maxReduction: 0,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: true,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
+  credit: {
+    allow: false,
+    type: "none",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+  social: {
+    type: "flat",
+    baseType: "taxIncomeAndRate",
+    allowDiscount: false,
+    rateIndex: 1,
+    rate: 0.25,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 0,
+    minCap: 1,
+    minCapBase: 9720,
+    maxCapBase: 19440,
+  },
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+  health: {
+    type: "flat",
+    baseType: "maxBaseCap",
+    rateIndex: 1,
+    rate: 0.1,
+    maxCapBase: 48800,
+    minCap: 0,
+    maxCap: 24000,
+  },
+  finals: {
+    totalTax: "stateTax - taxCredit",
+    net: "grossIncome - totalExpenses - socials - totalHealth - stateTax",
+    netIncome: "grossIncome - totalExpenses - socials - totalHealth - stateTax",
+  },
+};
+
+export const romaniaConfig: TaxConfig = {
+  country: "Romania",
+  regimes: [
+    {
+      name: "Norma de Venit",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "norma_1",
+            subject: "income",
+            operation: "LESS THAN",
+            condition: 25001,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: romaniaNormaRules,
+    },
+    {
+      name: "Sistem Real",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "real_1",
+            subject: "income",
+            operation: "MORE THAN",
+            condition: 25000,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: romaniaRealRules,
+    },
+  ],
+  extras: {
+    jointFilingBenefits: false,
+  },
+};

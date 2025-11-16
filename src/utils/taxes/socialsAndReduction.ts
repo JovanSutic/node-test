@@ -41,7 +41,7 @@ export function getReductions(
     taxableIncome: 0,
   };
 
-  const { gross, expenses, socials, kids, minSalary } = incomeBasics;
+  const { gross, expenses, socials, kids, minSalary, health } = incomeBasics;
   let statefulBase = gross;
 
   const sequence = rules.tax.taxableIncomeSequence.split(",");
@@ -57,6 +57,9 @@ export function getReductions(
     }
     if (item === "socialsReduction" && rules.reduction.other.allow) {
       statefulBase = statefulBase - socials;
+    }
+    if (item === "healthReduction" && rules.reduction.other.allow) {
+      statefulBase = statefulBase - (health || 0);
     }
     if (item === "minSalaryReduction" && rules.salary) {
       statefulBase = statefulBase - (minSalary || 0);
