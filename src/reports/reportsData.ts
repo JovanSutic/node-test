@@ -1528,6 +1528,18 @@ export const romaniaCity = {
   countriesId: 11,
 };
 
+export const georgiaCity = {
+  id: 338,
+  name: "Batumi",
+  country: "Georgia",
+  search: "Batumi",
+  lat: 41.643414,
+  lng: 41.6399,
+  seaside: true,
+  size: 183000,
+  countriesId: 12,
+};
+
 export const mockDefinitions = [
   { id: 4, type: "country_tax_configuration" },
   { id: 5, type: "tax_regime_rules" },
@@ -1824,6 +1836,36 @@ export const mockDefValuesRomania = [
     countryId: 11,
     value:
       '"{"id":2,"tax":{"type":"flat","level":"state","rate":0.1,"other":{},"regionalExclusivity":false,"taxableIncomeSequence":"expensesReduction,socialsReduction,healthReduction"},"reduction":{"newCompany":{"allow":false,"type":"none","reduction":0,"maxReduction":0,"yearLength":0},"assumedCost":{"allow":false,"type":"actualExpenses","reduction":0,"maxReduction":0,"workTypeReductions":{}},"other":{"allow":true,"personal":0,"age":0,"ageCap":0}},"social":{"type":"flat","baseType":"taxIncomeAndRate","allowDiscount":false,"rateIndex":1,"rate":0.25,"discountedAmount":0,"discountLength":0,"maxCap":0,"minCap":1,"minCapBase":9700,"maxCapBase":19500},"health":{"type":"flat","baseType":"maxBaseCap","rateIndex":1,"rate":0.1,"maxCapBase":48800,"minCap":0,"maxCap":24300},"finals":{"totalTax":"stateTax - taxCredit","net":"grossIncome - totalExpenses - socials - totalHealth - stateTax","netIncome":"grossIncome - totalExpenses - socials - totalHealth - stateTax"}}"',
+    score: null,
+    comment: null,
+    note: null,
+    type: "country_tax_rule",
+    visible: true,
+  },
+].map((item, index) => ({
+  ...item,
+  definition: mockDefinitions[index] || mockDefinitions[1],
+}));
+
+export const mockDefValuesGeorgia = [
+  {
+    definitionId: 50,
+    cityId: null,
+    countryId: 12,
+    value:
+      '"{"country":"Georgia","regimes":[{"name":"Individual Entrepreneur – Small Business","conditions":{"type":"AND","list":[]},"rules":1}],"extras":{"jointFilingBenefits":false}}"',
+    score: null,
+    comment: null,
+    note: null,
+    type: "country_config",
+    visible: true,
+  },
+  {
+    definitionId: 51,
+    cityId: null,
+    countryId: 12,
+    value:
+      '"{"id":1,"tax":{"type":"flat","level":"state","rate":0.01,"other":{"threshold":159000,"newRate":0.03},"regionalExclusivity":false,"taxableIncomeSequence":"grossIncome"},"reduction":{"newCompany":{"allow":false,"type":"none","reduction":0,"maxReduction":0,"yearLength":0},"assumedCost":{"allow":false,"type":"none","reduction":0,"maxReduction":0,"workTypeReductions":{}},"other":{"allow":false,"personal":0,"age":0,"ageCap":0}},"social":{"type":"flat","baseType":"none","allowDiscount":false,"rateIndex":1,"rate":0,"discountedAmount":0,"discountLength":0,"maxCap":0,"minCap":0,"minCapBase":0,"maxCapBase":0},"health":{"type":"flat","baseType":"none","rateIndex":1,"rate":0,"maxCapBase":0,"minCap":0,"maxCap":0},"finals":{"totalTax":"stateTax","net":"grossIncome - stateTax - totalExpenses","netIncome":"grossIncome - stateTax - totalExpenses"}}"',
     score: null,
     comment: null,
     note: null,

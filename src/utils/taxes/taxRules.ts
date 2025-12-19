@@ -1763,3 +1763,123 @@ export const romaniaConfig: TaxConfig = {
     jointFilingBenefits: false,
   },
 };
+
+export const georgiaIERules: TaxRules = {
+  tax: {
+    type: "flat",
+    level: "state",
+    rate: 0.01,
+    other: {
+      threshold: 159000,
+      newRate: 0.03,
+    },
+    regionalExclusivity: false,
+    taxableIncomeSequence: "grossIncome",
+  },
+  reduction: {
+    newCompany: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      yearLength: 0,
+    },
+    assumedCost: {
+      allow: false,
+      type: "none",
+      reduction: 0,
+      maxReduction: 0,
+      workTypeReductions: {},
+    },
+    other: {
+      allow: false,
+      personal: 0,
+      age: 0,
+      ageCap: 0,
+    },
+  },
+  credit: {
+    allow: false,
+    type: "none",
+    items: {
+      workingMom: 0,
+      household: 0,
+      dependent: 0,
+      healthAndEdu: 0,
+    },
+    caps: {
+      incomeLimit: 0,
+      incomeLimitJoint: 0,
+      aboveLimit: 0,
+      multiplier: 0,
+      decrease: 0,
+      multiplierJoint: 0,
+      decreaseJoint: 0,
+    },
+  },
+  social: {
+    type: "flat",
+    baseType: "none",
+    allowDiscount: false,
+    rateIndex: 1,
+    rate: 0,
+    discountedAmount: 0,
+    discountLength: 0,
+    maxCap: 0,
+    minCap: 0,
+    minCapBase: 0,
+    maxCapBase: 0,
+  },
+  allowance: {
+    allow: false,
+    allowSpouse: false,
+    allowKids: false,
+    allowExtraKid: false,
+    personal: 0,
+    dependentSpouse: 0,
+    dependentKids: [],
+    extraKid: 0,
+    extraKidLimit: 0,
+    useType: "no allowance",
+  },
+  health: {
+    type: "flat",
+    baseType: "none",
+    rateIndex: 1,
+    rate: 0,
+    maxCapBase: 0,
+    minCap: 0,
+    maxCap: 0,
+  },
+  finals: {
+    totalTax: "stateTax",
+    net: "grossIncome - stateTax - totalExpenses",
+    netIncome: "grossIncome - stateTax -totalExpenses",
+  },
+};
+
+export const georgiaConfig: TaxConfig = {
+  country: "Georgia",
+  regimes: [
+    {
+      name: "Individual Entrepreneur",
+      conditions: {
+        type: "AND",
+        list: [
+          {
+            name: "ge_ie_turnover_limit",
+            subject: "income",
+            operation: "MORE THAN",
+            condition: 0,
+            conditionType: "number",
+            object: "",
+          },
+        ],
+      },
+      rules: georgiaIERules,
+    },
+  ],
+  extras: {
+    jointFilingBenefits: false,
+  },
+};

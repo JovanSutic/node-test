@@ -139,7 +139,8 @@ export function getStateTax(taxData: {
   const { isStateTax, taxRules, taxableIncome, brackets, totalAllowance } =
     taxData;
 
-  const { type, rate } = taxRules;
+  const { type, rate, other } = taxRules;
+  const { threshold, newRate } = other ?? {};
 
   if (isStateTax) {
     if (type === "progressive") {
@@ -182,6 +183,12 @@ export function getStateTax(taxData: {
           corporateTax,
           withholdingTax,
         },
+      };
+    }
+    if (threshold && newRate && taxableIncome > threshold) {
+      return {
+        tax: newRate * taxableIncome,
+        allowanceTax: 0,
       };
     }
     return {

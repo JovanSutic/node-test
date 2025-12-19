@@ -166,6 +166,7 @@ export function getTaxCalculationFunction(country: string) {
   if (country === "Bulgaria") return calculateTax;
   if (country === "Serbia") return calculateTax;
   if (country === "Romania") return calculateTax;
+  if (country === "Georgia") return calculateTax;
 
   return null;
 }
