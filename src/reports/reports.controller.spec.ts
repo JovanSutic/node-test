@@ -27,6 +27,7 @@ import {
   czechCity,
   serbiaCity,
   romaniaCity,
+  georgiaCity,
   mockDefValuesSerbia,
   mockDefinitions,
   mockDefValuesBulgaria,
@@ -35,6 +36,7 @@ import {
   mockDefValuesPortugal,
   mockDefValuesSpain,
   mockDefValuesRomania,
+  mockDefValuesGeorgia,
 } from "./reportsData";
 
 describe("ReportsController", () => {
@@ -630,5 +632,69 @@ describe("ReportsController", () => {
       .expect(201);
 
     expect(response.body.net).toBe(34112.5);
+  });
+
+  it("get public report for single IE Georgia via POST /reports/public", async () => {
+    const publicPostDto = {
+      cityId: 22,
+      isWorkingMom: false,
+      dependents: [],
+      incomes: [
+        {
+          isUSCitizen: false,
+          currency: "eur",
+          income: 50000,
+          accountantCost: 1000,
+          expensesCost: 0,
+          age: 20,
+        },
+      ],
+    };
+
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(
+      mockDefValuesGeorgia
+    );
+    prismaServiceMock.cities.findUnique.mockResolvedValue(georgiaCity);
+    jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
+
+    const response = await request(app.getHttpServer())
+      .post("/reports/public")
+      .send(publicPostDto)
+      .expect(201);
+
+    expect(response.body.net).toBe(48500);
+  });
+
+  it("get public report for huge IE Georgia via POST /reports/public", async () => {
+    const publicPostDto = {
+      cityId: 22,
+      isWorkingMom: false,
+      dependents: [],
+      incomes: [
+        {
+          isUSCitizen: false,
+          currency: "eur",
+          income: 200000,
+          accountantCost: 2000,
+          expensesCost: 0,
+          age: 20,
+        },
+      ],
+    };
+
+    prismaServiceMock.definition.findMany.mockResolvedValue(mockDefinitions);
+    prismaServiceMock.def_value.findMany.mockResolvedValue(
+      mockDefValuesGeorgia
+    );
+    prismaServiceMock.cities.findUnique.mockResolvedValue(georgiaCity);
+    jest.spyOn(pricesService, "getAll").mockResolvedValue(spainPrices);
+
+    const response = await request(app.getHttpServer())
+      .post("/reports/public")
+      .send(publicPostDto)
+      .expect(201);
+
+    expect(response.body.net).toBe(192000);
   });
 });
