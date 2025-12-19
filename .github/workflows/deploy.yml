@@ -85,8 +85,8 @@ jobs:
             echo "Removing all unused images..."
             docker image prune -a -f
 
-            # echo "System clean"
-            # docker system prune -a -f --volumes
+            echo "System clean"
+            docker system prune -a -f --volumes
 
             # Step 3: Pull the latest code from GitHub
             echo "Pulling latest code from GitHub"
