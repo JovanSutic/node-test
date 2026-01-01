@@ -12,13 +12,14 @@ import {
   Put,
   Delete,
   UseGuards,
+  Query,
+  ValidationPipe,
 } from "@nestjs/common";
-import { CreateCountryDto, CountryDto } from "./countries.dto";
+import { CreateCountryDto, CountryDto, CountryQueryDto } from "./countries.dto";
 import { CountriesService } from "./countries.service";
 import {
   ExistenceValidationPipe,
   UniqueExistenceValidation,
-  ValidationPipe,
 } from "./countries.validation.pipe";
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "../utils/auth.guard";
@@ -30,7 +31,7 @@ export class CountriesController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @UsePipes(ValidationPipe, ExistenceValidationPipe)
+  @UsePipes(new ValidationPipe({ transform: true }), ExistenceValidationPipe)
   @ApiOperation({ summary: "Create the new country." })
   @ApiResponse({
     status: 201,
@@ -72,7 +73,7 @@ export class CountriesController {
     },
   })
   async create(
-    @Body() CreateCountryDto: CreateCountryDto | CreateCountryDto[]
+    @Body() CreateCountryDto: CreateCountryDto
   ) {
     try {
       return await this.countriesService.create(CreateCountryDto);
@@ -87,6 +88,7 @@ export class CountriesController {
   }
 
   @Get()
+  @UsePipes(new ValidationPipe({ transform: true }))
   @ApiOperation({ summary: "Return all countries." })
   @ApiResponse({
     status: 200,
@@ -109,9 +111,9 @@ export class CountriesController {
       },
     },
   })
-  async getAll() {
+  async getAll(@Query() query: CountryQueryDto) {
     try {
-      return await this.countriesService.getAll();
+      return await this.countriesService.getAll(query);
     } catch (error: any) {
       throw new BadRequestException(
         error.message || "An error occurred while fetching all the countries"

@@ -101,6 +101,21 @@ describe("CountriesController", () => {
     expect(response.status).toBe(200);
   });
 
+    it("should return an array of countries according to the filters via GET /countries", async () => {
+    const mockCities: CountryDto[] = [
+      { id: 1, name: "Italy" },
+      { id: 2, name: "Spain" },
+    ];
+    jest.spyOn(countriesService, "getAll").mockResolvedValue(mockCities);
+
+    const response = await request(app.getHttpServer())
+      .get("/countries?definitionId=50")
+      .expect(200);
+
+    expect(response.body).toEqual(mockCities);
+    expect(response.status).toBe(200);
+  });
+
   it("should return a country by ID via GET /countries/:id", async () => {
     const country = {
       id: 1,
