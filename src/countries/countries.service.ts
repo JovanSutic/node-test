@@ -6,42 +6,45 @@ import { CountryDto, CreateCountryDto } from "./countries.dto";
 export class CountriesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createCountryDto: CreateCountryDto | CreateCountryDto[]) {
-    if (Array.isArray(createCountryDto)) {
-      try {
-        return await this.prisma.countries.createMany({
-          data: createCountryDto.map((item) => ({
-            name: item.name,
-          })),
-        });
-      } catch (error: any) {
-        throw new BadRequestException(
-          error.message ||
-            "An error occurred while creating the country in the database"
-        );
-      }
-    } else {
-      const { name } = CreateCountryDto;
+  async create(createCountryDto: CreateCountryDto) {
+    const { name } = createCountryDto;
 
-      try {
-        return await this.prisma.countries.create({
-          data: {
-            name,
-          },
-        });
-      } catch (error: any) {
-        throw new BadRequestException(
-          error.message ||
-            "An error occurred while creating the country in the database"
-        );
-      }
+    try {
+      return await this.prisma.countries.create({
+        data: {
+          name,
+        },
+      });
+    } catch (error: any) {
+      throw new BadRequestException(
+        error.message ||
+          "An error occurred while creating the country in the database"
+      );
     }
   }
 
-  async getAll() {
+  async getAll(params?: {
+    definitionId?: number;
+    orderBy?: "id" | "name";
+    order?: "asc" | "desc";
+  }) {
     try {
+      const { definitionId, orderBy = "id", order = "asc" } = params || {};
+
       return await this.prisma.countries.findMany({
-        orderBy: [{ id: "asc" }],
+        where: definitionId
+          ? {
+              defValue: {
+                some: {
+                  definitionId,
+                },
+              },
+            }
+          : undefined,
+
+        orderBy: {
+          [orderBy]: order,
+        },
       });
     } catch (error: any) {
       throw new BadRequestException(
