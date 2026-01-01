@@ -20,23 +20,6 @@ const validateCountry = (country: CreateCountryDto) => {
   }
 };
 
-@Injectable()
-export class ValidationPipe implements PipeTransform {
-  transform(value: any) {
-    if (value && typeof value === "object") {
-      if (Array.isArray(value)) {
-        for (const item of value) {
-          validateCountry(item);
-        }
-      } else {
-        validateCountry(value);
-      }
-    }
-
-    return value;
-  }
-}
-
 const checkCountryExistence = async (
   country: CountryDto | CreateCountryDto,
   prisma: PrismaService
